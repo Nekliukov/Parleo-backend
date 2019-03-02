@@ -1,7 +1,7 @@
-﻿using Parleo.DAL.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Parleo.DAL.Entities;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Text;
 
 namespace Parleo.DAL.Contexts
@@ -11,12 +11,18 @@ namespace Parleo.DAL.Contexts
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<UserAuth> UserAuth { get; set; }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        public UserContext(DbContextOptions options) : base(options)
+        {
+
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<UserAuth>()
-                .HasRequired(ua => ua.UserInfo)
-                .WithRequiredPrincipal(ui => ui.UserAuth);
+                .HasOne(ua => ua.UserInfo)
+                .WithOne(ui => ui.UserAuth)
+                .HasForeignKey<UserAuth>(ua => ua.UserInfoId);
         }
     }
 }
