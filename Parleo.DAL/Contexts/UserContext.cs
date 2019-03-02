@@ -6,14 +6,17 @@ using System.Text;
 
 namespace Parleo.DAL.Contexts
 {
-    class UserContext : DbContext
+    public class UserContext : DbContext
     {
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<UserAuth> UserAuth { get; set; }
 
+        public UserContext() : base()
+        {
+        }
+
         public UserContext(DbContextOptions options) : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
