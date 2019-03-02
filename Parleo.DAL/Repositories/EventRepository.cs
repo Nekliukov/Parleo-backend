@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Parleo.BLL.Repositories
 {
-    class EventsRepository
+    class EventRepository
     {
     }
 }

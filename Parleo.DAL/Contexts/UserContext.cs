@@ -8,8 +8,9 @@ namespace Parleo.DAL.Contexts
 {
     public class UserContext : DbContext
     {
-        public DbSet<UserInfo> UserInfo { get; set; }
-        public DbSet<UserAuth> UserAuth { get; set; }
+        public DbSet<UserInfo> UserInfos { get; set; }
+
+        public DbSet<UserAuth> UserAuths { get; set; }
 
         public UserContext() : base()
         {
