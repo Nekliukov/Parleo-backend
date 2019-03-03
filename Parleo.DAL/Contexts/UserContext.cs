@@ -21,8 +21,10 @@ namespace Parleo.DAL.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Event>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<UserInfo>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<Language>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
+
             modelBuilder.Entity<UserInfo>().Property(ui => ui.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
             modelBuilder.Entity<UserAuth>()
@@ -30,11 +32,18 @@ namespace Parleo.DAL.Contexts
                 .WithOne(ui => ui.UserAuth)
                 .HasForeignKey<UserAuth>(ua => ua.UserInfoId);
 
+            modelBuilder.Entity<UserInfo>()
+                .HasMany(ui => ui.Events)
+                .WithOne(e => e.Creator);
+            modelBuilder.Entity<Language>()
+                .HasMany(lng => lng.Events)
+                .WithOne(e => e.Language);
+
             #region User-Language m2m
             modelBuilder.Entity<UserLanguage>().HasKey(k => new { k.UserId, k.LanguageId });
             modelBuilder.Entity<UserLanguage>()
                 .HasOne(ul => ul.UserInfo)
-                .WithMany(ui => ui.UserLanguages)
+                .WithMany(ui => ui.Languages)
                 .HasForeignKey(ul => ul.UserId);
             modelBuilder.Entity<UserLanguage>()
                 .HasOne(ul => ul.Language)

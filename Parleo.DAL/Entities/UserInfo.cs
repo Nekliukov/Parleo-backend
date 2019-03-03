@@ -19,6 +19,7 @@ namespace Parleo.DAL.Entities
         public DateTime CreatedAt { get; set; }
 
         public UserAuth UserAuth { get; set; }
-        public ICollection<UserLanguage> UserLanguages { get; set; }
+        public ICollection<Event> Events { get; set; }
+        public ICollection<UserLanguage> Languages { get; set; }
     }
 }
