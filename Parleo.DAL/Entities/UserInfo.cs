@@ -18,7 +18,7 @@ namespace Parleo.DAL.Entities
         public decimal Longitude { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public virtual UserAuth UserAuth { get; set; }
+        public UserAuth UserAuth { get; set; }
         public ICollection<UserLanguage> UserLanguages { get; set; }
     }
 }

@@ -8,8 +8,8 @@ namespace Parleo.DAL.Contexts
 {
     public class UserContext : DbContext
     {
-        public DbSet<UserInfo> UserInfo { get; set; }
-        public DbSet<UserAuth> UserAuth { get; set; }
+        //public DbSet<UserInfo> UserInfo { get; set; }
+        //public DbSet<UserAuth> UserAuth { get; set; }
 
         public UserContext() : base()
         {
@@ -30,8 +30,8 @@ namespace Parleo.DAL.Contexts
                 .WithOne(ui => ui.UserAuth)
                 .HasForeignKey<UserAuth>(ua => ua.UserInfoId);
 
-            modelBuilder.Entity<UserLanguage>()
-                .HasKey(k => new { k.UserId, k.LanguageId });
+            #region User-Language m2m
+            modelBuilder.Entity<UserLanguage>().HasKey(k => new { k.UserId, k.LanguageId });
             modelBuilder.Entity<UserLanguage>()
                 .HasOne(ul => ul.UserInfo)
                 .WithMany(ui => ui.UserLanguages)
@@ -40,6 +40,21 @@ namespace Parleo.DAL.Contexts
                 .HasOne(ul => ul.Language)
                 .WithMany(lng => lng.UserLanguages)
                 .HasForeignKey(ul => ul.LanguageId);
+            #endregion
+
+            #region User-User m2m
+            modelBuilder.Entity<UserFriends>().HasKey(k => new { k.UserToId, k.UserFromId });
+            modelBuilder.Entity<UserFriends>()
+                .HasOne(fs => fs.UserTo)
+                .WithMany()
+                .HasForeignKey(fs => fs.UserToId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<UserFriends>()
+                .HasOne(fs => fs.UserFrom)
+                .WithMany()
+                .HasForeignKey(fs => fs.UserFromId)
+                .OnDelete(DeleteBehavior.Restrict);
+            #endregion
         }
     }
 }
