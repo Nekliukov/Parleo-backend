@@ -17,8 +17,8 @@ namespace Parleo.DI
         /// <param name="connectionString"></param>
         public static void InjectDependencies(IServiceCollection services, string connectionString)
         {
-            RegisterScoped(typeof(UserService), "Service", services);
-            RegisterScoped(typeof(UserRepository), "Repository", services);
+            RegisterScoped(typeof(UsersService), "Service", services);
+            RegisterScoped(typeof(UsersRepository), "Repository", services);
 
             services.AddDbContext<UserContext>(
                 options => options.UseSqlServer(connectionString));

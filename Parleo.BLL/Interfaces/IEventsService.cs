@@ -1,6 +1,6 @@
 ﻿namespace Parleo.BLL.Interfaces
 {
-    public interface IEventsRepository
+    public interface IEventsService
     {
         
     }

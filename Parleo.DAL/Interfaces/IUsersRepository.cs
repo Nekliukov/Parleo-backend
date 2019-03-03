@@ -1,6 +1,6 @@
 ﻿namespace Parleo.DAL.Interfaces
 {
-    public interface IUserRepository
+    public interface IUsersRepository
     {
         
     }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Parleo.BLL.Interfaces;
 
 namespace Parleo.BLL.Services
 {
-    class EventsService
+    public class EventsService : IEventsService
     {
     }
 }
