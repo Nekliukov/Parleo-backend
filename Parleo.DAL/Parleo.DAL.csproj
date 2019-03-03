@@ -5,6 +5,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20190303122253_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303122253_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303123218_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303123218_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303124052_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303124052_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303124211_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303124211_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303124501_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303124501_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303133122_AddEvents.cs" />
+    <Compile Remove="Migrations\20190303133122_AddEvents.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />

@@ -3,58 +3,23 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parleo.DAL.Contexts;
 
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20190303132213_AddUserFriends")]
+    partial class AddUserFriends
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Parleo.DAL.Entities.Event", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<Guid?>("CreatorId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<DateTime?>("EndDate");
-
-                    b.Property<bool>("IsFinished");
-
-                    b.Property<Guid?>("LanguageId");
-
-                    b.Property<decimal>("Latitude")
-                        .HasColumnType("decimal(10, 2)");
-
-                    b.Property<decimal>("Longitude")
-                        .HasColumnType("decimal(11, 8)");
-
-                    b.Property<int>("MaxParticipants");
-
-                    b.Property<string>("Name");
-
-                    b.Property<DateTime>("StartTime");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.HasIndex("LanguageId");
-
-                    b.ToTable("Event");
-                });
 
             modelBuilder.Entity("Parleo.DAL.Entities.Language", b =>
                 {
@@ -144,17 +109,6 @@ namespace Parleo.DAL.Migrations
                     b.ToTable("UserLanguage");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.Event", b =>
-                {
-                    b.HasOne("Parleo.DAL.Entities.UserInfo", "Creator")
-                        .WithMany("Events")
-                        .HasForeignKey("CreatorId");
-
-                    b.HasOne("Parleo.DAL.Entities.Language", "Language")
-                        .WithMany("Events")
-                        .HasForeignKey("LanguageId");
-                });
-
             modelBuilder.Entity("Parleo.DAL.Entities.UserAuth", b =>
                 {
                     b.HasOne("Parleo.DAL.Entities.UserInfo", "UserInfo")
@@ -184,7 +138,7 @@ namespace Parleo.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Parleo.DAL.Entities.UserInfo", "UserInfo")
-                        .WithMany("Languages")
+                        .WithMany("UserLanguages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
