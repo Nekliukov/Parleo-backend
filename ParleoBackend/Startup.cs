@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Parleo.DAL.Contexts;
+using Parleo.DI;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace ParleoBackend
@@ -50,8 +51,7 @@ namespace ParleoBackend
                 c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddDbContext<UserContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            DependencyInjection.InjectDependencies(services, Configuration.GetConnectionString("DefaultConnection"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

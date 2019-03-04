@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Parleo.DAL.Interfaces;
 
-namespace Parleo.BLL.Repositories
+namespace Parleo.DAL.Repositories
 {
-    class EventsRepository
+    public class EventsRepository : IEventsRepository
     {
     }
 }

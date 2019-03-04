@@ -1,10 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Parleo.BLL.Interfaces;
+using Parleo.DAL.Interfaces;
 
 namespace Parleo.BLL.Services
 {
-    class UsersService
+    public class UsersService : IUsersService
     {
+        private IUsersRepository _repository;
+
+        public UsersService(IUsersRepository repository)
+        {
+            _repository = repository;
+        }
     }
 }

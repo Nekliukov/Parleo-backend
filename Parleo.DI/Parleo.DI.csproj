@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Parleo.BLL\Parleo.BLL.csproj" />
     <ProjectReference Include="..\Parleo.DAL\Parleo.DAL.csproj" />
   </ItemGroup>
 
