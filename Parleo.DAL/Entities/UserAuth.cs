@@ -16,6 +16,6 @@ namespace Parleo.DAL.Entities
 
         public DateTime LastLogin { get; set; }
 
-        public virtual UserInfo UserInfo { get; set; }
+        public UserInfo UserInfo { get; set; }
     }
 }
