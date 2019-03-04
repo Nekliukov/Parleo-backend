@@ -1,7 +1,23 @@
-﻿namespace Parleo.BLL.Interfaces
+﻿using Parleo.DAL.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Parleo.BLL.Interfaces
 {
     public interface IUsersService
     {
-        
+        Task<UserAuth> AuthenticateAsync(string email, string password);
+
+        Task<IEnumerable<UserInfo>> GetAllUsersAsync();
+
+        Task<UserInfo> GetUserByIdAsync(Guid id);
+
+        Task<UserInfo> CreateUserAsync(UserInfo user, string password);
+
+        Task<bool> UpdateUserAsync(UserInfo userParam, string password = null);
+
+        Task<bool> DeleteUserAsync(Guid id);
+
     }
 }
