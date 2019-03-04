@@ -9,7 +9,7 @@ namespace Parleo.BLL.Interfaces
     {
         Task<UserAuth> AuthenticateAsync(string email, string password);
 
-        Task<IEnumerable<UserInfo>> GetAllUsersAsync();
+        Task<IEnumerable<UserInfo>> GetUsersPageAsync();
 
         Task<UserInfo> GetUserByIdAsync(Guid id);
 

@@ -33,9 +33,10 @@ namespace Parleo.DAL.Repositories
             return result != 0;
         }
 
-        public async Task<IList<UserInfo>> GetAllAsync()
+        public async Task<IList<UserInfo>> GetPageAsync(int number)
         {
-            return await _context.UserInfo.ToListAsync();
+            //Hardcoded 25. add to configure, when it'll be necessary. This number was approved with front-end
+            return await _context.UserInfo.Skip(number).Take(25).ToListAsync();
         }
 
         public async Task<UserInfo> GetAsync(Guid id)

@@ -7,7 +7,7 @@ namespace Parleo.DAL.Interfaces
 {
     public interface IUsersRepository
     {
-        Task<IList<UserInfo>> GetAllAsync();
+        Task<IList<UserInfo>> GetPageAsync(int number);
 
         Task<UserInfo> GetAsync(Guid id);
 

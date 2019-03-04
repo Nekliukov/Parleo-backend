@@ -35,9 +35,9 @@ namespace Parleo.BLL.Services
             return user;
         }
 
-        public async Task<IEnumerable<UserInfo>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserInfo>> GetUsersPageAsync(int number)
         {
-            return await _repository.GetAllAsync();
+            return await _repository.GetPageAsync(number);
         }
 
         public async Task<UserInfo> GetUserByIdAsync(Guid id)
