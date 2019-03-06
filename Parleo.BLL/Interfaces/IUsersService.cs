@@ -15,9 +15,9 @@ namespace Parleo.BLL.Interfaces
 
         Task<UserInfo> CreateUserAsync(UserInfo user, string password);
 
-        Task<bool> UpdateUserAsync(UserInfo userParam, string password = null);
+        Task<bool> UpdateUserAsync(UserInfo user, string password = null);
 
-        Task<bool> DeleteUserAsync(Guid id);
+        Task<bool> DisableUserAsync(Guid id);
 
     }
 }

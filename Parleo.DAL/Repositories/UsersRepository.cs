@@ -18,19 +18,17 @@ namespace Parleo.DAL.Repositories
             _context = context;
         }
 
-        public async Task<bool> AddAsync(UserInfo entity)
+        public async Task<bool> CreateAsync(UserInfo entity)
         {
             _context.UserInfo.Add(entity);
             var result =  await _context.SaveChangesAsync();
             return result != 0;
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DisableAsync(Guid id)
         {
-            var entity = _context.UserInfo.First(user => user.Id == id);
-            _context.UserInfo.Remove(entity);
-            var result = await _context.SaveChangesAsync();
-            return result != 0;
+            //TODO: update the IsEnabled field on the user when it appears on the model
+            return true;
         }
 
         public async Task<IList<UserInfo>> GetPageAsync(int number)

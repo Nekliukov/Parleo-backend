@@ -1,4 +1,5 @@
-﻿using Parleo.BLL.Interfaces;
+﻿using Parleo.BLL.Helpers;
+using Parleo.BLL.Interfaces;
 using Parleo.DAL.Entities;
 using Parleo.DAL.Interfaces;
 using System;
@@ -11,10 +12,12 @@ namespace Parleo.BLL.Services
     public class UsersService : IUsersService
     {
         private IUsersRepository _repository;
+        private readonly SecurityHelper _securityHelper;
 
-        public UsersService(IUsersRepository repository)
+        public UsersService(IUsersRepository repository, SecurityHelper securityHelper)
         {
             _repository = repository;
+            _securityHelper = securityHelper;
         }
         public async Task<UserAuth> AuthenticateAsync(string email, string password)
         {
@@ -28,13 +31,14 @@ namespace Parleo.BLL.Services
                 return null;
 
             // check if password is correct
-            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            if (!_securityHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
                 return null;
 
             // authentication successful
             return user;
         }
 
+        //TODO: add filters
         public async Task<IEnumerable<UserInfo>> GetUsersPageAsync(int number)
         {
             return await _repository.GetPageAsync(number);
@@ -49,89 +53,56 @@ namespace Parleo.BLL.Services
         {
             // validation
             if (string.IsNullOrWhiteSpace(password))
-                throw new AppException("Password is required");
+                throw new AppException(ErrorType.InvalidPassword, "Password is required");
 
             if (await _repository.FindByEmailAsync(user.UserAuth.Email) != null)
-                throw new AppException("Email \"" + user.UserAuth.Email + "\" is already taken");
+                throw new AppException(ErrorType.ExistingEmail,"Email \"" + user.UserAuth.Email + "\" is already taken");
 
             byte[] passwordHash, passwordSalt;
-            CreatePasswordHash(password, out passwordHash, out passwordSalt);
+            _securityHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
             user.UserAuth.PasswordHash = passwordHash;
             user.UserAuth.PasswordSalt = passwordSalt;
 
-            var result = await _repository.AddAsync(user);
+            var result = await _repository.CreateAsync(user);
             if (!result)
-                throw new AppException("Smth bad happens in the server side and user don't save");
+                throw new Exception("Smth bad happend on the server side and user wasn't saved");
             return user;
         }
 
-        public async Task<bool> UpdateUserAsync(UserInfo userParam, string password = null)
+        public async Task<bool> UpdateUserAsync(UserInfo user, string password = null)
         {
-            var user = await _repository.GetAsync(userParam.Id);
+            var userInfo = await _repository.GetAsync(user.Id);
 
-            if (user == null)
-                throw new AppException("User not found");
+            if (userInfo == null)
+                throw new AppException(ErrorType.InvalidId, "User not found");
 
-            if (userParam.UserAuth.Email != user.UserAuth.Email)
+            if (user.UserAuth.Email != userInfo.UserAuth.Email)
             {
                 // Email has changed so check if the new Email is already taken
-                if (await _repository.FindByEmailAsync(userParam.UserAuth.Email) != null)
-                    throw new AppException("Email " + userParam.UserAuth.Email + " is already taken");
+                if (await _repository.FindByEmailAsync(user.UserAuth.Email) != null)
+                    throw new AppException(ErrorType.ExistingEmail, "Email " + user.UserAuth.Email + " is already taken");
             }
 
             // update user properties
-            user = userParam;
+            userInfo = user;
 
             // update password if it was entered
             if (!string.IsNullOrWhiteSpace(password))
             {
                 byte[] passwordHash, passwordSalt;
-                CreatePasswordHash(password, out passwordHash, out passwordSalt);
+                _securityHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
-                user.UserAuth.PasswordHash = passwordHash;
-                user.UserAuth.PasswordSalt = passwordSalt;
+                userInfo.UserAuth.PasswordHash = passwordHash;
+                userInfo.UserAuth.PasswordSalt = passwordSalt;
             }
 
-            return await _repository.UpdateAsync(user);
+            return await _repository.UpdateAsync(userInfo);
         }
 
-        public async Task<bool> DeleteUserAsync(Guid id)
+        public async Task<bool> DisableUserAsync(Guid id)
         {
-            return await _repository.DeleteAsync(id);
-        }
-
-        // private helper methods
-
-        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
-
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-            }
-        }
-
-        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-        {
-            if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
-            if (storedHash.Length != 64) throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
-            if (storedSalt.Length != 128) throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
-
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
-            {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++)
-                {
-                    if (computedHash[i] != storedHash[i]) return false;
-                }
-            }
-
-            return true;
+            return await _repository.DisableAsync(id);
         }
     }
 }

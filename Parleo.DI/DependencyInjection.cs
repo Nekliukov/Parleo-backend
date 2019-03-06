@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Parleo.DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Parleo.BLL.Helpers;
 
 namespace Parleo.DI
 {
@@ -20,6 +21,7 @@ namespace Parleo.DI
             RegisterScoped(typeof(UsersService), "Service", services);
             RegisterScoped(typeof(UsersRepository), "Repository", services);
 
+            services.AddSingleton<SecurityHelper>();
             services.AddDbContext<UserContext>(
                 options => options.UseSqlServer(connectionString));
         }

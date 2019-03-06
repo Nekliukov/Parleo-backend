@@ -11,11 +11,11 @@ namespace Parleo.DAL.Interfaces
 
         Task<UserInfo> GetAsync(Guid id);
 
-        Task<bool> AddAsync(UserInfo entity);
+        Task<bool> CreateAsync(UserInfo entity);
 
         Task<bool> UpdateAsync(UserInfo entity);
 
-        Task<bool> DeleteAsync(Guid id);
+        Task<bool> DisableAsync(Guid id);
 
         Task<UserAuth> FindByEmailAsync(string email);
     }
