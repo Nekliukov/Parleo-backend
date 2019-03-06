@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Parleo.BLL.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Parleo.BLL.Helpers
 {
-    public class SecurityHelper
+    public class SecurityHelper : ISecurityHelper
     {
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {

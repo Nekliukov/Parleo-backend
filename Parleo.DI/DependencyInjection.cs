@@ -20,8 +20,7 @@ namespace Parleo.DI
         {
             RegisterScoped(typeof(UsersService), "Service", services);
             RegisterScoped(typeof(UsersRepository), "Repository", services);
-
-            services.AddSingleton<SecurityHelper>();
+            RegisterScoped(typeof(SecurityHelper), "Helper", services);
             services.AddDbContext<UserContext>(
                 options => options.UseSqlServer(connectionString));
         }

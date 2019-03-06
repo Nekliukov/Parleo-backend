@@ -12,9 +12,9 @@ namespace Parleo.BLL.Services
     public class UsersService : IUsersService
     {
         private IUsersRepository _repository;
-        private readonly SecurityHelper _securityHelper;
+        private readonly ISecurityHelper _securityHelper;
 
-        public UsersService(IUsersRepository repository, SecurityHelper securityHelper)
+        public UsersService(IUsersRepository repository, ISecurityHelper securityHelper)
         {
             _repository = repository;
             _securityHelper = securityHelper;
