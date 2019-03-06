@@ -50,7 +50,7 @@ namespace ParleoBackend
                 // ...and tell Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
-
+            
             DependencyInjection.InjectDependencies(services, Configuration.GetConnectionString("DefaultConnection"));
         }
 
