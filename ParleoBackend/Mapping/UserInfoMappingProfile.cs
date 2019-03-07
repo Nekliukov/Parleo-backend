@@ -5,9 +5,9 @@ using DataAssesUserInfo = Parleo.DAL.Entities.UserInfo;
 
 namespace ParleoBackend.Mapping
 {
-    public class UserInfoMapperProfile : Profile
+    public class UserInfoMappingProfile : Profile
     {
-        public UserInfoMapperProfile()
+        public UserInfoMappingProfile()
         {
             CreateMap<DataAssesUserInfo, UserInfoViewModel>()
                 .ForMember(ui => ui.Languages, opt => opt.MapFrom(ui => 
