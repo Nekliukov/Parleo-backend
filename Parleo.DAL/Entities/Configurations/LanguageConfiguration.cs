@@ -10,7 +10,10 @@ namespace Parleo.DAL.Entities.Configurations
     {
         public void Configure(EntityTypeBuilder<Language> builder)
         {
-            
+            builder.ToTable("tbl_language").HasKey(l => l.Id);
+            builder.Property(l => l.Id).HasColumnName("cln_id").ValueGeneratedOnAdd();
+            builder.Property(l => l.Name).HasColumnName("cln_name");
+            builder.HasMany(l => l.Events).WithOne(e => e.Language).HasForeignKey(e => e.LanguageId);
         }
     }
 }

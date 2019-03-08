@@ -30,5 +30,7 @@ namespace Parleo.DAL.Entities
         public virtual ICollection<Event> Events { get; set; }
 
         public virtual ICollection<UserLanguage> Languages { get; set; }
+
+        public virtual ICollection<UserFriends> Friends { get; set; }
     }
 }
