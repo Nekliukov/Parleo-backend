@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Parleo.DAL.Entities.Configurations
 {
-    public class EventConfigurationcs : IEntityTypeConfiguration<Event>
+    public class EventConfiguration : IEntityTypeConfiguration<Event>
     {
         public void Configure(EntityTypeBuilder<Event> builder)
         {

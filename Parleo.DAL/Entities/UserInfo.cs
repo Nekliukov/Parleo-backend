@@ -16,15 +16,19 @@ namespace Parleo.DAL.Entities
         public DateTime Birthdate { get; set; }
 
         public bool Gender { get; set; }
+
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Latitude { get; set; }
+
         [Column(TypeName = "decimal(11, 8)")]
         public decimal Longitude { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
-        public UserAuth UserAuth { get; set; }
-        public ICollection<Event> Events { get; set; }
-        public ICollection<UserLanguage> Languages { get; set; }
+        public virtual UserAuth UserAuth { get; set; }
+
+        public virtual ICollection<Event> Events { get; set; }
+
+        public virtual ICollection<UserLanguage> Languages { get; set; }
     }
 }

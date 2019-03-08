@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Parleo.DAL.Entities;
+using Parleo.DAL.Entities.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,7 +23,12 @@ namespace Parleo.DAL.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            modelBuilder.ApplyConfiguration(new EventConfiguration());
+            modelBuilder.ApplyConfiguration(new LanguageConfiguration());
+            modelBuilder.ApplyConfiguration(new UserAuthConfiguration());
+            modelBuilder.ApplyConfiguration(new UserFriendsConfiguration());
+            modelBuilder.ApplyConfiguration(new UserInfoConfiguration());
+            modelBuilder.ApplyConfiguration(new UserLanguageConfiguration());
         }
     }
 }
