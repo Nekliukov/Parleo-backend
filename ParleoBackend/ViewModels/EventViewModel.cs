@@ -1,6 +1,6 @@
 using System;
 
-namespace ParleoBackend
+namespace ParleoBackend.ViewModels
 {
     public class EventViewModel
     {
@@ -24,7 +24,7 @@ namespace ParleoBackend
 
         public Guid CreatorId { get; set; } 
 
-        public LanguageViewModel Language { get; set; }
+        public UserLanguageViewModel Language { get; set; }
 
 		//PARTICIPANTS??
     }

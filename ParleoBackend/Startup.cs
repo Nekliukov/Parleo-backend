@@ -55,6 +55,7 @@ namespace ParleoBackend
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
+                mc.AddProfile(new UserLanguageMappingProfile());
                 mc.AddProfile(new EventMappingProfile());
                 mc.AddProfile(new UserInfoMappingProfile());
             });

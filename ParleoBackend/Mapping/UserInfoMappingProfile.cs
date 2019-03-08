@@ -10,8 +10,9 @@ namespace ParleoBackend.Mapping
         public UserInfoMappingProfile()
         {
             CreateMap<DataAssesUserInfo, UserInfoViewModel>()
-                .ForMember(ui => ui.Languages, opt => opt.MapFrom(ui => 
-                    ui.Languages.Select(l => l.UserId == ui.Id)));
+                .ForMember(ui => ui.Mail, opt => opt.MapFrom(uivm => uivm.UserAuth.Email));
+
+            CreateMap<UserInfoViewModel, DataAssesUserInfo>();
         }
     }
 }

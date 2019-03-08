@@ -7,9 +7,7 @@ namespace ParleoBackend
     {
         public Guid Id { get; set; }
 
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
+        public string Name { get; set; }        
         
         public DateTime Birthdate { get; set; }
 
@@ -19,8 +17,12 @@ namespace ParleoBackend
         
         public decimal Longitude { get; set; }
 
-        //Email?
+        public string Mail { get; set; }
 
-        public ICollection<LanguageViewModel> Languages { get; set; }
+        /*public virtual ICollection<EventViewModel> Events { get; set; }
+
+        public virtual ICollection<UserLanguageViewModel> Languages { get; set; }
+
+        public virtual ICollection<UserFriendsViewModel> Friends { get; set; }   */     
     }
 }

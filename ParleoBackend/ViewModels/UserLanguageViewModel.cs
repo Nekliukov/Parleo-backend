@@ -2,7 +2,7 @@ using System;
 
 namespace ParleoBackend
 {
-    public class LanguageViewModel
+    public class UserLanguageViewModel
     {
         public Guid Id { get; set; }
 
