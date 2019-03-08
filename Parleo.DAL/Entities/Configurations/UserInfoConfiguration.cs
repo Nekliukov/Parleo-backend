@@ -12,8 +12,7 @@ namespace Parleo.DAL.Entities.Configurations
         {
             builder.ToTable("tbl_user_info").HasKey(ui => ui.Id);
             builder.Property(ui => ui.Id).HasColumnName("cln_id").ValueGeneratedOnAdd();
-            builder.Property(ui => ui.FirstName).HasColumnName("cln_firstname");
-            builder.Property(ui => ui.LastName).HasColumnName("cln_lastname");
+            builder.Property(ui => ui.Name).HasColumnName("cln_name");            
             builder.Property(ui => ui.Birthdate).HasColumnName("cln_birth_date").HasColumnType("Date");
             builder.Property(ui => ui.Gender).HasColumnName("cln_gender");
             builder.Property(ui => ui.Latitude).HasColumnName("cln_latitude").HasColumnType("decimal(10, 2)");
