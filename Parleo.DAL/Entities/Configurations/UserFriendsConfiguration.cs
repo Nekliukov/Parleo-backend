@@ -16,7 +16,7 @@ namespace Parleo.DAL.Entities.Configurations
             builder.Property(uf => uf.Status).HasColumnName("cln_status");
             builder.HasOne(uf => uf.UserFrom).WithMany(ui => ui.Friends).HasForeignKey(uf => uf.UserFromId)
                 .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(uf => uf.UserTo).WithMany(ui => ui.Friends).HasForeignKey(uf => uf.UserToId)
+            builder.HasOne(uf => uf.UserTo).WithMany(ui => ui.InFriends).HasForeignKey(uf => uf.UserToId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
