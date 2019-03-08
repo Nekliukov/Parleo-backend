@@ -1,6 +1,6 @@
 using System;
 
-namespace ParleoBackend
+namespace ParleoBackend.ViewModels
 {
     public class UserLanguageViewModel
     {
