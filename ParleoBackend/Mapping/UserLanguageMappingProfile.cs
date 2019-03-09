@@ -2,7 +2,7 @@
 using ParleoBackend.ViewModels;
 using System;
 using System.Linq;
-using DataAssesLanguage = Parleo.DAL.Entities.UserLanguage;
+using DataAccessLanguage = Parleo.DAL.Entities.UserLanguage;
 
 namespace ParleoBackend.Mapping
 {
@@ -10,11 +10,11 @@ namespace ParleoBackend.Mapping
     {
         public UserLanguageMappingProfile()
         {
-            CreateMap<DataAssesLanguage, UserLanguageViewModel>()
+            CreateMap<DataAccessLanguage, UserLanguageViewModel>()
                 .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.UserId))
                 .ForMember(ul => ul.Name, opt => opt.MapFrom(ulvm => ulvm.Language.Name));
 
-            CreateMap<UserLanguageViewModel, DataAssesLanguage>();
+            CreateMap<UserLanguageViewModel, DataAccessLanguage>();
         }
     }
 }

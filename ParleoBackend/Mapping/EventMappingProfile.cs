@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ParleoBackend.ViewModels;
-using DataAssesEvent = Parleo.DAL.Entities.Event;
+using DataAccessEvent = Parleo.DAL.Entities.Event;
 
 namespace ParleoBackend.Mapping
 {
@@ -8,7 +8,7 @@ namespace ParleoBackend.Mapping
     {
         public EventMappingProfile()
         {
-            CreateMap<DataAssesEvent, EventViewModel>();
+            CreateMap<DataAccessEvent, EventViewModel>();
         }
     }
 }

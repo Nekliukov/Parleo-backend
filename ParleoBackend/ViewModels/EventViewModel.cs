@@ -18,9 +18,9 @@ namespace ParleoBackend.ViewModels
 
         public bool IsFinished { get; set; }
 
-        public DateTime StartTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        public DateTimeOffset? EndDate { get; set; }
 
         public Guid CreatorId { get; set; } 
 

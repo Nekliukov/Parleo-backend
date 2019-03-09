@@ -2,7 +2,7 @@
 using ParleoBackend.ViewModels;
 using System;
 using System.Linq;
-using DataAssesUserInfo = Parleo.DAL.Entities.UserInfo;
+using DataAccessUserInfo = Parleo.DAL.Entities.UserInfo;
 
 namespace ParleoBackend.Mapping
 {
@@ -10,10 +10,10 @@ namespace ParleoBackend.Mapping
     {
         public UserInfoMappingProfile()
         {
-            CreateMap<DataAssesUserInfo, UserInfoViewModel>()
-                .ForMember(ui => ui.Mail, opt => opt.MapFrom(uivm => uivm.UserAuth.Email));
+            CreateMap<DataAccessUserInfo, UserInfoViewModel>()
+                .ForMember(ui => ui.Email, opt => opt.MapFrom(uivm => uivm.UserAuth.Email));
 
-            CreateMap<UserInfoViewModel, DataAssesUserInfo>();            
+            CreateMap<UserInfoViewModel, DataAccessUserInfo>();            
         }
     }
 }
