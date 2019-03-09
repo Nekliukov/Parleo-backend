@@ -35,7 +35,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(AuthorizationRequest authorizationRequest)
+        public async Task<IActionResult> RegisterAsync(AuthorizationViewModel authorizationRequest)
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationRequest);
             UserInfoModel user = await _accountService.CreateUserAsync(authorizationModel);
@@ -43,7 +43,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(AuthorizationRequest authorizationRequest)
+        public async Task<IActionResult> LoginAsync(AuthorizationViewModel authorizationRequest)
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationRequest);
             await _accountService.AuthenticateAsync(authorizationModel);
