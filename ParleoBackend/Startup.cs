@@ -52,7 +52,7 @@ namespace ParleoBackend
                 // ...and tell Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
-
+          
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new UserLanguageMappingProfile());
