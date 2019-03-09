@@ -45,17 +45,19 @@ namespace Parleo.BLL.Services
         }
 
         //TODO: add filters
-        public async Task<IEnumerable<UserInfo>> GetUsersPageAsync(int number)
+        public async Task<IEnumerable<UserInfoModel>> GetUsersPageAsync(int offset)
         {
-            return await _repository.GetPageAsync(number);
+            IList<UserInfo> users = await _repository.GetPageAsync(offset);
+            return _mapper.Map<IEnumerable<UserInfoModel>>(users);
         }
 
-        public async Task<UserInfo> GetUserByIdAsync(Guid id)
+        public async Task<UserInfoModel> GetUserByIdAsync(Guid id)
         {
-            return await _repository.GetAsync(id);
+            UserInfo user = await _repository.GetAsync(id);
+            return _mapper.Map<UserInfoModel>(user);
         }
 
-        public async Task<UserInfo> CreateUserAsync(AuthorizationModel authorizationModel)
+        public async Task<UserInfoModel> CreateUserAsync(AuthorizationModel authorizationModel)
         {
             // validation
             if (string.IsNullOrWhiteSpace(authorizationModel.Password))
@@ -75,35 +77,26 @@ namespace Parleo.BLL.Services
             var result = await _repository.CreateAsync(user);
             if (!result)
                 throw new Exception("Smth bad happend on the server side and user wasn't saved");
-            return user;
+
+            return _mapper.Map<UserInfoModel>(user);
         }
 
-        public async Task<bool> UpdateUserAsync(UserInfo user, string password = null)
+        public async Task<bool> UpdateUserAsync(UserInfoModel user)
         {
-            var userInfo = await _repository.GetAsync(user.Id);
+            UserInfo userInfo = await _repository.GetAsync(user.Id);
 
             if (userInfo == null)
                 throw new AppException(ErrorType.InvalidId, "User not found");
 
-            if (user.UserAuth.Email != userInfo.UserAuth.Email)
+            if (user.Email != userInfo.UserAuth.Email)
             {
                 // Email has changed so check if the new Email is already taken
-                if (await _repository.FindByEmailAsync(user.UserAuth.Email) != null)
-                    throw new AppException(ErrorType.ExistingEmail, "Email " + user.UserAuth.Email + " is already taken");
+                if (await _repository.FindByEmailAsync(user.Email) != null)
+                    throw new AppException(ErrorType.ExistingEmail, "Email " + user.Email + " is already taken");
             }
 
             // update user properties
-            userInfo = user;
-
-            // update password if it was entered
-            if (!string.IsNullOrWhiteSpace(password))
-            {
-                byte[] passwordHash, passwordSalt;
-                _securityService.CreatePasswordHash(password, out passwordHash, out passwordSalt);
-
-                userInfo.UserAuth.PasswordHash = passwordHash;
-                userInfo.UserAuth.PasswordSalt = passwordSalt;
-            }
+            userInfo = _mapper.Map<UserInfo>(user);
 
             return await _repository.UpdateAsync(userInfo);
         }

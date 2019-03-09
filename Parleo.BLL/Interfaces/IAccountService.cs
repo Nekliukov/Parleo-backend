@@ -10,13 +10,13 @@ namespace Parleo.BLL.Interfaces
     {
         Task<UserAuth> AuthenticateAsync(AuthorizationModel authorizationModel);
 
-        Task<IEnumerable<UserInfo>> GetUsersPageAsync(int number);
+        Task<IEnumerable<UserInfoModel>> GetUsersPageAsync(int number);
 
-        Task<UserInfo> GetUserByIdAsync(Guid id);
+        Task<UserInfoModel> GetUserByIdAsync(Guid id);
 
-        Task<UserInfo> CreateUserAsync(AuthorizationModel authorizationModel);
+        Task<UserInfoModel> CreateUserAsync(AuthorizationModel authorizationModel);
 
-        Task<bool> UpdateUserAsync(UserInfo user, string password = null);
+        Task<bool> UpdateUserAsync(UserInfoModel user);
 
         Task<bool> DisableUserAsync(Guid id);
 

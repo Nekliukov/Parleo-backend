@@ -4,6 +4,9 @@ using Parleo.BLL.Models;
 using ParleoBackend.ViewModels;
 using AutoMapper;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
 
 namespace ParleoBackend.Controllers
 {
@@ -23,12 +26,20 @@ namespace ParleoBackend.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetUsers(int offset)
+        {
+            IEnumerable<UserInfoModel> users = await _accountService.GetUsersPageAsync(offset);
+            return Ok(_mapper.Map<IEnumerable<UserInfoViewModel>>(users));
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(AuthorizationRequest authorizationRequest)
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationRequest);
-            await _accountService.CreateUserAsync(authorizationModel);
-            return Ok();
+            UserInfoModel user = await _accountService.CreateUserAsync(authorizationModel);
+            return Ok(_mapper.Map<UserInfoViewModel>(user));
         }
 
         [HttpPost("login")]
@@ -37,6 +48,35 @@ namespace ParleoBackend.Controllers
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationRequest);
             await _accountService.AuthenticateAsync(authorizationModel);
             return Ok();
+        }
+
+        [HttpPut("edit")]
+        [Authorize]
+        public async Task<IActionResult> EditAsync(UserInfoViewModel user)
+        {
+            if (await _accountService.UpdateUserAsync(_mapper.Map<UserInfoModel>(user)))
+            {
+                return NoContent();
+            }
+
+            return BadRequest();
+        }
+
+        [HttpGet("logout")]
+        [Authorize]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            // jwt
+            return NoContent();
+        }
+
+        [HttpGet("getUser")]
+        [Authorize]
+        public async Task<IActionResult> GetUserAsync()
+        {
+            // get id from jwt token
+            UserInfoModel user = await _accountService.GetUserByIdAsync(new Guid());
+            return Ok(_mapper.Map<UserInfoViewModel>(user));
         }
     }
 }

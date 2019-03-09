@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace ParleoBackend.ViewModels
 {
@@ -7,7 +6,7 @@ namespace ParleoBackend.ViewModels
     {
         public Guid Id { get; set; }
 
-        public string Name { get; set; }        
+        public string Name { get; set; }
         
         public DateTime Birthdate { get; set; }
 
