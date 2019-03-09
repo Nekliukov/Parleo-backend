@@ -9,9 +9,9 @@ namespace ParleoBackend.Mapping
     {
         public UserAuthMappingProfile()
         {
-            CreateMap<DataAccessAuth, UserAuthViewModel>();
+            CreateMap<DataAccessAuth, AuthorizationRequest>();
 
-            CreateMap<UserAuthViewModel, DataAccessAuth>();
+            CreateMap<AuthorizationRequest, DataAccessAuth>();
 
             CreateMap<AuthUserInfoViewModel, DataAccessUserInfo>();
         }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Parleo.BLL.Interfaces
 {
-    public interface IUsersService
+    public interface IAccountService
     {
         Task<UserAuth> AuthenticateAsync(string email, string password);
 
@@ -13,7 +13,7 @@ namespace Parleo.BLL.Interfaces
 
         Task<UserInfo> GetUserByIdAsync(Guid id);
 
-        Task<UserInfo> CreateUserAsync(UserInfo user, string password);
+        Task<UserInfo> CreateUserAsync(AuthorizationModel authorizationModel);
 
         Task<bool> UpdateUserAsync(UserInfo user, string password = null);
 

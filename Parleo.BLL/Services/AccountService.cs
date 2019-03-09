@@ -1,23 +1,21 @@
-﻿using Parleo.BLL.Helpers;
-using Parleo.BLL.Interfaces;
+﻿using Parleo.BLL.Interfaces;
 using Parleo.DAL.Entities;
 using Parleo.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Parleo.BLL.Services
 {
-    public class UsersService : IUsersService
+    public class AccountService : IAccountService
     {
         private IUsersRepository _repository;
-        private readonly ISecurityHelper _securityHelper;
+        private readonly ISecurityService _securityService;
 
-        public UsersService(IUsersRepository repository, ISecurityHelper securityHelper)
+        public AccountService(IUsersRepository repository, ISecurityService securityHelper)
         {
             _repository = repository;
-            _securityHelper = securityHelper;
+            _securityService = securityHelper;
         }
         public async Task<UserAuth> AuthenticateAsync(string email, string password)
         {
@@ -30,11 +28,9 @@ namespace Parleo.BLL.Services
             if (user == null)
                 return null;
 
-            // check if password is correct
-            if (!_securityHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            if (!_securityService.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
                 return null;
 
-            // authentication successful
             return user;
         }
 
@@ -59,7 +55,7 @@ namespace Parleo.BLL.Services
                 throw new AppException(ErrorType.ExistingEmail,"Email \"" + user.UserAuth.Email + "\" is already taken");
 
             byte[] passwordHash, passwordSalt;
-            _securityHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+            _securityService.CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
             user.UserAuth.PasswordHash = passwordHash;
             user.UserAuth.PasswordSalt = passwordSalt;
@@ -91,7 +87,7 @@ namespace Parleo.BLL.Services
             if (!string.IsNullOrWhiteSpace(password))
             {
                 byte[] passwordHash, passwordSalt;
-                _securityHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+                _securityService.CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
                 userInfo.UserAuth.PasswordHash = passwordHash;
                 userInfo.UserAuth.PasswordSalt = passwordSalt;
