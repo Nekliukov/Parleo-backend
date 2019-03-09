@@ -27,18 +27,18 @@ namespace Parleo.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<UserAuth> AuthenticateAsync(string email, string password)
+        public async Task<UserAuth> AuthenticateAsync(AuthorizationModel authorizationModel)
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(authorizationModel.Email) || string.IsNullOrEmpty(authorizationModel.Password))
                 return null;
 
-            var user = await _repository.FindByEmailAsync(email);
+            var user = await _repository.FindByEmailAsync(authorizationModel.Password);
 
             // check if email exists
             if (user == null)
                 return null;
 
-            if (!_securityService.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            if (!_securityService.VerifyPasswordHash(authorizationModel.Password, user.PasswordHash, user.PasswordSalt))
                 return null;
 
             return user;

@@ -3,6 +3,7 @@ using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models;
 using ParleoBackend.ViewModels;
 using AutoMapper;
+using System.Threading.Tasks;
 
 namespace ParleoBackend.Controllers
 {
@@ -23,10 +24,19 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPost("register")]
-        public void Post(AuthorizationRequest authorizationRequest)
+        public async Task<IActionResult> RegisterAsync(AuthorizationRequest authorizationRequest)
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationRequest);
-            _accountService.CreateUserAsync(authorizationModel);
+            await _accountService.CreateUserAsync(authorizationModel);
+            return Ok();
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync(AuthorizationRequest authorizationRequest)
+        {
+            AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationRequest);
+            await _accountService.AuthenticateAsync(authorizationModel);
+            return Ok();
         }
     }
 }

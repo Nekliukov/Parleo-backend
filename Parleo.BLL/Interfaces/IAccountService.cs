@@ -8,7 +8,7 @@ namespace Parleo.BLL.Interfaces
 {
     public interface IAccountService
     {
-        Task<UserAuth> AuthenticateAsync(string email, string password);
+        Task<UserAuth> AuthenticateAsync(AuthorizationModel authorizationModel);
 
         Task<IEnumerable<UserInfo>> GetUsersPageAsync(int number);
 
