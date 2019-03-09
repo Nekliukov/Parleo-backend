@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ParleoBackend.ViewModels
 {
-    public class UserAuthViewModel
+    public class AuthorizationRequest
     {
         public string Password { get; set; }
 

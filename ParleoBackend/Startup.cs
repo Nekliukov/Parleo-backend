@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Parleo.DAL.Contexts;
 using Parleo.DI;
 using ParleoBackend.Mapping;
 using Swashbuckle.AspNetCore.Swagger;
@@ -52,16 +43,8 @@ namespace ParleoBackend
                 // ...and tell Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
-          
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new UserLanguageMappingProfile());
-                mc.AddProfile(new EventMappingProfile());
-                mc.AddProfile(new UserInfoMappingProfile());
-            });
 
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
+            MapperExtension.Configure(services);
 
             services.AddMvc();
 
@@ -85,7 +68,6 @@ namespace ParleoBackend
 
             app.UseSwagger();
 
-            //This line enables Swagger UI, which provides us with a nice, simple UI with which we can view our API calls.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger XML Api Demo v1");

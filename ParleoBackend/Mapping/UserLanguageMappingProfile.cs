@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using ParleoBackend.ViewModels;
-using System;
-using System.Linq;
 using DataAccessLanguage = Parleo.DAL.Entities.UserLanguage;
 
 namespace ParleoBackend.Mapping

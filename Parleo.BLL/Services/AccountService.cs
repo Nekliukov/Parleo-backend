@@ -1,22 +1,32 @@
 ﻿using Parleo.BLL.Interfaces;
+using Parleo.BLL.Models;
 using Parleo.DAL.Entities;
 using Parleo.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace Parleo.BLL.Services
 {
     public class AccountService : IAccountService
     {
-        private IUsersRepository _repository;
+        private readonly IUsersRepository _repository;
         private readonly ISecurityService _securityService;
+        private readonly IMapper _mapper;
 
-        public AccountService(IUsersRepository repository, ISecurityService securityHelper)
+
+        public AccountService(
+            IUsersRepository repository,
+            ISecurityService securityHelper,
+            IMapper mapper
+        )
         {
             _repository = repository;
             _securityService = securityHelper;
+            _mapper = mapper;
         }
+
         public async Task<UserAuth> AuthenticateAsync(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
@@ -45,17 +55,19 @@ namespace Parleo.BLL.Services
             return await _repository.GetAsync(id);
         }
 
-        public async Task<UserInfo> CreateUserAsync(UserInfo user, string password)
+        public async Task<UserInfo> CreateUserAsync(AuthorizationModel authorizationModel)
         {
             // validation
-            if (string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(authorizationModel.Password))
                 throw new AppException(ErrorType.InvalidPassword, "Password is required");
 
-            if (await _repository.FindByEmailAsync(user.UserAuth.Email) != null)
-                throw new AppException(ErrorType.ExistingEmail,"Email \"" + user.UserAuth.Email + "\" is already taken");
+            if (await _repository.FindByEmailAsync(authorizationModel.Email) != null)
+                throw new AppException(ErrorType.ExistingEmail,"Email \"" + authorizationModel.Email + "\" is already taken");
 
             byte[] passwordHash, passwordSalt;
-            _securityService.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+            _securityService.CreatePasswordHash(authorizationModel.Password, out passwordHash, out passwordSalt);
+
+            UserInfo user = _mapper.Map<UserInfo>(authorizationModel);
 
             user.UserAuth.PasswordHash = passwordHash;
             user.UserAuth.PasswordSalt = passwordSalt;

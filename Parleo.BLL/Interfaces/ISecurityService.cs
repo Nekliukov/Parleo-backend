@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Parleo.BLL.Interfaces
 {
-    public interface ISecurityHepler
+    public interface ISecurityService
     {
         void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
 

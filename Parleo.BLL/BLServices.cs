@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Services;
 
@@ -10,6 +11,7 @@ namespace Parleo.BLL
         {
             services.AddSingleton<IAccountService, AccountService>();
             services.AddSingleton<ISecurityService, SecurityService>();
+            MapperExtension.Configure(services);
         }
     }
 }
