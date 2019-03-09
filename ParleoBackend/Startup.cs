@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Parleo.DAL.Contexts;
 using Parleo.DI;
+using ParleoBackend.Mapping;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace ParleoBackend
@@ -50,7 +52,19 @@ namespace ParleoBackend
                 // ...and tell Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
-            
+          
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new UserLanguageMappingProfile());
+                mc.AddProfile(new EventMappingProfile());
+                mc.AddProfile(new UserInfoMappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.AddMvc();
+
             DependencyInjection.InjectDependencies(services, Configuration.GetConnectionString("DefaultConnection"));
         }
 

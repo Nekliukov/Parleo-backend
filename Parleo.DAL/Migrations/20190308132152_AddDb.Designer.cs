@@ -10,14 +10,14 @@ using Parleo.DAL.Contexts;
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20190303133951_AddEventsModel")]
-    partial class AddEventsModel
+    [Migration("20190308132152_AddDb")]
+    partial class AddDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -25,29 +25,39 @@ namespace Parleo.DAL.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnName("cln_id");
 
-                    b.Property<Guid?>("CreatorId");
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnName("cln_creator_id");
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .HasColumnName("cln_description");
 
-                    b.Property<DateTime?>("EndDate");
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnName("cln_end_date");
 
-                    b.Property<bool>("IsFinished");
+                    b.Property<bool>("IsFinished")
+                        .HasColumnName("cln_is_finished");
 
-                    b.Property<Guid?>("LanguageId");
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnName("cln_language_id");
 
                     b.Property<decimal>("Latitude")
+                        .HasColumnName("cln_latitude")
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<decimal>("Longitude")
+                        .HasColumnName("cln_longitude")
                         .HasColumnType("decimal(11, 8)");
 
-                    b.Property<int>("MaxParticipants");
+                    b.Property<int>("MaxParticipants")
+                        .HasColumnName("cln_max_participants");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasColumnName("cln_name");
 
-                    b.Property<DateTime>("StartTime");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnName("cln_start_time");
 
                     b.HasKey("Id");
 
@@ -55,106 +65,127 @@ namespace Parleo.DAL.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("Event");
+                    b.ToTable("tbl_event");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Entities.Language", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnName("cln_id");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasColumnName("cln_name");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Language");
+                    b.ToTable("tbl_language");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Entities.UserAuth", b =>
                 {
-                    b.Property<Guid>("UserInfoId");
+                    b.Property<Guid>("UserInfoId")
+                        .HasColumnName("cln_user_info_id");
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .HasColumnName("cln_email");
 
-                    b.Property<DateTime>("LastLogin");
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnName("cln_last_login");
 
-                    b.Property<string>("Password");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnName("cln_password_hash");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnName("cln_password_salt");
 
                     b.HasKey("UserInfoId");
 
-                    b.ToTable("UserAuth");
+                    b.ToTable("tbl_user_auth");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Entities.UserFriends", b =>
                 {
-                    b.Property<Guid>("UserToId");
+                    b.Property<Guid>("UserFromId")
+                        .HasColumnName("cln_user_from");
 
-                    b.Property<Guid>("UserFromId");
+                    b.Property<Guid>("UserToId")
+                        .HasColumnName("cln_user_to");
 
-                    b.Property<int>("Status");
+                    b.Property<int>("Status")
+                        .HasColumnName("cln_status");
 
-                    b.HasKey("UserToId", "UserFromId");
+                    b.HasKey("UserFromId", "UserToId");
 
-                    b.HasIndex("UserFromId");
+                    b.HasIndex("UserToId");
 
-                    b.ToTable("UserFriends");
+                    b.ToTable("tbl_user_friends");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Entities.UserInfo", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnName("cln_id");
 
                     b.Property<DateTime>("Birthdate")
+                        .HasColumnName("cln_birth_date")
                         .HasColumnType("Date");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnName("cln_created_at");
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .HasColumnName("cln_firstname");
 
-                    b.Property<bool>("Gender");
+                    b.Property<bool>("Gender")
+                        .HasColumnName("cln_gender");
 
-                    b.Property<string>("LastName");
+                    b.Property<string>("LastName")
+                        .HasColumnName("cln_lastname");
 
                     b.Property<decimal>("Latitude")
+                        .HasColumnName("cln_latitude")
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<decimal>("Longitude")
+                        .HasColumnName("cln_longitude")
                         .HasColumnType("decimal(11, 8)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserInfo");
+                    b.ToTable("tbl_user_info");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Entities.UserLanguage", b =>
                 {
-                    b.Property<Guid>("UserId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnName("cln_user_id");
 
-                    b.Property<Guid>("LanguageId");
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnName("cln_language_id");
 
-                    b.Property<byte>("Level");
+                    b.Property<byte>("Level")
+                        .HasColumnName("cln_level");
 
                     b.HasKey("UserId", "LanguageId");
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("UserLanguage");
+                    b.ToTable("tbl_user_language");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Entities.Event", b =>
                 {
                     b.HasOne("Parleo.DAL.Entities.UserInfo", "Creator")
                         .WithMany("Events")
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Parleo.DAL.Entities.Language", "Language")
                         .WithMany("Events")
-                        .HasForeignKey("LanguageId");
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Parleo.DAL.Entities.UserAuth", b =>
@@ -168,12 +199,12 @@ namespace Parleo.DAL.Migrations
             modelBuilder.Entity("Parleo.DAL.Entities.UserFriends", b =>
                 {
                     b.HasOne("Parleo.DAL.Entities.UserInfo", "UserFrom")
-                        .WithMany()
+                        .WithMany("Friends")
                         .HasForeignKey("UserFromId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Parleo.DAL.Entities.UserInfo", "UserTo")
-                        .WithMany()
+                        .WithMany("InFriends")
                         .HasForeignKey("UserToId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });

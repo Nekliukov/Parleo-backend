@@ -17,7 +17,7 @@ namespace Parleo.DAL.Entities
         public byte[] PasswordSalt { get; set; }
 
         public DateTime LastLogin { get; set; }
-
-        public UserInfo UserInfo { get; set; }
+        
+        public virtual UserInfo UserInfo { get; set; }
     }
 }
