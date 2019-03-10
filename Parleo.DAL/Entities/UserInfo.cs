@@ -29,8 +29,6 @@ namespace Parleo.DAL.Entities
 
         public virtual ICollection<UserLanguage> Languages { get; set; }
 
-        public virtual ICollection<UserFriends> Friends { get; set; }
-
-        public virtual ICollection<UserFriends> InFriends { get; set; }
+        public virtual ICollection<UserFriends> Friends { get; set; }        
     }
 }
