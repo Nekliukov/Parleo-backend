@@ -20,10 +20,10 @@ namespace ParleoBackend.ViewModels
         [EmailAddress]
         public string Email { get; set; }
 
-        /*public virtual ICollection<EventViewModel> Events { get; set; }
+        /*public ICollection<EventViewModel> Events { get; set; }
 
-        public virtual ICollection<UserLanguageViewModel> Languages { get; set; }
+        public ICollection<UserLanguageViewModel> Languages { get; set; }
 
-        public virtual ICollection<UserFriendsViewModel> Friends { get; set; }   */     
+        public ICollection<UserFriendsViewModel> Friends { get; set; }   */     
     }
 }

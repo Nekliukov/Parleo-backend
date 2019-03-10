@@ -27,8 +27,8 @@ namespace Parleo.DAL.Entities
 
         public DateTimeOffset? EndDate { get; set; }
 
-        public virtual User Creator { get; set; }
+        public User Creator { get; set; }
 
-        public virtual Language Language { get; set; }
+        public Language Language { get; set; }
     }
 }

@@ -23,12 +23,12 @@ namespace Parleo.DAL.Entities
 
         public DateTimeOffset CreatedAt { get; set; }
 
-        public virtual Credentials Credentials { get; set; }
+        public Credentials Credentials { get; set; }
 
-        public virtual ICollection<Event> Events { get; set; }
+        public ICollection<Event> Events { get; set; }
 
-        public virtual ICollection<UserLanguage> Languages { get; set; }
+        public ICollection<UserLanguage> Languages { get; set; }
 
-        public virtual ICollection<UserFriends> Friends { get; set; }        
+        public ICollection<UserFriends> Friends { get; set; }        
     }
 }
