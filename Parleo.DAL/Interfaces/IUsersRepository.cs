@@ -7,16 +7,16 @@ namespace Parleo.DAL.Interfaces
 {
     public interface IUsersRepository
     {
-        Task<IList<UserInfo>> GetPageAsync(int number);
+        Task<IList<User>> GetPageAsync(int number);
 
-        Task<UserInfo> GetAsync(Guid id);
+        Task<User> GetAsync(Guid id);
 
-        Task<bool> CreateAsync(UserInfo entity);
+        Task<bool> CreateAsync(User entity);
 
-        Task<bool> UpdateAsync(UserInfo entity);
+        Task<bool> UpdateAsync(User entity);
 
         Task<bool> DisableAsync(Guid id);
 
-        Task<UserAuth> FindByEmailAsync(string email);
+        Task<Credentials> FindByEmailAsync(string email);
     }
 }

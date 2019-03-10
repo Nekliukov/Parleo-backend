@@ -11,7 +11,7 @@ namespace ParleoBackend.Mapping
             {
                 mc.AddProfile(new UserLanguageMappingProfile());
                 mc.AddProfile(new EventMappingProfile());
-                mc.AddProfile(new UserInfoMappingProfile());
+                mc.AddProfile(new UserMappingProfile());
             });
 
             IMapper mapper = mappingConfig.CreateMapper();

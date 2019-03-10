@@ -17,6 +17,18 @@
     <Compile Remove="Migrations\20190303124501_AddLanguageModels.Designer.cs" />
     <Compile Remove="Migrations\20190303133122_AddEvents.cs" />
     <Compile Remove="Migrations\20190303133122_AddEvents.Designer.cs" />
+    <Compile Remove="Migrations\20190310142450_CreateDbByCurrentModels.cs" />
+    <Compile Remove="Migrations\20190310142450_CreateDbByCurrentModels.Designer.cs" />
+    <Compile Remove="Migrations\20190310153341_InitialCreate.cs" />
+    <Compile Remove="Migrations\20190310153341_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20190310155304_CreateInitialModels.cs" />
+    <Compile Remove="Migrations\20190310155304_CreateInitialModels.Designer.cs" />
+    <Compile Remove="Migrations\20190310155649_CreateInitialModels.cs" />
+    <Compile Remove="Migrations\20190310155649_CreateInitialModels.Designer.cs" />
+    <Compile Remove="Migrations\20190310155912_CreateInitialModels.cs" />
+    <Compile Remove="Migrations\20190310155912_CreateInitialModels.Designer.cs" />
+    <Compile Remove="Migrations\20190310160227_CreateInitialModels.cs" />
+    <Compile Remove="Migrations\20190310160227_CreateInitialModels.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

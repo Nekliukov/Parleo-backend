@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Parleo.DAL.Entities
 {
-    public class UserAuth
+    public class Credentials
     {
         [Key]
-        [ForeignKey("UserInfo")]
-        public Guid UserInfoId { get; set; }
+        [ForeignKey("User")]
+        public Guid UserId { get; set; }
 
         public string Email { get; set; }
 
@@ -16,8 +16,8 @@ namespace Parleo.DAL.Entities
 
         public byte[] PasswordSalt { get; set; }
 
-        public DateTime LastLogin { get; set; }
+        public DateTimeOffset LastLogin { get; set; }
         
-        public virtual UserInfo UserInfo { get; set; }
+        public User User { get; set; }
     }
 }

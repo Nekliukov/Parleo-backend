@@ -8,11 +8,11 @@ namespace Parleo.DAL.Entities
     {
         public Guid UserId { get; set; }
 
-        public virtual UserInfo UserInfo { get; set; }
+        public User User { get; set; }
 
         public Guid LanguageId { get; set; }
 
-        public virtual Language Language { get; set; }
+        public Language Language { get; set; }
 
         public byte Level { get; set; }
     }

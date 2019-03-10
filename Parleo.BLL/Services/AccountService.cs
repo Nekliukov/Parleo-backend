@@ -27,7 +27,7 @@ namespace Parleo.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<UserAuth> AuthenticateAsync(AuthorizationModel authorizationModel)
+        public async Task<Credentials> AuthenticateAsync(AuthorizationModel authorizationModel)
         {
             if (string.IsNullOrEmpty(authorizationModel.Email) || string.IsNullOrEmpty(authorizationModel.Password))
                 return null;
@@ -45,19 +45,19 @@ namespace Parleo.BLL.Services
         }
 
         //TODO: add filters
-        public async Task<IEnumerable<UserInfoModel>> GetUsersPageAsync(int offset)
+        public async Task<IEnumerable<UserModel>> GetUsersPageAsync(int offset)
         {
-            IList<UserInfo> users = await _repository.GetPageAsync(offset);
-            return _mapper.Map<IEnumerable<UserInfoModel>>(users);
+            IList<User> users = await _repository.GetPageAsync(offset);
+            return _mapper.Map<IEnumerable<UserModel>>(users);
         }
 
-        public async Task<UserInfoModel> GetUserByIdAsync(Guid id)
+        public async Task<UserModel> GetUserByIdAsync(Guid id)
         {
-            UserInfo user = await _repository.GetAsync(id);
-            return _mapper.Map<UserInfoModel>(user);
+            User user = await _repository.GetAsync(id);
+            return _mapper.Map<UserModel>(user);
         }
 
-        public async Task<UserInfoModel> CreateUserAsync(AuthorizationModel authorizationModel)
+        public async Task<UserModel> CreateUserAsync(AuthorizationModel authorizationModel)
         {
             // validation
             if (string.IsNullOrWhiteSpace(authorizationModel.Password))
@@ -69,26 +69,26 @@ namespace Parleo.BLL.Services
             byte[] passwordHash, passwordSalt;
             _securityService.CreatePasswordHash(authorizationModel.Password, out passwordHash, out passwordSalt);
 
-            UserInfo user = _mapper.Map<UserInfo>(authorizationModel);
+            User user = _mapper.Map<User>(authorizationModel);
 
-            user.UserAuth.PasswordHash = passwordHash;
-            user.UserAuth.PasswordSalt = passwordSalt;
+            user.Credentials.PasswordHash = passwordHash;
+            user.Credentials.PasswordSalt = passwordSalt;
 
             var result = await _repository.CreateAsync(user);
             if (!result)
                 throw new Exception("Smth bad happend on the server side and user wasn't saved");
 
-            return _mapper.Map<UserInfoModel>(user);
+            return _mapper.Map<UserModel>(user);
         }
 
-        public async Task<bool> UpdateUserAsync(UserInfoModel user)
+        public async Task<bool> UpdateUserAsync(UserModel user)
         {
-            UserInfo userInfo = await _repository.GetAsync(user.Id);
+            User User = await _repository.GetAsync(user.Id);
 
-            if (userInfo == null)
+            if (User == null)
                 throw new AppException(ErrorType.InvalidId, "User not found");
 
-            if (user.Email != userInfo.UserAuth.Email)
+            if (user.Email != User.Credentials.Email)
             {
                 // Email has changed so check if the new Email is already taken
                 if (await _repository.FindByEmailAsync(user.Email) != null)
@@ -96,9 +96,9 @@ namespace Parleo.BLL.Services
             }
 
             // update user properties
-            userInfo = _mapper.Map<UserInfo>(user);
+            User = _mapper.Map<User>(user);
 
-            return await _repository.UpdateAsync(userInfo);
+            return await _repository.UpdateAsync(User);
         }
 
         public async Task<bool> DisableUserAsync(Guid id)
