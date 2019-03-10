@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ParleoBackend.ViewModels
 {
-    public class AuthUserInfoViewModel
+    public class AuthUserViewModel
     {
         [Required]
         public string Name { get; set; }

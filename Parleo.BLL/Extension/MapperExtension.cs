@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Parleo.BLL.Models;
-using DataAccessAuth = Parleo.DAL.Entities.UserAuth;
-using DataAccessUserInfo = Parleo.DAL.Entities.UserInfo;
+using DataAccessAuth = Parleo.DAL.Entities.Credentials;
+using DataAccessUser = Parleo.DAL.Entities.User;
 
 namespace Parleo.BLL.Extensions
 {
@@ -14,9 +14,9 @@ namespace Parleo.BLL.Extensions
             {
                 mc.CreateMap<DataAccessAuth, AuthorizationModel>();
                 mc.CreateMap<AuthorizationModel, DataAccessAuth>();
-                mc.CreateMap<UserInfoModel, DataAccessUserInfo>();
-                mc.CreateMap<DataAccessUserInfo, UserInfoModel>()
-                    .ForMember(ui => ui.Email, opt => opt.MapFrom(uivm => uivm.UserAuth.Email));
+                mc.CreateMap<UserModel, DataAccessUser>();
+                mc.CreateMap<DataAccessUser, UserModel>()
+                    .ForMember(ui => ui.Email, opt => opt.MapFrom(uivm => uivm.Credentials.Email));
             });
 
             IMapper mapper = mappingConfig.CreateMapper();

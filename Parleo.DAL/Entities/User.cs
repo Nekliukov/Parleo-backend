@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Parleo.DAL.Entities
 {
-    public class UserInfo
+    public class User
     {
         public Guid Id { get; set; }
 
@@ -21,9 +21,9 @@ namespace Parleo.DAL.Entities
         [Column(TypeName = "decimal(11, 8)")]
         public decimal Longitude { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
 
-        public virtual UserAuth UserAuth { get; set; }
+        public virtual Credentials Credentials { get; set; }
 
         public virtual ICollection<Event> Events { get; set; }
 

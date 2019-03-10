@@ -8,9 +8,9 @@ namespace Parleo.DAL.Contexts
 {
     public class UserContext : DbContext
     {
-        public DbSet<UserInfo> UserInfo { get; set; }
+        public DbSet<User> User { get; set; }
 
-        public DbSet<UserAuth> UserAuth { get; set; }
+        public DbSet<Credentials> Credentials { get; set; }
 
         public UserContext() : base()
         {
@@ -23,18 +23,18 @@ namespace Parleo.DAL.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Event>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
-            modelBuilder.Entity<UserInfo>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
+            modelBuilder.Entity<User>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<Language>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
 
-            modelBuilder.Entity<UserInfo>().Property(ui => ui.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+            modelBuilder.Entity<User>().Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
-            modelBuilder.Entity<UserAuth>()
-                .HasOne(ua => ua.UserInfo)
-                .WithOne(ui => ui.UserAuth)
-                .HasForeignKey<UserAuth>(ua => ua.UserInfoId);
+            modelBuilder.Entity<Credentials>()
+                .HasOne(c => c.User)
+                .WithOne(ui => ui.Credentials)
+                .HasForeignKey<Credentials>(c => c.UserId);
 
-            modelBuilder.Entity<UserInfo>()
-                .HasMany(ui => ui.Events)
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Events)
                 .WithOne(e => e.Creator);
             modelBuilder.Entity<Language>()
                 .HasMany(lng => lng.Events)
@@ -43,8 +43,8 @@ namespace Parleo.DAL.Contexts
             #region User-Language m2m
             modelBuilder.Entity<UserLanguage>().HasKey(k => new { k.UserId, k.LanguageId });
             modelBuilder.Entity<UserLanguage>()
-                .HasOne(ul => ul.UserInfo)
-                .WithMany(ui => ui.Languages)
+                .HasOne(ul => ul.User)
+                .WithMany(u => u.Languages)
                 .HasForeignKey(ul => ul.UserId);
             modelBuilder.Entity<UserLanguage>()
                 .HasOne(ul => ul.Language)
@@ -56,7 +56,7 @@ namespace Parleo.DAL.Contexts
             modelBuilder.Entity<UserFriends>().HasKey(k => new { k.UserToId, k.UserFromId });
             modelBuilder.Entity<UserFriends>()
                 .HasOne(fs => fs.UserTo)
-                .WithMany()
+                .WithMany(u => u.Friends)
                 .HasForeignKey(fs => fs.UserToId)
                 .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<UserFriends>()

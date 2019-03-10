@@ -18,9 +18,9 @@ namespace Parleo.DAL.Repositories
             _context = context;
         }
 
-        public async Task<bool> CreateAsync(UserInfo entity)
+        public async Task<bool> CreateAsync(User entity)
         {
-            _context.UserInfo.Add(entity);
+            _context.User.Add(entity);
             var result =  await _context.SaveChangesAsync();
             return result != 0;
         }
@@ -31,29 +31,29 @@ namespace Parleo.DAL.Repositories
             return true;
         }
 
-        public async Task<IList<UserInfo>> GetPageAsync(int offset)
+        public async Task<IList<User>> GetPageAsync(int offset)
         {
             //Hardcoded 25. add to configure, when it'll be necessary. This number was approved with front-end
-            return await _context.UserInfo.Skip(offset).Take(25).ToListAsync();
+            return await _context.User.Skip(offset).Take(25).ToListAsync();
         }
 
-        public async Task<UserInfo> GetAsync(Guid id)
+        public async Task<User> GetAsync(Guid id)
         {
-            return await _context.UserInfo
+            return await _context.User
             .FirstOrDefaultAsync(user => user.Id == id);
         }
 
 
-        public async Task<bool> UpdateAsync(UserInfo entity)
+        public async Task<bool> UpdateAsync(User entity)
         {
-            _context.UserInfo.Update(entity);
+            _context.User.Update(entity);
             var result = await _context.SaveChangesAsync();
             return result != 0;
         }
 
-        public async Task<UserAuth> FindByEmailAsync(string email)
+        public async Task<Credentials> FindByEmailAsync(string email)
         {
-            return await _context.UserAuth.FirstOrDefaultAsync(user => user.Email == email);
+            return await _context.Credentials.FirstOrDefaultAsync(user => user.Email == email);
         }
     }
 }

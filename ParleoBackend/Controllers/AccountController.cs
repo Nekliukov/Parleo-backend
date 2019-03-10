@@ -30,16 +30,16 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<IActionResult> GetUsers(int offset)
         {
-            IEnumerable<UserInfoModel> users = await _accountService.GetUsersPageAsync(offset);
-            return Ok(_mapper.Map<IEnumerable<UserInfoViewModel>>(users));
+            IEnumerable<UserModel> users = await _accountService.GetUsersPageAsync(offset);
+            return Ok(_mapper.Map<IEnumerable<UserViewModel>>(users));
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(AuthorizationViewModel authorizationViewModel)
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationViewModel);
-            UserInfoModel user = await _accountService.CreateUserAsync(authorizationModel);
-            return Ok(_mapper.Map<UserInfoViewModel>(user));
+            UserModel user = await _accountService.CreateUserAsync(authorizationModel);
+            return Ok(_mapper.Map<UserViewModel>(user));
         }
 
         [HttpPost("login")]
@@ -52,9 +52,9 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("edit")]
         [Authorize]
-        public async Task<IActionResult> EditAsync(UserInfoViewModel user)
+        public async Task<IActionResult> EditAsync(UserViewModel user)
         {
-            if (await _accountService.UpdateUserAsync(_mapper.Map<UserInfoModel>(user)))
+            if (await _accountService.UpdateUserAsync(_mapper.Map<UserModel>(user)))
             {
                 return NoContent();
             }
@@ -75,8 +75,8 @@ namespace ParleoBackend.Controllers
         public async Task<IActionResult> GetUserAsync()
         {
             // get id from jwt token
-            UserInfoModel user = await _accountService.GetUserByIdAsync(new Guid());
-            return Ok(_mapper.Map<UserInfoViewModel>(user));
+            UserModel user = await _accountService.GetUserByIdAsync(new Guid());
+            return Ok(_mapper.Map<UserViewModel>(user));
         }
     }
 }

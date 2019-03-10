@@ -8,15 +8,15 @@ namespace Parleo.BLL.Interfaces
 {
     public interface IAccountService
     {
-        Task<UserAuth> AuthenticateAsync(AuthorizationModel authorizationModel);
+        Task<Credentials> AuthenticateAsync(AuthorizationModel authorizationModel);
 
-        Task<IEnumerable<UserInfoModel>> GetUsersPageAsync(int number);
+        Task<IEnumerable<UserModel>> GetUsersPageAsync(int number);
 
-        Task<UserInfoModel> GetUserByIdAsync(Guid id);
+        Task<UserModel> GetUserByIdAsync(Guid id);
 
-        Task<UserInfoModel> CreateUserAsync(AuthorizationModel authorizationModel);
+        Task<UserModel> CreateUserAsync(AuthorizationModel authorizationModel);
 
-        Task<bool> UpdateUserAsync(UserInfoModel user);
+        Task<bool> UpdateUserAsync(UserModel user);
 
         Task<bool> DisableUserAsync(Guid id);
 

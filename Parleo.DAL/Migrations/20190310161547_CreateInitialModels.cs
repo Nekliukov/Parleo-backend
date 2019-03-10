@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parleo.DAL.Migrations
 {
-    public partial class CreateDbByCurrentModels : Migration
+    public partial class CreateInitialModels : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,7 +20,7 @@ namespace Parleo.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserInfo",
+                name: "User",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, defaultValueSql: "NEWID()"),
@@ -29,11 +29,32 @@ namespace Parleo.DAL.Migrations
                     Gender = table.Column<bool>(nullable: false),
                     Latitude = table.Column<decimal>(type: "decimal(10, 2)", nullable: false),
                     Longitude = table.Column<decimal>(type: "decimal(11, 8)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValueSql: "GETUTCDATE()")
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserInfo", x => x.Id);
+                    table.PrimaryKey("PK_User", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Credentials",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(nullable: false),
+                    Email = table.Column<string>(nullable: true),
+                    PasswordHash = table.Column<byte[]>(nullable: true),
+                    PasswordSalt = table.Column<byte[]>(nullable: true),
+                    LastLogin = table.Column<DateTimeOffset>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Credentials", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_Credentials_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -49,45 +70,24 @@ namespace Parleo.DAL.Migrations
                     IsFinished = table.Column<bool>(nullable: false),
                     StartTime = table.Column<DateTimeOffset>(nullable: false),
                     EndDate = table.Column<DateTimeOffset>(nullable: true),
-                    CreatorId = table.Column<Guid>(nullable: false),
-                    LanguageId = table.Column<Guid>(nullable: false)
+                    CreatorId = table.Column<Guid>(nullable: true),
+                    LanguageId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Event", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Event_UserInfo_CreatorId",
+                        name: "FK_Event_User_CreatorId",
                         column: x => x.CreatorId,
-                        principalTable: "UserInfo",
+                        principalTable: "User",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Event_Language_LanguageId",
                         column: x => x.LanguageId,
                         principalTable: "Language",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserAuth",
-                columns: table => new
-                {
-                    UserInfoId = table.Column<Guid>(nullable: false),
-                    Email = table.Column<string>(nullable: true),
-                    PasswordHash = table.Column<byte[]>(nullable: true),
-                    PasswordSalt = table.Column<byte[]>(nullable: true),
-                    LastLogin = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAuth", x => x.UserInfoId);
-                    table.ForeignKey(
-                        name: "FK_UserAuth_UserInfo_UserInfoId",
-                        column: x => x.UserInfoId,
-                        principalTable: "UserInfo",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,28 +96,21 @@ namespace Parleo.DAL.Migrations
                 {
                     UserToId = table.Column<Guid>(nullable: false),
                     UserFromId = table.Column<Guid>(nullable: false),
-                    Status = table.Column<int>(nullable: false),
-                    UserInfoId = table.Column<Guid>(nullable: true)
+                    Status = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserFriends", x => new { x.UserToId, x.UserFromId });
                     table.ForeignKey(
-                        name: "FK_UserFriends_UserInfo_UserFromId",
+                        name: "FK_UserFriends_User_UserFromId",
                         column: x => x.UserFromId,
-                        principalTable: "UserInfo",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserFriends_UserInfo_UserInfoId",
-                        column: x => x.UserInfoId,
-                        principalTable: "UserInfo",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserFriends_UserInfo_UserToId",
+                        name: "FK_UserFriends_User_UserToId",
                         column: x => x.UserToId,
-                        principalTable: "UserInfo",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -140,9 +133,9 @@ namespace Parleo.DAL.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserLanguage_UserInfo_UserId",
+                        name: "FK_UserLanguage_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "UserInfo",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -163,11 +156,6 @@ namespace Parleo.DAL.Migrations
                 column: "UserFromId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserFriends_UserInfoId",
-                table: "UserFriends",
-                column: "UserInfoId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserLanguage_LanguageId",
                 table: "UserLanguage",
                 column: "LanguageId");
@@ -176,10 +164,10 @@ namespace Parleo.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Event");
+                name: "Credentials");
 
             migrationBuilder.DropTable(
-                name: "UserAuth");
+                name: "Event");
 
             migrationBuilder.DropTable(
                 name: "UserFriends");
@@ -191,7 +179,7 @@ namespace Parleo.DAL.Migrations
                 name: "Language");
 
             migrationBuilder.DropTable(
-                name: "UserInfo");
+                name: "User");
         }
     }
 }

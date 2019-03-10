@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ParleoBackend.ViewModels
 {
-    public class UserInfoViewModel
+    public class UserViewModel
     {
         public Guid Id { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace Parleo.BLL.Models
 {
-    public class UserInfoModel
+    public class UserModel
     {
         public Guid Id { get; set; }
 
