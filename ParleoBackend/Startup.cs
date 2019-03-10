@@ -68,8 +68,7 @@ namespace ParleoBackend
             }
 
             app.UseHttpsRedirection();
-            app
-                .UseMvc();
+            app.UseMvc();
 
             app.UseSwagger();
 
