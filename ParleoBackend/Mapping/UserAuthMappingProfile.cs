@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Parleo.BLL.Models;
 using ParleoBackend.ViewModels;
-using DataAccessAuth = Parleo.DAL.Entities.UserAuth;
 using DataAccessUserInfo = Parleo.DAL.Entities.UserInfo;
 
 namespace ParleoBackend.Mapping
@@ -9,9 +9,9 @@ namespace ParleoBackend.Mapping
     {
         public UserAuthMappingProfile()
         {
-            CreateMap<DataAccessAuth, UserAuthViewModel>();
+            CreateMap<AuthorizationModel, AuthorizationViewModel>();
 
-            CreateMap<UserAuthViewModel, DataAccessAuth>();
+            CreateMap<AuthorizationViewModel, AuthorizationModel>();
 
             CreateMap<AuthUserInfoViewModel, DataAccessUserInfo>();
         }

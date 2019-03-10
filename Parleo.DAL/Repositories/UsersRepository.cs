@@ -31,10 +31,10 @@ namespace Parleo.DAL.Repositories
             return true;
         }
 
-        public async Task<IList<UserInfo>> GetPageAsync(int number)
+        public async Task<IList<UserInfo>> GetPageAsync(int offset)
         {
             //Hardcoded 25. add to configure, when it'll be necessary. This number was approved with front-end
-            return await _context.UserInfo.Skip(number).Take(25).ToListAsync();
+            return await _context.UserInfo.Skip(offset).Take(25).ToListAsync();
         }
 
         public async Task<UserInfo> GetAsync(Guid id)

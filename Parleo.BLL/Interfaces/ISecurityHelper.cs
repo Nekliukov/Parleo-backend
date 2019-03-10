@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Parleo.BLL.Interfaces
+﻿namespace Parleo.BLL.Interfaces
 {
-    public interface ISecurityHepler
+    public interface ISecurityHelper
     {
         void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
 

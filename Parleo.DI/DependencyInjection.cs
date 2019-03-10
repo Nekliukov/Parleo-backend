@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Parleo.DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Parleo.BLL.Helpers;
+using Parleo.BLL;
 
 namespace Parleo.DI
 {
@@ -18,9 +18,8 @@ namespace Parleo.DI
         /// <param name="connectionString"></param>
         public static void InjectDependencies(IServiceCollection services, string connectionString)
         {
-            RegisterScoped(typeof(UsersService), "Service", services);
+            BLServices.AddServices(services);
             RegisterScoped(typeof(UsersRepository), "Repository", services);
-            RegisterScoped(typeof(SecurityHelper), "Helper", services);
             services.AddDbContext<UserContext>(
                 options => options.UseSqlServer(connectionString));
         }
