@@ -10,8 +10,8 @@ namespace Parleo.BLL
     {
         public static void AddServices(IServiceCollection services)
         {
-            services.AddSingleton<IAccountService, AccountService>();
-            services.AddSingleton<ISecurityHelper, SecurityHelper>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<ISecurityHelper, SecurityHelper>();
             MapperExtension.Configure(services);
         }
     }

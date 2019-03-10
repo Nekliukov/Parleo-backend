@@ -46,11 +46,10 @@ namespace ParleoBackend
 
             MapperExtension.Configure(services);
 
+            DependencyInjection.InjectDependencies(services, Configuration.GetConnectionString("DefaultConnection"));
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            DependencyInjection.InjectDependencies(services, Configuration.GetConnectionString("DefaultConnection"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,7 +65,8 @@ namespace ParleoBackend
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app
+                .UseMvc();
 
             app.UseSwagger();
 

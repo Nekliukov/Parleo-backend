@@ -6,6 +6,7 @@ using System.Linq;
 using Parleo.DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Parleo.BLL;
+using Parleo.DAL;
 
 namespace Parleo.DI
 {
@@ -19,10 +20,24 @@ namespace Parleo.DI
         public static void InjectDependencies(IServiceCollection services, string connectionString)
         {
             BLServices.AddServices(services);
-            RegisterScoped(typeof(UsersRepository), "Repository", services);
+            DalServices.AddServices(services);
             services.AddDbContext<UserContext>(
                 options => options.UseSqlServer(connectionString));
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         /// <summary>
         /// This method will auto-inject services and repositories
