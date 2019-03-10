@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Parleo.BLL\Parleo.BLL.csproj" />
-    <ProjectReference Include="..\Parleo.DI\Parleo.DI.csproj" />
   </ItemGroup>
 
 </Project>
