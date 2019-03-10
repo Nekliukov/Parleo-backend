@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Parleo.DI;
+using Parleo.BLL;
+using Parleo.DAL;
 using ParleoBackend.Mapping;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -46,7 +47,9 @@ namespace ParleoBackend
 
             MapperExtension.Configure(services);
 
-            DependencyInjection.InjectDependencies(services, Configuration.GetConnectionString("DefaultConnection"));
+            BLServices.AddServices(services);
+            DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
+
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
