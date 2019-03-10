@@ -17,6 +17,7 @@ namespace ParleoBackend.ViewModels
 
         public decimal Longitude { get; set; }
 
+        [EmailAddress]
         public string Email { get; set; }
 
         /*public virtual ICollection<EventViewModel> Events { get; set; }
