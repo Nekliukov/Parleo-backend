@@ -2,9 +2,9 @@
 using System;
 using System.Text;
 
-namespace Parleo.BLL.Services
+namespace Parleo.BLL.Helpers
 {
-    public class SecurityService : ISecurityService
+    public class SecurityHelper : ISecurityHelper
     {
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {

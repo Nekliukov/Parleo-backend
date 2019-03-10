@@ -12,13 +12,13 @@ namespace Parleo.BLL.Services
     public class AccountService : IAccountService
     {
         private readonly IUsersRepository _repository;
-        private readonly ISecurityService _securityService;
+        private readonly ISecurityHelper _securityService;
         private readonly IMapper _mapper;
 
 
         public AccountService(
             IUsersRepository repository,
-            ISecurityService securityHelper,
+            ISecurityHelper securityHelper,
             IMapper mapper
         )
         {
