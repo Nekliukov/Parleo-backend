@@ -46,7 +46,9 @@ namespace ParleoBackend
 
             MapperExtension.Configure(services);
 
-            services.AddMvc();
+            services
+                .AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             DependencyInjection.InjectDependencies(services, Configuration.GetConnectionString("DefaultConnection"));
         }
