@@ -32,7 +32,7 @@ namespace Parleo.BLL.Services
             if (string.IsNullOrEmpty(authorizationModel.Email) || string.IsNullOrEmpty(authorizationModel.Password))
                 return null;
 
-            var user = await _repository.FindByEmailAsync(authorizationModel.Password);
+            var user = await _repository.FindByEmailAsync(authorizationModel.Email);
 
             // check if email exists
             if (user == null)
@@ -69,8 +69,10 @@ namespace Parleo.BLL.Services
             byte[] passwordHash, passwordSalt;
             _securityService.CreatePasswordHash(authorizationModel.Password, out passwordHash, out passwordSalt);
 
-            User user = _mapper.Map<User>(authorizationModel);
+            User user = new User();
 
+            user.Credentials = new Credentials();
+            user.Credentials.Email = authorizationModel.Email;
             user.Credentials.PasswordHash = passwordHash;
             user.Credentials.PasswordSalt = passwordSalt;
 
