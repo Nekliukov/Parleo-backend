@@ -34,13 +34,13 @@ namespace Parleo.DAL.Repositories
         public async Task<IList<User>> GetPageAsync(int offset)
         {
             //Hardcoded 25. add to configure, when it'll be necessary. This number was approved with front-end
-            return await _context.User.Skip(offset).Take(25).ToListAsync();
+            return await _context.User.Skip(offset).Take(25).Include(u => u.Credentials).ToListAsync();
         }
 
         public async Task<User> GetAsync(Guid id)
         {
-            return await _context.User
-            .FirstOrDefaultAsync(user => user.Id == id);
+            return await _context.User.Include(u => u.Credentials)
+                .FirstOrDefaultAsync(user => user.Id == id);
         }
 
 
@@ -53,7 +53,7 @@ namespace Parleo.DAL.Repositories
 
         public async Task<Credentials> FindByEmailAsync(string email)
         {
-            return await _context.Credentials.FirstOrDefaultAsync(user => user.Email == email);
+            return await _context.Credentials.Include(c => c.User).FirstOrDefaultAsync(с => с.Email == email);
         }
     }
 }
