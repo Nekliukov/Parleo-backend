@@ -26,7 +26,7 @@ namespace ParleoBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetUsers(int offset)
         {

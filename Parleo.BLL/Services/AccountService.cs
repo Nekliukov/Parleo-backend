@@ -69,10 +69,11 @@ namespace Parleo.BLL.Services
             byte[] passwordHash, passwordSalt;
             _securityService.CreatePasswordHash(authorizationModel.Password, out passwordHash, out passwordSalt);
 
-            User user = new User();
-
-            user.Credentials = new Credentials();
-            user.Credentials.Email = authorizationModel.Email;
+            User user = new User()
+            {
+                Credentials = _mapper.Map<Credentials>(authorizationModel)
+            };
+            
             user.Credentials.PasswordHash = passwordHash;
             user.Credentials.PasswordSalt = passwordSalt;
 

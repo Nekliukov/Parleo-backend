@@ -13,6 +13,7 @@ namespace Parleo.BLL.Extensions
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.CreateMap<DataAccessAuth, AuthorizationModel>();
+                mc.CreateMap<AuthorizationModel, DataAccessAuth>();
                 mc.CreateMap<UserModel, DataAccessUser>();
                 mc.CreateMap<DataAccessUser, UserModel>()
                     .ForMember(ui => ui.Email, opt => opt.MapFrom(uivm => uivm.Credentials.Email));
