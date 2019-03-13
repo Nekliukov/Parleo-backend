@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL;
 using Parleo.DAL;
 using ParleoBackend.Mapping;
@@ -45,6 +48,20 @@ namespace ParleoBackend
                 c.IncludeXmlComments(xmlPath);
             });
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.ASCII.GetBytes(Configuration.GetSection("JWTSecretKey").Value)
+                        ),
+                        ValidateIssuerSigningKey = true,
+                    };
+                });
+
+
             MapperExtension.Configure(services);
 
             BLServices.AddServices(services);
@@ -69,7 +86,7 @@ namespace ParleoBackend
 
             app.UseHttpsRedirection();
             app.UseMvc();
-
+            app.UseAuthentication();
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>

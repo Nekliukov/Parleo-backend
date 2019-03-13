@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using ParleoBackend.Extensions;
+using Microsoft.Extensions.Configuration;
 
 namespace ParleoBackend.Controllers
 {
@@ -15,14 +20,17 @@ namespace ParleoBackend.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
         public AccountController(
             IAccountService accountService,
-            IMapper mapper
+            IMapper mapper,
+            IConfiguration configuration
         )
         {
             _accountService = accountService;
+            _configuration = configuration; 
             _mapper = mapper;
         }
 
@@ -39,6 +47,7 @@ namespace ParleoBackend.Controllers
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationViewModel);
             UserModel user = await _accountService.CreateUserAsync(authorizationModel);
+
             return Ok(_mapper.Map<UserViewModel>(user));
         }
 
@@ -46,8 +55,10 @@ namespace ParleoBackend.Controllers
         public async Task<IActionResult> LoginAsync(AuthorizationViewModel authorizationViewModel)
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationViewModel);
-            await _accountService.AuthenticateAsync(authorizationModel);
-            return Ok();
+            UserModel user = await _accountService.AuthenticateAsync(authorizationModel);
+
+            var tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
+            return Ok(new { token = tokenString });
         }
 
         [HttpPut("edit")]
@@ -62,20 +73,13 @@ namespace ParleoBackend.Controllers
             return BadRequest();
         }
 
-        [HttpGet("logout")]
-        [Authorize]
-        public async Task<IActionResult> LogoutAsync()
-        {
-            // jwt
-            return NoContent();
-        }
-
         [HttpGet("getUser")]
         [Authorize]
         public async Task<IActionResult> GetUserAsync()
         {
-            // get id from jwt token
+            
             UserModel user = await _accountService.GetUserByIdAsync(new Guid());
+
             return Ok(_mapper.Map<UserViewModel>(user));
         }
     }

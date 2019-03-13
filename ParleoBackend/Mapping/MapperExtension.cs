@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using Parleo.BLL.Models;
+using ParleoBackend.ViewModels;
 
 namespace ParleoBackend.Mapping
 {
@@ -9,9 +11,10 @@ namespace ParleoBackend.Mapping
         {
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new UserLanguageMappingProfile());
-                mc.AddProfile(new EventMappingProfile());
-                mc.AddProfile(new UserMappingProfile());
+                mc.CreateMap<AuthorizationModel, AuthorizationViewModel>();
+                mc.CreateMap<AuthorizationViewModel, AuthorizationModel>();
+                mc.CreateMap<UserViewModel, UserModel>();
+                mc.CreateMap<UserModel, UserViewModel>();
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
