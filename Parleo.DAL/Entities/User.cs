@@ -25,10 +25,12 @@ namespace Parleo.DAL.Entities
 
         public Credentials Credentials { get; set; }
 
-        public ICollection<Event> Events { get; set; }
+        public ICollection<Event> CreatedEvents { get; set; }
 
         public ICollection<UserLanguage> Languages { get; set; }
 
-        public ICollection<UserFriends> Friends { get; set; }        
+        public ICollection<UserFriends> Friends { get; set; }
+
+        public ICollection<UserEvent> AttendingEvents { get; set; }
     }
 }
