@@ -34,7 +34,7 @@ namespace Parleo.DAL.Contexts
                 .HasForeignKey<Credentials>(c => c.UserId);
 
             modelBuilder.Entity<User>()
-                .HasMany(u => u.Events)
+                .HasMany(u => u.CreatedEvents)
                 .WithOne(e => e.Creator);
             modelBuilder.Entity<Language>()
                 .HasMany(lng => lng.Events)
@@ -64,6 +64,18 @@ namespace Parleo.DAL.Contexts
                 .WithMany()
                 .HasForeignKey(fs => fs.UserFromId)
                 .OnDelete(DeleteBehavior.Restrict);
+            #endregion
+
+            #region User-Event m2m
+            modelBuilder.Entity<UserEvent>().HasKey(k => new { k.UserId, k.EventId });
+            modelBuilder.Entity<UserEvent>()
+                .HasOne(ue => ue.User)
+                .WithMany(u => u.AttendingEvents)
+                .HasForeignKey(ue => ue.UserId);
+            modelBuilder.Entity<UserEvent>()
+                .HasOne(ue => ue.Event)
+                .WithMany(e => e.Participants)
+                .HasForeignKey(ue => ue.EventId);
             #endregion
         }
     }

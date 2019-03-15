@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Parleo.DAL.Entities
@@ -30,5 +31,7 @@ namespace Parleo.DAL.Entities
         public User Creator { get; set; }
 
         public Language Language { get; set; }
+
+        public ICollection<UserEvent> Participants { get; set; }
     }
 }
