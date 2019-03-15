@@ -9,7 +9,7 @@ namespace ParleoBackend.Extensions
 {
     public static class AuthorizationExtension
     {
-        public static string GetJWTToken(UserModel user, string secret)
+        public static string GetJWTToken(UserModel user, string secretKey)
         {
             var claims = new Claim[]
             {
@@ -21,7 +21,7 @@ namespace ParleoBackend.Extensions
                 claims: claims,
                 expires: DateTime.Now.AddMonths(1),
                 signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)), 
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)), 
                     SecurityAlgorithms.HmacSha256
                 )
             );
