@@ -3,22 +3,20 @@ using Parleo.DAL.Entities;
 
 namespace Parleo.DAL.Contexts
 {
-    public class UserContext : DbContext
+    public class EventContext : DbContext
     {
-        public DbSet<User> User { get; set; }
-
-        public DbSet<Credentials> Credentials { get; set; }
-
-        public UserContext() : base()
+        public EventContext() : base()
         {
         }
 
-        public UserContext(DbContextOptions options) : base(options)
+        public EventContext(DbContextOptions options) : base(options)
         {
         }
+
+        public DbSet<Event> Event { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {            
+        {
             modelBuilder.Entity<Event>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<User>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<Language>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
