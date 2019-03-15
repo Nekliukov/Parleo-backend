@@ -47,15 +47,17 @@ namespace ParleoBackend
                 // ...and tell Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
-
+           
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
                         ValidateLifetime = true,
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.ASCII.GetBytes(Configuration.GetSection("JWTSecretKey").Value)
+                            Encoding.UTF8.GetBytes(Configuration.GetSection("JWTSecretKey").Value)
                         ),
                         ValidateIssuerSigningKey = true,
                     };
@@ -84,9 +86,9 @@ namespace ParleoBackend
                 app.UseHsts();
             }
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
-            app.UseAuthentication();
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>

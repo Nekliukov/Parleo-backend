@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using ParleoBackend.Extensions;
 using Microsoft.Extensions.Configuration;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ParleoBackend.Controllers
 {
@@ -47,8 +45,8 @@ namespace ParleoBackend.Controllers
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationViewModel);
             UserModel user = await _accountService.CreateUserAsync(authorizationModel);
-
-            return Ok(_mapper.Map<UserViewModel>(user));
+            string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
+            return Ok(new { token = tokenString });
         }
 
         [HttpPost("login")]
@@ -56,8 +54,7 @@ namespace ParleoBackend.Controllers
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationViewModel);
             UserModel user = await _accountService.AuthenticateAsync(authorizationModel);
-
-            var tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
+            string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
             return Ok(new { token = tokenString });
         }
 
@@ -77,8 +74,8 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<IActionResult> GetUserAsync()
         {
-            
-            UserModel user = await _accountService.GetUserByIdAsync(new Guid());
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
 
             return Ok(_mapper.Map<UserViewModel>(user));
         }

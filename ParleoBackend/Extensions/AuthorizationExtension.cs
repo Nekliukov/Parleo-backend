@@ -13,16 +13,16 @@ namespace ParleoBackend.Extensions
         {
             var claims = new Claim[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Name)
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString())
             };
 
             var token = new JwtSecurityToken(
-                issuer: "DemoApp",
-                audience: "DemoAppClient",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMonths(1),
                 signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)), SecurityAlgorithms.HmacSha256
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)), 
+                    SecurityAlgorithms.HmacSha256
                 )
             );
 
