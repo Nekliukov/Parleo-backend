@@ -23,7 +23,7 @@ namespace ParleoBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpPut("/{eventId}/addParticipant/{userId}")]
+        [HttpPut("{eventId}/addParticipant/{userId}")]
         [Authorize]
         public async Task<ActionResult> AddEventParticipant(
             Guid eventId, 
@@ -44,7 +44,7 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        [HttpGet("/{eventId}/page/{offset}")]
+        [HttpGet("{eventId}/page/{offset}")]
         [Authorize]
         public async Task<ActionResult> GetParticipantsPageAsync(
             Guid eventId, 
@@ -56,7 +56,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<IEnumerable<UserViewModel>>(participants));
         }
 
-        [HttpPost("/create")]
+        [HttpPost("create")]
         [Authorize]
         public async Task<ActionResult> CreateEventAsync(EventViewModel entity)
         {
@@ -65,7 +65,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<EventViewModel>(ev));
         }
 
-        [HttpPut("/update")]
+        [HttpPut("update")]
         [Authorize]
         public async Task<ActionResult> UpdateEventAsync(EventViewModel entity)
         {
@@ -75,7 +75,7 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        [HttpPut("/{eventId}/removeParticipant/{userId}")]
+        [HttpPut("{eventId}/removeParticipant/{userId}")]
         [Authorize]
         public async Task<ActionResult> RemoveEventParticipant(
             Guid eventId, 
