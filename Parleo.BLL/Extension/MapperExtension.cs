@@ -5,6 +5,7 @@ using DataAccessAuth = Parleo.DAL.Entities.Credentials;
 using DataAccessUser = Parleo.DAL.Entities.User;
 using DataAccessLanguage = Parleo.DAL.Entities.Language;
 using DataAccessEvent = Parleo.DAL.Entities.Event;
+using DataAccessUserLanguage = Parleo.DAL.Entities.UserLanguage;
 
 namespace Parleo.BLL.Extensions
 {
@@ -30,7 +31,11 @@ namespace Parleo.BLL.Extensions
                         opt => opt.MapFrom(e => e.Participants.Count));
                 mc.CreateMap<EventModel, DataAccessEvent>();
 
+                mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
+                    .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.UserId))
+                    .ForMember(ul => ul.Name, opt => opt.MapFrom(ulvm => ulvm.Language.Name));
 
+                mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
             });
 
             IMapper mapper = mappingConfig.CreateMapper();

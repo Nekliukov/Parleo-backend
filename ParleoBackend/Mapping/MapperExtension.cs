@@ -13,8 +13,18 @@ namespace ParleoBackend.Mapping
             {
                 mc.CreateMap<AuthorizationModel, AuthorizationViewModel>();
                 mc.CreateMap<AuthorizationViewModel, AuthorizationModel>();
+
                 mc.CreateMap<UserViewModel, UserModel>();
                 mc.CreateMap<UserModel, UserViewModel>();
+
+                mc.CreateMap<EventModel, EventViewModel>();
+                mc.CreateMap<EventViewModel, EventModel>();
+
+                mc.CreateMap<LanguageModel, LanguageViewModel>();
+                mc.CreateMap<LanguageViewModel, LanguageModel>();
+
+                mc.CreateMap<UserLanguageModel, UserLanguageViewModel>();
+                mc.CreateMap<UserLanguageViewModel, UserLanguageModel>();
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
