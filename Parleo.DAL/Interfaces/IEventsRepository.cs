@@ -7,10 +7,12 @@ namespace Parleo.DAL.Interfaces
 {
     public interface IEventsRepository
     {
-        Task<IList<Event>> GetEventsPageAsync(int offset);
+        Task<IEnumerable<Event>> GetEventsPageAsync(int offset);
 
         // By filters
         Task<Event> GetEventAsync(Guid id);
+
+        Task<IEnumerable<UserEvent>> GetParticipantsPageAsync(Guid eventId, int offset);
 
         Task<bool> CreateEventAsync(Event entity);
 
@@ -21,6 +23,6 @@ namespace Parleo.DAL.Interfaces
         Task<bool> RemoveEventParticipant(Guid eventId, Guid userId);
 
         // Need to discuss
-        // Task<bool> InviteParticipant(Guid id);
+        // Task<bool> InviteParticipant(Guid eventId, Guid userId);
     }
 }

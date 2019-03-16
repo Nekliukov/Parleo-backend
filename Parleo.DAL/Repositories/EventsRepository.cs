@@ -47,7 +47,7 @@ namespace Parleo.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IList<Event>> GetEventsPageAsync(int offset)
+        public async Task<IEnumerable<Event>> GetEventsPageAsync(int offset)
         {
             // Hardcoded 25. add to configure, when it'll be necessary. 
             // This number was approved with front-end
@@ -55,9 +55,21 @@ namespace Parleo.DAL.Repositories
                 .Include(e => e.Participants).ToListAsync();
         }
 
+        public async Task<IEnumerable<UserEvent>> GetParticipantsPageAsync(
+            Guid eventId, 
+            int offset)
+        {
+            var participants = await _context.Events
+                .Include(e => e.Participants)
+                .FirstOrDefaultAsync(e => e.Id == eventId);
+
+            return  participants.Participants.Skip(offset).Take(25).ToList();
+        }
+
         public async Task<bool> RemoveEventParticipant(Guid eventId, Guid userId)
         {
-            Event ev = await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId);
+            Event ev = await _context.Events.FirstOrDefaultAsync(
+                e => e.Id == eventId);
 
             if (ev != null)
             {

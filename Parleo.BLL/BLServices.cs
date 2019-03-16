@@ -12,6 +12,7 @@ namespace Parleo.BLL
         {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ISecurityHelper, SecurityHelper>();
+            services.AddScoped<IEventsService, EventsService>();
             MapperExtension.Configure(services);
         }
     }
