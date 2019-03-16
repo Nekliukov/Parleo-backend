@@ -14,7 +14,7 @@ namespace Parleo.DAL.Interfaces
 
         Task<IEnumerable<UserEvent>> GetParticipantsPageAsync(Guid eventId, int offset);
 
-        Task<bool> CreateEventAsync(Event entity);
+        Task<Event> CreateEventAsync(Event entity);
 
         Task<bool> UpdateEventAsync(Event entity);
 

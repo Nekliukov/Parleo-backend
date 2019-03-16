@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Parleo.BLL.Interfaces
 {
-    public interface IEventsService
+    public interface IEventService
     {
         Task<IEnumerable<EventModel>> GetEventsPageAsync(int offset);
 
@@ -14,7 +14,7 @@ namespace Parleo.BLL.Interfaces
 
         Task<IEnumerable<UserModel>> GetParticipantsPageAsync(Guid eventId, int offset);
 
-        Task<bool> CreateEventAsync(EventModel entity);
+        Task<EventModel> CreateEventAsync(EventModel entity);
 
         Task<bool> UpdateEventAsync(EventModel entity);
 

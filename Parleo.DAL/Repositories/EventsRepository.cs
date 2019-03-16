@@ -34,12 +34,12 @@ namespace Parleo.DAL.Repositories
             return result != 0;
         }
 
-        public async Task<bool> CreateEventAsync(Event entity)
+        public async Task<Event> CreateEventAsync(Event entity)
         {
-            _context.Events.Add(entity);
-            var result = await _context.SaveChangesAsync();
+            var ev = _context.Events.Add(entity);
+            await _context.SaveChangesAsync();
 
-            return result != 0;
+            return ev.Entity;
         }
 
         public Task<Event> GetEventAsync(Guid id)

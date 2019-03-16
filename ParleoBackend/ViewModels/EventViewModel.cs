@@ -26,6 +26,6 @@ namespace ParleoBackend.ViewModels
 
         public UserLanguageViewModel Language { get; set; }
 
-		//PARTICIPANTS??
+        public int ParticipantsCount { get; set; }
     }
 }

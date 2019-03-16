@@ -10,7 +10,7 @@ using Parleo.DAL.Interfaces;
 
 namespace Parleo.BLL.Services
 {
-    public class EventsService : IEventsService
+    public class EventsService : IEventService
     {
         private readonly IEventsRepository _repository;
         private readonly IMapper _mapper;
@@ -26,9 +26,10 @@ namespace Parleo.BLL.Services
             return await _repository.AddEventParticipant(eventId, userId);       
         }
 
-        public async Task<bool> CreateEventAsync(EventModel entity)
+        public async Task<EventModel> CreateEventAsync(EventModel entity)
         {
-            return await _repository.CreateEventAsync(_mapper.Map<Event>(entity));
+            Event ev = await _repository.CreateEventAsync(_mapper.Map<Event>(entity));
+            return _mapper.Map<EventModel>(ev);
         }
 
         public Task<EventModel> GetEventAsync(Guid id)
@@ -40,7 +41,7 @@ namespace Parleo.BLL.Services
         {
             var eventModels = await _repository.GetEventsPageAsync(offset);
 
-            return eventModels.Select(em => _mapper.Map<EventModel>(em));
+            return _mapper.Map<IEnumerable<EventModel>>(eventModels);
         }
 
         public async Task<IEnumerable<UserModel>> GetParticipantsPageAsync(Guid eventId, int offset)
