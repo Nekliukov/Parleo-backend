@@ -27,12 +27,12 @@ namespace Parleo.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<Credentials> AuthenticateAsync(AuthorizationModel authorizationModel)
+        public async Task<UserModel> AuthenticateAsync(AuthorizationModel authorizationModel)
         {
             if (string.IsNullOrEmpty(authorizationModel.Email) || string.IsNullOrEmpty(authorizationModel.Password))
                 return null;
 
-            var user = await _repository.FindByEmailAsync(authorizationModel.Email);
+            Credentials user = await _repository.FindByEmailAsync(authorizationModel.Email);
 
             // check if email exists
             if (user == null)
@@ -41,7 +41,7 @@ namespace Parleo.BLL.Services
             if (!_securityService.VerifyPasswordHash(authorizationModel.Password, user.PasswordHash, user.PasswordSalt))
                 return null;
 
-            return user;
+            return _mapper.Map<UserModel>(user.User);
         }
 
         //TODO: add filters
