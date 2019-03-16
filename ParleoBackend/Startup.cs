@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL;
 using Parleo.DAL;
-using ParleoBackend.Mapping;
+using ParleoBackend.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace ParleoBackend

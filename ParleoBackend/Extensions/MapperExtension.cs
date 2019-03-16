@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Parleo.BLL.Models;
 using ParleoBackend.ViewModels;
 
-namespace ParleoBackend.Mapping
+namespace ParleoBackend.Extensions
 {
     public static class MapperExtension
     {

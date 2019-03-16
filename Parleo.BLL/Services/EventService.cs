@@ -10,12 +10,12 @@ using Parleo.DAL.Interfaces;
 
 namespace Parleo.BLL.Services
 {
-    public class EventsService : IEventService
+    public class EventService : IEventService
     {
         private readonly IEventsRepository _repository;
         private readonly IMapper _mapper;
 
-        public EventsService(IEventsRepository repository, IMapper mapper)
+        public EventService(IEventsRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
