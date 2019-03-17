@@ -11,6 +11,8 @@ using ParleoBackend.Extensions;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Logging;
+using System.Net;
+using Parleo.BLL;
 
 namespace ParleoBackend.Controllers
 {
@@ -38,48 +40,96 @@ namespace ParleoBackend.Controllers
 
         [HttpGet]
         [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetUsers(int offset)
         {
             IEnumerable<UserModel> users = await _accountService.GetUsersPageAsync(offset);
+            if (users == null)
+            {
+                return NotFound();
+            }
+
             return Ok(_mapper.Map<IEnumerable<UserViewModel>>(users));
         }
 
         [HttpPost("register")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RegisterAsync(AuthorizationViewModel authorizationViewModel)
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationViewModel);
-            UserModel user = await _accountService.CreateUserAsync(authorizationModel);
+            UserModel user;
+            try
+            {
+                user = await _accountService.CreateUserAsync(authorizationModel);
+            }
+            catch(AppException ex)
+            {
+                return BadRequest(ex.Error.ToString());
+            }
+
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
             string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
             return Ok(new { token = tokenString });
         }
 
         [HttpPost("login")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LoginAsync(AuthorizationViewModel authorizationViewModel)
         {
             AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationViewModel);
-            UserModel user = await _accountService.AuthenticateAsync(authorizationModel);
+            UserModel user;
+            try
+            {
+                user = await _accountService.AuthenticateAsync(authorizationModel);
+            }
+            catch (AppException ex)
+            {
+                return BadRequest(ex.Error.ToString());
+            }
+ 
             string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
+
             return Ok(new { token = tokenString });
         }
 
         [HttpPut("edit")]
         [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EditAsync(UserViewModel user)
         {
-            if (await _accountService.UpdateUserAsync(_mapper.Map<UserModel>(user)))
+            bool isEdited = false;
+            try
             {
-                return NoContent();
+                isEdited = await _accountService.UpdateUserAsync(_mapper.Map<UserModel>(user));
+            }
+            catch(AppException ex)
+            {
+                return BadRequest(ex.Error.ToString());
             }
 
-            return BadRequest();
+            if (!isEdited)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
         }
 
         [HttpGet("getUser")]
         [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserAsync()
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
+            if (user == null)
+            {
+                return BadRequest();
+            }
 
             return Ok(_mapper.Map<UserViewModel>(user));
         }

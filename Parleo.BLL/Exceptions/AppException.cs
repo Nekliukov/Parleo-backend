@@ -25,12 +25,10 @@ namespace Parleo.BLL
         }
     }
     public enum ErrorType
-    {
-        //throws out when Email already exists
-        ExistingEmail, 
-
+    { 
+        ExistingEmail,       //throws out when Email already exists
+        EmailNotFound,
         InvalidPassword,
-
         InvalidId
     }
 }
