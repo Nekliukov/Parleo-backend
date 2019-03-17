@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using ParleoBackend.Extensions;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Logging;
 
 namespace ParleoBackend.Controllers
 {
@@ -20,16 +21,19 @@ namespace ParleoBackend.Controllers
         private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
         public AccountController(
             IAccountService accountService,
             IMapper mapper,
-            IConfiguration configuration
+            IConfiguration configuration,
+            ILogger<AccountController> logger
         )
         {
             _accountService = accountService;
             _configuration = configuration; 
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]
