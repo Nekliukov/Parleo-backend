@@ -41,8 +41,14 @@ namespace ParleoBackend.Controllers
         [HttpGet]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUsers(int offset)
         {
+            if(offset < 0)
+            {
+                return BadRequest();
+            }
+
             IEnumerable<UserModel> users = await _accountService.GetUsersPageAsync(offset);
             if (users == null)
             {
@@ -99,6 +105,7 @@ namespace ParleoBackend.Controllers
         [HttpPut("edit")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> EditAsync(UserViewModel user)
         {
             bool isEdited = false;

@@ -33,27 +33,19 @@ namespace Parleo.BLL.Services
 
         public async Task<UserModel> AuthenticateAsync(AuthorizationModel authorizationModel)
         {
-            if (string.IsNullOrEmpty(authorizationModel.Email) ||
-                string.IsNullOrEmpty(authorizationModel.Password))
-            {
-                return null;
-            }
-                
             Credentials user = await _repository.FindByEmailAsync(authorizationModel.Email);
      
             if (user == null) // check if email exists
             {
-                string msg = $"{authorizationModel.Email} is not found";
-                _logger.LogError(msg);
-                throw new AppException(ErrorType.EmailNotFound, msg);
+                throw new AppException(ErrorType.EmailNotFound,
+                    $"{authorizationModel.Email} is not found");
             }
                 
             if (!_securityService.VerifyPasswordHash(authorizationModel.Password,
                 user.PasswordHash, user.PasswordSalt))
             {
-                string msg = $"Wrong password for {authorizationModel.Email}";
-                _logger.LogError(msg);
-                throw new AppException(ErrorType.InvalidPassword, msg);
+                throw new AppException(ErrorType.InvalidPassword,
+                    $"Wrong password for {authorizationModel.Email}");
             }
                 
             return _mapper.Map<UserModel>(user.User);
@@ -86,9 +78,7 @@ namespace Parleo.BLL.Services
         {
             if (await _repository.FindByEmailAsync(authorizationModel.Email) != null)
             {
-                string msg = $"Email {authorizationModel.Email} is already exists";
-                _logger.LogError(msg);
-                throw new AppException(ErrorType.ExistingEmail, msg);
+                throw new AppException(ErrorType.ExistingEmail, $"Email {authorizationModel.Email} is already exists");
             }
 
             byte[] passwordHash, passwordSalt;
@@ -117,18 +107,15 @@ namespace Parleo.BLL.Services
 
             if (User == null)
             {
-                string msg = "User not found";
-                _logger.LogWarning(msg);
-                throw new AppException(ErrorType.InvalidId, msg);
+                return false; //bad request
             }
                 
             if (user.Email != User.Credentials.Email)
             {
                 if (await _repository.FindByEmailAsync(user.Email) != null)
                 {
-                    string msg = "Email " + user.Email + " is already taken";
-                    _logger.LogWarning(msg);
-                    throw new AppException(ErrorType.ExistingEmail, msg);
+                    throw new AppException(ErrorType.ExistingEmail,
+                        "Email " + user.Email + " is already taken");
                 }                 
             }
 
