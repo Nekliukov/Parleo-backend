@@ -1,8 +1,7 @@
-using System;
-
-namespace ParleoBackend.ViewModels
+﻿using System;
+namespace Parleo.BLL.Models
 {
-    public class EventViewModel
+    public class EventModel
     {
         public Guid Id { get; set; }
 
@@ -10,9 +9,9 @@ namespace ParleoBackend.ViewModels
 
         public string Description { get; set; }
 
-        public int MaxParticipants { get; set; }    
-        
-        public decimal Latitude { get; set; }  
+        public int MaxParticipants { get; set; }        
+       
+        public decimal Latitude { get; set; }
         
         public decimal Longitude { get; set; }
 
@@ -22,9 +21,9 @@ namespace ParleoBackend.ViewModels
 
         public DateTimeOffset? EndDate { get; set; }
 
-        public Guid CreatorId { get; set; } 
+        public Guid CreatorId { get; set; }
 
-        public LanguageViewModel Language { get; set; }
+        public LanguageModel Language { get; set; }
 
         public int ParticipantsCount { get; set; }
     }
