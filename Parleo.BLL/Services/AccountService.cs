@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace Parleo.BLL.Services
 {
@@ -14,33 +15,39 @@ namespace Parleo.BLL.Services
         private readonly IUsersRepository _repository;
         private readonly ISecurityHelper _securityService;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
 
         public AccountService(
             IUsersRepository repository,
             ISecurityHelper securityHelper,
-            IMapper mapper
+            IMapper mapper,
+            ILogger<AccountService> logger
         )
         {
             _repository = repository;
             _securityService = securityHelper;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<UserModel> AuthenticateAsync(AuthorizationModel authorizationModel)
         {
-            if (string.IsNullOrEmpty(authorizationModel.Email) || string.IsNullOrEmpty(authorizationModel.Password))
-                return null;
-
             Credentials user = await _repository.FindByEmailAsync(authorizationModel.Email);
-
-            // check if email exists
-            if (user == null)
-                return null;
-
-            if (!_securityService.VerifyPasswordHash(authorizationModel.Password, user.PasswordHash, user.PasswordSalt))
-                return null;
-
+     
+            if (user == null) // check if email exists
+            {
+                throw new AppException(ErrorType.EmailNotFound,
+                    $"{authorizationModel.Email} is not found");
+            }
+                
+            if (!_securityService.VerifyPasswordHash(authorizationModel.Password,
+                user.PasswordHash, user.PasswordSalt))
+            {
+                throw new AppException(ErrorType.InvalidPassword,
+                    $"Wrong password for {authorizationModel.Email}");
+            }
+                
             return _mapper.Map<UserModel>(user.User);
         }
 
@@ -48,23 +55,31 @@ namespace Parleo.BLL.Services
         public async Task<IEnumerable<UserModel>> GetUsersPageAsync(int offset)
         {
             IList<User> users = await _repository.GetPageAsync(offset);
+            if(users == null)
+            {
+                return null;
+            }
+
             return _mapper.Map<IEnumerable<UserModel>>(users);
         }
 
         public async Task<UserModel> GetUserByIdAsync(Guid id)
         {
             User user = await _repository.GetAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
             return _mapper.Map<UserModel>(user);
         }
 
         public async Task<UserModel> CreateUserAsync(AuthorizationModel authorizationModel)
         {
-            // validation
-            if (string.IsNullOrWhiteSpace(authorizationModel.Password))
-                throw new AppException(ErrorType.InvalidPassword, "Password is required");
-
             if (await _repository.FindByEmailAsync(authorizationModel.Email) != null)
-                throw new AppException(ErrorType.ExistingEmail,"Email \"" + authorizationModel.Email + "\" is already taken");
+            {
+                throw new AppException(ErrorType.ExistingEmail, $"Email {authorizationModel.Email} is already exists");
+            }
 
             byte[] passwordHash, passwordSalt;
             _securityService.CreatePasswordHash(authorizationModel.Password, out passwordHash, out passwordSalt);
@@ -79,7 +94,9 @@ namespace Parleo.BLL.Services
 
             var result = await _repository.CreateAsync(user);
             if (!result)
-                throw new Exception("Smth bad happend on the server side and user wasn't saved");
+            {
+                return null;
+            }
 
             return _mapper.Map<UserModel>(user);
         }
@@ -89,16 +106,19 @@ namespace Parleo.BLL.Services
             User User = await _repository.GetAsync(user.Id);
 
             if (User == null)
-                throw new AppException(ErrorType.InvalidId, "User not found");
-
+            {
+                return false; //bad request
+            }
+                
             if (user.Email != User.Credentials.Email)
             {
-                // Email has changed so check if the new Email is already taken
                 if (await _repository.FindByEmailAsync(user.Email) != null)
-                    throw new AppException(ErrorType.ExistingEmail, "Email " + user.Email + " is already taken");
+                {
+                    throw new AppException(ErrorType.ExistingEmail,
+                        "Email " + user.Email + " is already taken");
+                }                 
             }
 
-            // update user properties
             User = _mapper.Map<User>(user);
 
             return await _repository.UpdateAsync(User);
