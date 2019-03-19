@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20190303122253_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303122253_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303123218_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303123218_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303124052_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303124052_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303124211_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303124211_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303124501_AddLanguageModels.cs" />
+    <Compile Remove="Migrations\20190303124501_AddLanguageModels.Designer.cs" />
+    <Compile Remove="Migrations\20190303133122_AddEvents.cs" />
+    <Compile Remove="Migrations\20190303133122_AddEvents.Designer.cs" />
+    <Compile Remove="Migrations\20190310142450_CreateDbByCurrentModels.cs" />
+    <Compile Remove="Migrations\20190310142450_CreateDbByCurrentModels.Designer.cs" />
+    <Compile Remove="Migrations\20190310153341_InitialCreate.cs" />
+    <Compile Remove="Migrations\20190310153341_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20190310155304_CreateInitialModels.cs" />
+    <Compile Remove="Migrations\20190310155304_CreateInitialModels.Designer.cs" />
+    <Compile Remove="Migrations\20190310155649_CreateInitialModels.cs" />
+    <Compile Remove="Migrations\20190310155649_CreateInitialModels.Designer.cs" />
+    <Compile Remove="Migrations\20190310155912_CreateInitialModels.cs" />
+    <Compile Remove="Migrations\20190310155912_CreateInitialModels.Designer.cs" />
+    <Compile Remove="Migrations\20190310160227_CreateInitialModels.cs" />
+    <Compile Remove="Migrations\20190310160227_CreateInitialModels.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
+  </ItemGroup>
+
+</Project>
