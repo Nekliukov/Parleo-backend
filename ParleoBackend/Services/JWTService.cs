@@ -1,27 +1,30 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL.Models;
+using ParleoBackend.Services;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 
 namespace ParleoBackend.Extensions
 {
-    public static class AuthorizationExtension
+    public class JWTService
     {
-        public static string GetJWTToken(UserModel user, string secretKey)
-        {
-            var claims = new Claim[]
-            {
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString())
-            };
+        private readonly IJWTSettings _jwtSettings;
 
+        public JWTService(
+            IJWTSettings jwtSettings
+        )
+        {
+            _jwtSettings = jwtSettings;
+        }
+
+        public string GetJWTToken(UserModel user, string secretKey)
+        {
             var token = new JwtSecurityToken(
-                claims: claims,
+                claims: ClaimsService.GetClaims(user),
                 expires: DateTime.Now.AddMonths(1),
                 signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)), 
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
                     SecurityAlgorithms.HmacSha256
                 )
             );

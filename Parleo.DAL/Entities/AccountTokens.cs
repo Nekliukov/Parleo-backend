@@ -4,20 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Parleo.DAL.Entities
 {
-    public class Credentials
+    public class AccountTokens
     {
         [Key]
         [ForeignKey("User")]
         public Guid UserId { get; set; }
-
-        public string Email { get; set; }
-
-        public byte[] PasswordHash { get; set; }
-
-        public byte[] PasswordSalt { get; set; }
-
-        public DateTimeOffset LastLogin { get; set; }
-
+        public DateTime ExpirationDate { get; set; }
         public User User { get; set; }
     }
 }

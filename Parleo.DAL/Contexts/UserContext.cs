@@ -9,16 +9,18 @@ namespace Parleo.DAL.Contexts
 
         public DbSet<Credentials> Credentials { get; set; }
 
+        public DbSet<AccountTokens> AccountTokens { get; set; }
+
         public UserContext() : base()
         {
         }
 
-        public UserContext(DbContextOptions options) : base(options)
+        public UserContext(DbContextOptions<UserContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {            
+        {
             modelBuilder.Entity<Event>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<User>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<Language>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
@@ -29,6 +31,11 @@ namespace Parleo.DAL.Contexts
                 .HasOne(c => c.User)
                 .WithOne(ui => ui.Credentials)
                 .HasForeignKey<Credentials>(c => c.UserId);
+
+            modelBuilder.Entity<AccountTokens>()
+                .HasOne(c => c.User)
+                .WithOne(ui => ui.AccountTokens)
+                .HasForeignKey<AccountTokens>(c => c.UserId);
 
             modelBuilder.Entity<User>()
                 .HasMany(u => u.CreatedEvents)

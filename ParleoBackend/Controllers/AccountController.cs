@@ -33,7 +33,7 @@ namespace ParleoBackend.Controllers
         )
         {
             _accountService = accountService;
-            _configuration = configuration; 
+            _configuration = configuration;
             _mapper = mapper;
             _logger = logger;
         }
@@ -78,7 +78,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest();
             }
 
-            string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
+            string tokenString = JWTService.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
             return Ok(new { token = tokenString });
         }
 
@@ -97,7 +97,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest(ex.Error.ToString());
             }
  
-            string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
+            string tokenString = JWTService.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
 
             return Ok(new { token = tokenString });
         }
@@ -139,6 +139,11 @@ namespace ParleoBackend.Controllers
             }
 
             return Ok(_mapper.Map<UserViewModel>(user));
+        }
+
+        public async Task<IActionResult> AccountActivateAsync(string token)
+        {
+
         }
     }
 }
