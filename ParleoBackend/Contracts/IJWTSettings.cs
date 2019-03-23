@@ -1,6 +1,6 @@
 ﻿namespace ParleoBackend
 {
-    public interface IJWTSettings
+    public interface IJwtSettings
     {
         string JWTKey { get; }
     }

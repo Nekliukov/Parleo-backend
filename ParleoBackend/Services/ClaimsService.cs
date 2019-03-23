@@ -1,11 +1,22 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL.Models;
+using ParleoBackend.Contracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
+
 namespace ParleoBackend.Services
 {
-    public class ClaimsService
+    public class ClaimsService: IClaimsService
     {
+        private readonly IJwtSettings _jwtSettings;
+        public ClaimsService(
+            IJwtSettings jwtSettings
+        )
+        {
+            _jwtSettings = jwtSettings;
+        }
+
         public Claim[] GetClaims(UserModel user)
         {
             var claims = new Claim[]
@@ -17,15 +28,20 @@ namespace ParleoBackend.Services
             return claims;
         }
 
-        public void GetClaimsFromToken(string token)
+        public Claim GetClaimsFromToken(string token)
         {
-            SecurityToken validatedToken;
-            TokenValidationParameters validationParameters = new TokenValidationParameters();
+            TokenValidationParameters validationParameters = new TokenValidationParameters()
+            {
+                RequireExpirationTime = true,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(_jwtSettings.JWTKey)
+                )
+            };
 
-            validationParameters.ValidateLifetime = true;
-            validationParameters.IssuerSigningKey = 
+            ClaimsPrincipal principal = new JwtSecurityTokenHandler()
+                .ValidateToken(token, validationParameters, out SecurityToken validatedToken);
 
-            ClaimsPrincipal principal = new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out validatedToken);
+            return principal.FindFirst(JwtRegisteredClaimNames.Jti);
         }
     }
 }

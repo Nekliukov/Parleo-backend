@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
-using ParleoBackend.Extensions;
-using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using Parleo.BLL;
+using ParleoBackend.Contracts;
 
 namespace ParleoBackend.Controllers
 {
@@ -21,21 +20,24 @@ namespace ParleoBackend.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        private readonly IConfiguration _configuration;
+        IEmailService _emailService;
+        private readonly IJwtService _jwtService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public AccountController(
             IAccountService accountService,
             IMapper mapper,
-            IConfiguration configuration,
-            ILogger<AccountController> logger
+            IJwtService jwtService,
+            ILogger<AccountController> logger,
+            IEmailService emailService
         )
         {
             _accountService = accountService;
-            _configuration = configuration;
+            _jwtService = jwtService;
             _mapper = mapper;
             _logger = logger;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -78,8 +80,9 @@ namespace ParleoBackend.Controllers
                 return BadRequest();
             }
 
-            string tokenString = JWTService.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
-            return Ok(new { token = tokenString });
+            string tokenString = _jwtService.GetJWTToken(user);
+            await _emailService.SendEmailConfirmationLink(user.Email, tokenString);
+            return NoContent();
         }
 
         [HttpPost("login")]
@@ -96,10 +99,9 @@ namespace ParleoBackend.Controllers
             {
                 return BadRequest(ex.Error.ToString());
             }
- 
-            string tokenString = JWTService.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
 
-            return Ok(new { token = tokenString });
+            string tokenString = _jwtService.GetJWTToken(user);
+            return Ok(new {token = tokenString});
         }
 
         [HttpPut("edit")]
@@ -141,9 +143,19 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<UserViewModel>(user));
         }
 
-        public async Task<IActionResult> AccountActivateAsync(string token)
+        [HttpGet("activate")]
+        public async Task<IActionResult> GetActivatedUserAccount(string token)
         {
+            string userIdString = _jwtService.GetUserIdFromToken(token);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return BadRequest();
+            }
 
+
+            UserModel user = await _accountService.GetUserByIdAsync(new Guid(userIdString));
+
+            return Ok(user);
         }
     }
 }

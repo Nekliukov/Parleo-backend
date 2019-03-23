@@ -48,7 +48,7 @@ namespace ParleoBackend
                 // ...and tell Swagger to use those XML comments.
                 c.IncludeXmlComments(xmlPath);
             });
-           
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -69,6 +69,7 @@ namespace ParleoBackend
 
             BLServices.AddServices(services);
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
+            WebServices.AddServices(services);
 
             services
                 .AddMvc()

@@ -2,15 +2,15 @@
 
 namespace ParleoBackend.Configuration
 {
-    public class JWTSettings: IJWTSettings
+    public class JwtSettings : IJwtSettings
     {
         private readonly IConfiguration _configuration;
 
-        public JWTSettings(
+        public JwtSettings(
             IConfiguration configuration
         )
         {
-            _configuration = configuration.GetSection(nameof(JWTSettings));
+            _configuration = configuration.GetSection(nameof(JwtSettings));
         }
 
         public string JWTKey => _configuration.GetValue<string>(nameof(JWTKey));
