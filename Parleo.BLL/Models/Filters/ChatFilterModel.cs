@@ -2,7 +2,7 @@ using Parleo.BLL.Models.Pages;
 
 namespace Parleo.BLL.Models.Filters
 {
-    public class ChatFilterViewModel : PageRequestModel
+    public class ChatFilterModel : PageRequestModel
     {
         public string Keywords { get; set; }
     }

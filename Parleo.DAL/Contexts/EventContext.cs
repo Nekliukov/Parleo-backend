@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Parleo.DAL.Entities;
+using Parleo.DAL.Models.Entities;
 
 namespace Parleo.DAL.Contexts
 {

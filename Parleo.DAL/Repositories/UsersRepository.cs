@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Parleo.DAL.Contexts;
-using Parleo.DAL.Entities;
+using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
 
 namespace Parleo.DAL.Repositories

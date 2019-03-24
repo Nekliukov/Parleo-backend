@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
-using Parleo.DAL.Entities;
+using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
 
 namespace Parleo.BLL.Services
