@@ -1,4 +1,4 @@
-namespace ParleoBackend.ViewModels
+namespace ParleoBackend.ViewModels.Pages
 {
     // This goes to back-end
     public class PageRequestViewModel

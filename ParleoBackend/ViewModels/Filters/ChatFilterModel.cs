@@ -1,4 +1,6 @@
-namespace ParleoBackend.ViewModels
+using ParleoBackend.ViewModels.Pages;
+
+namespace ParleoBackend.ViewModels.Filters
 {
     public class ChatFilterViewModel : PageRequestViewModel
     {

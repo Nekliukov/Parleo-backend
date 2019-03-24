@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ParleoBackend.ViewModels
+namespace ParleoBackend.ViewModels.Pages
 {
     // This goes from back-end
     public class PageViewModel<T>

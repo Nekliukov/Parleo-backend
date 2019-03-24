@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models;
-using ParleoBackend.ViewModels;
+using ParleoBackend.ViewModels.Entities;
 using AutoMapper;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;

@@ -1,8 +1,9 @@
-using ParleoBackend.ViewModels;
+using ParleoBackend.ViewModels.Entities;
+using ParleoBackend.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
 
-namespace ParleoBackend.ViewModels
+namespace ParleoBackend.ViewModels.Filters
 {
     public class EventFilterViewModel : PageRequestViewModel
     {

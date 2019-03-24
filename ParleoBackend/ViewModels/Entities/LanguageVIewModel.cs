@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ParleoBackend.ViewModels
+namespace ParleoBackend.ViewModels.Entities
 {
     public class LanguageViewModel
     {

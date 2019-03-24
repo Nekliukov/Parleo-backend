@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Parleo.BLL.Models;
-using ParleoBackend.ViewModels;
+using ParleoBackend.ViewModels.Entities;
 
 namespace ParleoBackend.Extensions
 {

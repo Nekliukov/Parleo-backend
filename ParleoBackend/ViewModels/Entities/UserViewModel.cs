@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ParleoBackend.ViewModels
+namespace ParleoBackend.ViewModels.Entities
 {
     public class UserViewModel
     {
