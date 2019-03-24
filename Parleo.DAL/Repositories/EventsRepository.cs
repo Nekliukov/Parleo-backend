@@ -42,9 +42,9 @@ namespace Parleo.DAL.Repositories
             return ev.Entity;
         }
 
-        public Task<Event> GetEventAsync(Guid id)
+        public async Task<Event> GetEventAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.Events.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<IEnumerable<Event>> GetEventsPageAsync(int offset)

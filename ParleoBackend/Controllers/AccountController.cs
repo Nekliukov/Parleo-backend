@@ -33,7 +33,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetUsers(int offset)
         {
             IEnumerable<UserModel> users = await _accountService.GetUsersPageAsync(offset);

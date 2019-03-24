@@ -13,7 +13,7 @@ namespace Parleo.DAL.Contexts
         {
         }
 
-        public UserContext(DbContextOptions options) : base(options)
+        public UserContext(DbContextOptions<UserContext> options) : base(options)
         {
         }
 

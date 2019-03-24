@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
-namespace Parleo.DAL.Models.Entities
+namespace Parleo.BLL.Models.Entities
 {
-    public class Event
+    public class UpdateEventModel
     {
-        public Guid Id { get; set; }
-
         public string Name { get; set; }
 
         public string Description { get; set; }
 
         public int MaxParticipants { get; set; }
 
-        // public Guid ChatId { get; set; }
-
-        [Column(TypeName = "decimal(10, 2)")]
         public decimal Latitude { get; set; }
 
-        [Column(TypeName = "decimal(11, 8)")]
         public decimal Longitude { get; set; }
 
         public bool IsFinished { get; set; }
@@ -30,12 +24,8 @@ namespace Parleo.DAL.Models.Entities
 
         public Guid CreatorId { get; set; }
 
-        public User Creator { get; set; }
-
         public Guid LanguageId { get; set; }
 
-        public Language Language { get; set; }
-
-        public ICollection<UserEvent> Participants { get; set; }
+        public int ParticipantsCount { get; set; }
     }
 }

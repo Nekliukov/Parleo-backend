@@ -9,7 +9,7 @@ namespace Parleo.DAL.Contexts
         {
         }
 
-        public EventContext(DbContextOptions options) : base(options)
+        public EventContext(DbContextOptions<EventContext> options) : base(options)
         {
         }
 

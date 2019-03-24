@@ -24,7 +24,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPut("{eventId}/addParticipant/{userId}")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult> AddEventParticipant(
             Guid eventId, 
             Guid userId)
@@ -37,7 +37,7 @@ namespace ParleoBackend.Controllers
         // TODO
         // Add filter model and implement it (repo -> service -> controller)
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult> GetEventAsync(Guid id)
         {
             await _service.GetEventAsync(id);
@@ -45,7 +45,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpGet("{eventId}/page/{offset}")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult> GetParticipantsPageAsync(
             Guid eventId, 
             int offset)
@@ -57,17 +57,17 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize]
-        public async Task<ActionResult> CreateEventAsync(EventViewModel entity)
+        //[Authorize]
+        public async Task<ActionResult> CreateEventAsync(UpdateEventViewModel entity)
         {
-            var ev = await _service.CreateEventAsync(_mapper.Map<EventModel>(entity));
+            var ev = await _service.CreateEventAsync(_mapper.Map<UpdateEventModel>(entity));
 
             return Ok(_mapper.Map<EventViewModel>(ev));
         }
 
         [HttpPut("update")]
-        [Authorize]
-        public async Task<ActionResult> UpdateEventAsync(EventViewModel entity)
+        //[Authorize]
+        public async Task<ActionResult> UpdateEventAsync(UpdateEventViewModel entity)
         {
             var result = await _service.UpdateEventAsync(
                 _mapper.Map<EventModel>(entity));
@@ -76,7 +76,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPut("{eventId}/removeParticipant/{userId}")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult> RemoveEventParticipant(
             Guid eventId, 
             Guid userId)

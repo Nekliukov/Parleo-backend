@@ -26,7 +26,7 @@ namespace Parleo.BLL.Services
             return await _repository.AddEventParticipant(eventId, userId);       
         }
 
-        public async Task<EventModel> CreateEventAsync(EventModel entity)
+        public async Task<EventModel> CreateEventAsync(UpdateEventModel entity)
         {
             Event ev = await _repository.CreateEventAsync(_mapper.Map<Event>(entity));
             return _mapper.Map<EventModel>(ev);

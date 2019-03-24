@@ -21,7 +21,7 @@ namespace Parleo.BLL.Models.Entities
 
         public DateTimeOffset? EndDate { get; set; }
 
-        public Guid CreatorId { get; set; }
+        public UserModel Creator { get; set; }
 
         public LanguageModel Language { get; set; }
 
