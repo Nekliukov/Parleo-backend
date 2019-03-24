@@ -1,10 +1,10 @@
-using Parleo.BLL.Models.Entities;
-using Parleo.BLL.Models.Pages;
+using Parleo.DAL.Models.Entities;
+using Parleo.DAL.Models.Pages;
 using System.Collections.Generic;
 
-namespace Parleo.BLL.Models.Filters
+namespace Parleo.DAL.Models.Filters
 {
-    public class UserFilterViewModel : PageRequestModel
+    public class UserFilter : PageRequest
     {
         public int MinAge { get; set; }
 
@@ -16,6 +16,6 @@ namespace Parleo.BLL.Models.Filters
 
         public int MaxDistance { get; set; }
 
-        public List<UserLanguageModel> Languages { get; set; }
+        public List<UserLanguage> Languages { get; set; }
     }
 }

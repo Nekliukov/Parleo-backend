@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Parleo.BLL.Models.Filters
 {
-    public class EventFilterViewModel : PageRequestModel
+    public class EventFilterModel : PageRequestModel
     {
         public int MinNumberOfParticipants { get; set; }
 

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Parleo.DAL.Entities
+namespace Parleo.DAL.Models.Entities
 {
     public class Credentials
     {

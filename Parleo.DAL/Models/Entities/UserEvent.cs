@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Parleo.DAL.Entities
+namespace Parleo.DAL.Models.Entities
 {
     public class UserEvent
     {

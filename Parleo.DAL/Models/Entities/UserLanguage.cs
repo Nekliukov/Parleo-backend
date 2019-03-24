@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Parleo.DAL.Entities
+namespace Parleo.DAL.Models.Entities
 {
     public class UserLanguage
     {
