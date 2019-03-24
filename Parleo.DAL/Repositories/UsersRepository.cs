@@ -11,16 +11,16 @@ namespace Parleo.DAL.Repositories
 {
     public class UsersRepository : IUsersRepository
     {
-        private readonly UserContext _context;
+        private readonly Contexts.AppContext _context;
 
-        public UsersRepository(UserContext context)
+        public UsersRepository(Contexts.AppContext context)
         {
             _context = context;
         }
 
         public async Task<bool> CreateAsync(User entity)
         {
-            _context.User.Add(entity);
+            _context.Users.Add(entity);
             var result =  await _context.SaveChangesAsync();
             return result != 0;
         }
@@ -34,19 +34,19 @@ namespace Parleo.DAL.Repositories
         public async Task<IList<User>> GetPageAsync(int offset)
         {
             //Hardcoded 25. add to configure, when it'll be necessary. This number was approved with front-end
-            return await _context.User.Skip(offset).Take(25).Include(u => u.Credentials).ToListAsync();
+            return await _context.Users.Skip(offset).Take(25).Include(u => u.Credentials).ToListAsync();
         }
 
         public async Task<User> GetAsync(Guid id)
         {
-            return await _context.User.Include(u => u.Credentials)
+            return await _context.Users.Include(u => u.Credentials)
                 .FirstOrDefaultAsync(user => user.Id == id);
         }
 
 
         public async Task<bool> UpdateAsync(User entity)
         {
-            _context.User.Update(entity);
+            _context.Users.Update(entity);
             var result = await _context.SaveChangesAsync();
             return result != 0;
         }

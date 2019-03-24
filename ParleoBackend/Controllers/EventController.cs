@@ -26,7 +26,7 @@ namespace ParleoBackend.Controllers
         [HttpPut("{eventId}/addParticipant/{userId}")]
         //[Authorize]
         public async Task<ActionResult> AddEventParticipant(
-            Guid eventId, 
+            Guid eventId,
             Guid userId)
         {
             var result = await _service.AddEventParticipant(eventId, userId);
@@ -34,9 +34,14 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        // TODO
-        // Add filter model and implement it (repo -> service -> controller)
         [HttpGet]
+        //[Authorize]
+        public async Task<IActionResult> GetEventsPageAsync()
+        {
+
+        }
+
+        [HttpGet("{eventId}")]
         //[Authorize]
         public async Task<ActionResult> GetEventAsync(Guid id)
         {
@@ -65,12 +70,14 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<EventViewModel>(ev));
         }
 
-        [HttpPut("update")]
+        [HttpPut("{eventId}/update")]
         //[Authorize]
-        public async Task<ActionResult> UpdateEventAsync(UpdateEventViewModel entity)
+        public async Task<ActionResult> UpdateEventAsync(
+            Guid eventId, 
+            UpdateEventViewModel entity)
         {
-            var result = await _service.UpdateEventAsync(
-                _mapper.Map<EventModel>(entity));
+            var result = await _service.UpdateEventAsync(eventId,
+                _mapper.Map<UpdateEventModel>(entity));
 
             return Ok();
         }

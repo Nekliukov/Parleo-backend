@@ -9,7 +9,7 @@ using Parleo.DAL.Contexts;
 
 namespace Parleo.DAL.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(Contexts.AppContext))]
     [Migration("20190310161547_CreateInitialModels")]
     partial class CreateInitialModels
     {

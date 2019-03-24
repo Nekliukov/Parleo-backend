@@ -22,8 +22,6 @@ namespace ParleoBackend.ViewModels.Entities
 
         public Guid CreatorId { get; set; }
 
-        public Guid LanguageId { get; set; }
-
-        public int ParticipantsCount { get; set; }
+        public Guid LanguageId { get; set; }        
     }
 }

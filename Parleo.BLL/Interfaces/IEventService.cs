@@ -16,7 +16,7 @@ namespace Parleo.BLL.Interfaces
 
         Task<EventModel> CreateEventAsync(UpdateEventModel entity);
 
-        Task<bool> UpdateEventAsync(EventModel entity);
+        Task<bool> UpdateEventAsync(Guid eventId, UpdateEventModel entity);
 
         Task<bool> AddEventParticipant(Guid eventId, Guid userId);
 

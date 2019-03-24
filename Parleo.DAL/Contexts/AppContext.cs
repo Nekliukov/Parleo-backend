@@ -3,20 +3,24 @@ using Parleo.DAL.Models.Entities;
 
 namespace Parleo.DAL.Contexts
 {
-    public class EventContext : DbContext
+    public class AppContext : DbContext
     {
-        public EventContext() : base()
-        {
-        }
+        public DbSet<User> Users { get; set; }
 
-        public EventContext(DbContextOptions<EventContext> options) : base(options)
-        {
-        }
+        public DbSet<Credentials> Credentials { get; set; }
 
         public DbSet<Event> Events { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public AppContext() : base()
         {
+        }
+
+        public AppContext(DbContextOptions options) : base(options)
+        {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {            
             modelBuilder.Entity<Event>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<User>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<Language>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
@@ -66,11 +70,13 @@ namespace Parleo.DAL.Contexts
             modelBuilder.Entity<UserEvent>()
                 .HasOne(ue => ue.User)
                 .WithMany(u => u.AttendingEvents)
-                .HasForeignKey(ue => ue.UserId);
+                .HasForeignKey(ue => ue.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<UserEvent>()
                 .HasOne(ue => ue.Event)
                 .WithMany(e => e.Participants)
-                .HasForeignKey(ue => ue.EventId);
+                .HasForeignKey(ue => ue.EventId)
+                .OnDelete(DeleteBehavior.Restrict);
             #endregion
         }
     }

@@ -11,9 +11,9 @@ namespace Parleo.DAL.Repositories
 {
     public class EventsRepository : IEventsRepository
     {
-        private readonly EventContext _context;
+        private readonly Contexts.AppContext _context;
 
-        public EventsRepository(EventContext context)
+        public EventsRepository(Contexts.AppContext context)
         {
             _context = context;
         }
@@ -90,9 +90,25 @@ namespace Parleo.DAL.Repositories
             return false;
         }
 
-        public async Task<bool> UpdateEventAsync(Event entity)
+        public async Task<bool> UpdateEventAsync(Guid eventId, Event entity)
         {
-            _context.Events.Update(entity);
+            Event ev = await _context.Events.SingleOrDefaultAsync(
+                e => e.Id == eventId);
+
+            if (ev != null)
+            {                
+                ev.CreatorId = entity.CreatorId;
+                ev.Description = entity.Description;
+                ev.EndDate = entity.EndDate;
+                ev.IsFinished = entity.IsFinished;
+                ev.LanguageId = entity.LanguageId;
+                ev.Latitude = entity.Latitude;
+                ev.Longitude = entity.Longitude;
+                ev.MaxParticipants = entity.MaxParticipants;
+                ev.Name = entity.Name;
+                ev.StartTime = entity.StartTime;                
+            }
+
             var result = await _context.SaveChangesAsync();
 
             return result != 0;

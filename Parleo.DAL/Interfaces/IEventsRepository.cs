@@ -16,7 +16,7 @@ namespace Parleo.DAL.Interfaces
 
         Task<Event> CreateEventAsync(Event entity);
 
-        Task<bool> UpdateEventAsync(Event entity);
+        Task<bool> UpdateEventAsync(Guid eventId, Event entity);
 
         Task<bool> AddEventParticipant(Guid eventId, Guid userId);
 
