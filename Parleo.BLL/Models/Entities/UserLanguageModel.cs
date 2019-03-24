@@ -1,11 +1,13 @@
 ﻿using System;
 
-namespace Parleo.BLL.Models
+namespace Parleo.BLL.Models.Entities
 {
-    public class LanguageModel
+    public class UserLanguageModel
     {
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+
+        public byte Level { get; set; }
     }
 }

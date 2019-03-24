@@ -1,4 +1,4 @@
-﻿using Parleo.BLL.Models;
+﻿using Parleo.BLL.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

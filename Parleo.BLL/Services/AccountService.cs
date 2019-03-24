@@ -1,5 +1,5 @@
 ﻿using Parleo.BLL.Interfaces;
-using Parleo.BLL.Models;
+using Parleo.BLL.Models.Entities;
 using Parleo.DAL.Entities;
 using Parleo.DAL.Interfaces;
 using System;

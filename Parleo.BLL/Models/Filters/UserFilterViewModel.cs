@@ -1,10 +1,10 @@
-using ParleoBackend.ViewModels.Entities;
-using ParleoBackend.ViewModels.Pages;
+using Parleo.BLL.Models.Entities;
+using Parleo.BLL.Models.Pages;
 using System.Collections.Generic;
 
-namespace ParleoBackend.ViewModels.Filters
+namespace Parleo.BLL.Models.Filters
 {
-    public class UserFilterViewModel : PageRequestViewModel
+    public class UserFilterViewModel : PageRequestModel
     {
         public int MinAge { get; set; }
 
@@ -16,6 +16,6 @@ namespace ParleoBackend.ViewModels.Filters
 
         public int MaxDistance { get; set; }
 
-        public List<UserLanguageViewModel> Languages { get; set; }
+        public List<UserLanguageModel> Languages { get; set; }
     }
 }

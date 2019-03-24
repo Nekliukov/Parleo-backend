@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Interfaces;
-using Parleo.BLL.Models;
+using Parleo.BLL.Models.Entities;
 using ParleoBackend.ViewModels.Entities;
 using AutoMapper;
 using System.Threading.Tasks;

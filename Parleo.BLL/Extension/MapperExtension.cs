@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using Parleo.BLL.Models;
+using Parleo.BLL.Models.Entities;
 using DataAccessAuth = Parleo.DAL.Entities.Credentials;
 using DataAccessUser = Parleo.DAL.Entities.User;
 using DataAccessLanguage = Parleo.DAL.Entities.Language;

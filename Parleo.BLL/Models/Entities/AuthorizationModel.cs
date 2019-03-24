@@ -1,4 +1,4 @@
-﻿namespace Parleo.BLL.Models
+﻿namespace Parleo.BLL.Models.Entities
 {
     public class AuthorizationModel
     {
