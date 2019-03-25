@@ -18,5 +18,7 @@ namespace Parleo.DAL.Interfaces
         Task<bool> DisableAsync(Guid id);
 
         Task<Credentials> FindByEmailAsync(string email);
+
+        Task AddAccountToken(AccountToken accountToken);
     }
 }

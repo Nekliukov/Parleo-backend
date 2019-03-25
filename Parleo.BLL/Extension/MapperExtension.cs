@@ -6,6 +6,7 @@ using DataAccessUser = Parleo.DAL.Entities.User;
 using DataAccessLanguage = Parleo.DAL.Entities.Language;
 using DataAccessEvent = Parleo.DAL.Entities.Event;
 using DataAccessUserLanguage = Parleo.DAL.Entities.UserLanguage;
+using Parleo.DAL.Entities;
 
 namespace Parleo.BLL.Extensions
 {
@@ -17,6 +18,8 @@ namespace Parleo.BLL.Extensions
             {
                 mc.CreateMap<DataAccessAuth, AuthorizationModel>();
                 mc.CreateMap<AuthorizationModel, DataAccessAuth>();
+
+                mc.CreateMap<AccountTokenModel, AccountToken>();
 
                 mc.CreateMap<UserModel, DataAccessUser>();
                 mc.CreateMap<DataAccessUser, UserModel>()

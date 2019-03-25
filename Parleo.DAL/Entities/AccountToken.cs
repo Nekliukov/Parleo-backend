@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Parleo.DAL.Entities
 {
-    public class AccountTokens
+    public class AccountToken
     {
         [Key]
         [ForeignKey("User")]

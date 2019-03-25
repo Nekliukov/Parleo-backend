@@ -9,7 +9,7 @@ namespace Parleo.DAL.Contexts
 
         public DbSet<Credentials> Credentials { get; set; }
 
-        public DbSet<AccountTokens> AccountTokens { get; set; }
+        public DbSet<AccountToken> AccountTokens { get; set; }
 
         public UserContext() : base()
         {
@@ -32,10 +32,10 @@ namespace Parleo.DAL.Contexts
                 .WithOne(ui => ui.Credentials)
                 .HasForeignKey<Credentials>(c => c.UserId);
 
-            modelBuilder.Entity<AccountTokens>()
+            modelBuilder.Entity<AccountToken>()
                 .HasOne(c => c.User)
                 .WithOne(ui => ui.AccountTokens)
-                .HasForeignKey<AccountTokens>(c => c.UserId);
+                .HasForeignKey<AccountToken>(c => c.UserId);
 
             modelBuilder.Entity<User>()
                 .HasMany(u => u.CreatedEvents)

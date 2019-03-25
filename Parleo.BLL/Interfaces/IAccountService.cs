@@ -1,5 +1,4 @@
 ﻿using Parleo.BLL.Models;
-using Parleo.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +18,8 @@ namespace Parleo.BLL.Interfaces
         Task<bool> UpdateUserAsync(UserModel user);
 
         Task<bool> DisableUserAsync(Guid id);
+
+        Task AddAcountToken(AccountTokenModel tokenModel);
 
     }
 }

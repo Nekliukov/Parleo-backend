@@ -55,5 +55,11 @@ namespace Parleo.DAL.Repositories
         {
             return await _context.Credentials.Include(c => c.User).FirstOrDefaultAsync(с => с.Email == email);
         }
+
+        public async Task AddAccountToken(AccountToken accountToken)
+        {
+            _context.AccountTokens.Add(accountToken);
+            await _context.SaveChangesAsync();
+        }
     }
 }
