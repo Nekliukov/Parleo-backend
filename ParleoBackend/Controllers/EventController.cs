@@ -9,7 +9,6 @@ using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Filters;
 using ParleoBackend.ViewModels.Pages;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ParleoBackend.Controllers
@@ -28,7 +27,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPut("{eventId}/addParticipant/{userId}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult> AddEventParticipant(
             Guid eventId,
             Guid userId)
@@ -39,9 +38,9 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetEventsPageAsync(
-            EventFilterViewModel eventFilter)
+            [FromQuery] EventFilterViewModel eventFilter)
         {
             var result = await _service.GetEventsPageAsync(
                 _mapper.Map<EventFilterModel>(eventFilter));
@@ -50,7 +49,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpGet("{eventId}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult> GetEventAsync(Guid eventId)
         {
             var e = await _service.GetEventAsync(eventId);
@@ -58,20 +57,21 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpGet("{eventId}/page")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult> GetParticipantsPageAsync(
             Guid eventId,
-            PageRequestViewModel pageRequest)
+            [FromQuery] PageRequestViewModel pageRequest)
         {
             var participants = await _service.GetParticipantsPageAsync(
                 eventId, _mapper.Map<PageRequestModel>(pageRequest));
 
-            return Ok(_mapper.Map<IEnumerable<UserViewModel>>(participants));
+            return Ok(_mapper.Map<PageViewModel<UserViewModel>>(participants));
         }
 
         [HttpPost("create")]
-        //[Authorize]
-        public async Task<ActionResult> CreateEventAsync(UpdateEventViewModel entity)
+        [Authorize]
+        public async Task<ActionResult> CreateEventAsync(
+            [FromQuery] UpdateEventViewModel entity)
         {
             var ev = await _service.CreateEventAsync(_mapper.Map<UpdateEventModel>(entity));
 
@@ -79,10 +79,10 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPut("{eventId}/update")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult> UpdateEventAsync(
-            Guid eventId, 
-            UpdateEventViewModel entity)
+            Guid eventId,
+            [FromQuery] UpdateEventViewModel entity)
         {
             var result = await _service.UpdateEventAsync(eventId,
                 _mapper.Map<UpdateEventModel>(entity));
@@ -91,7 +91,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPut("{eventId}/removeParticipant/{userId}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult> RemoveEventParticipant(
             Guid eventId, 
             Guid userId)

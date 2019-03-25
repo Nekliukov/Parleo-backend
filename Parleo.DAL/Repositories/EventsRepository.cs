@@ -46,7 +46,12 @@ namespace Parleo.DAL.Repositories
 
         public async Task<Event> GetEventAsync(Guid id)
         {
-            return await _context.Events.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Events
+                .Include(e => e.Language)
+                .Include(e => e.Creator)
+                .Include(e => e.Participants)
+                .ThenInclude(ue => ue.User)
+                .FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<Page<Event>> GetEventsPageAsync(
@@ -66,6 +71,10 @@ namespace Parleo.DAL.Repositories
                     e.StartTime <= eventFilter.MaxStartDate : true)
                 .Where(e => (eventFilter.MinStartDate != null) ?
                     e.StartTime >= eventFilter.MaxStartDate : true)
+                .Include(e => e.Creator)
+                .Include(e => e.Language)
+                .Include(e => e.Participants)
+                .ThenInclude(ue => ue.User)
                 .ToListAsync();
 
             int totalAmount = events.Count();
@@ -92,6 +101,7 @@ namespace Parleo.DAL.Repositories
         {
             var ev = await _context.Events
                 .Include(e => e.Participants)
+                .ThenInclude(ue => ue.User)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
             if (pageRequest.PageSize == null)
@@ -114,12 +124,15 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> RemoveEventParticipant(Guid eventId, Guid userId)
         {
-            Event ev = await _context.Events.FirstOrDefaultAsync(
+            Event ev = await _context.Events                
+                .Include(e => e.Participants)
+                .ThenInclude(ue => ue.User)
+                .FirstOrDefaultAsync(
                 e => e.Id == eventId);
 
             if (ev != null)
             {
-                UserEvent userEvent = ev.Participants
+                UserEvent userEvent = ev.Participants                    
                     .FirstOrDefault(ue => ue.UserId == userId);
 
                 if (userEvent != null)

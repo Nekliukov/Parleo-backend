@@ -7,7 +7,6 @@ using Parleo.DAL.Models.Pages;
 using Parleo.BLL.Models.Pages;
 using DataAccessAuth = Parleo.DAL.Models.Entities.Credentials;
 using DataAccessUser = Parleo.DAL.Models.Entities.User;
-using DataAccessUserEvent = Parleo.DAL.Models.Entities.UserEvent;
 using DataAccessLanguage = Parleo.DAL.Models.Entities.Language;
 using DataAccessEvent = Parleo.DAL.Models.Entities.Event;
 using DataAccessUserLanguage = Parleo.DAL.Models.Entities.UserLanguage;
