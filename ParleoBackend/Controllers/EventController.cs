@@ -3,7 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
+using Parleo.BLL.Models.Filters;
+using Parleo.BLL.Models.Pages;
 using ParleoBackend.ViewModels.Entities;
+using ParleoBackend.ViewModels.Filters;
+using ParleoBackend.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -36,27 +40,31 @@ namespace ParleoBackend.Controllers
 
         [HttpGet]
         //[Authorize]
-        public async Task<IActionResult> GetEventsPageAsync()
+        public async Task<IActionResult> GetEventsPageAsync(
+            EventFilterViewModel eventFilter)
         {
+            var result = await _service.GetEventsPageAsync(
+                _mapper.Map<EventFilterModel>(eventFilter));
 
+            return Ok(result);
         }
 
         [HttpGet("{eventId}")]
         //[Authorize]
-        public async Task<ActionResult> GetEventAsync(Guid id)
+        public async Task<ActionResult> GetEventAsync(Guid eventId)
         {
-            await _service.GetEventAsync(id);
-            return Ok();
+            var e = await _service.GetEventAsync(eventId);
+            return Ok(_mapper.Map<EventViewModel>(e));
         }
 
-        [HttpGet("{eventId}/page/{offset}")]
+        [HttpGet("{eventId}/page")]
         //[Authorize]
         public async Task<ActionResult> GetParticipantsPageAsync(
-            Guid eventId, 
-            int offset)
+            Guid eventId,
+            PageRequestViewModel pageRequest)
         {
             var participants = await _service.GetParticipantsPageAsync(
-                eventId, offset);
+                eventId, _mapper.Map<PageRequestModel>(pageRequest));
 
             return Ok(_mapper.Map<IEnumerable<UserViewModel>>(participants));
         }

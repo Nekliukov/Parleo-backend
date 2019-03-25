@@ -1,17 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Parleo.DAL.Contexts;
 using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
+using Parleo.DAL.Models.Pages;
+using Parleo.DAL.Models.Filters;
 
 namespace Parleo.DAL.Repositories
 {
     public class EventsRepository : IEventsRepository
     {
         private readonly Contexts.AppContext _context;
+
+        private readonly int _deafultPageSize = 25;
 
         public EventsRepository(Contexts.AppContext context)
         {
@@ -47,23 +49,67 @@ namespace Parleo.DAL.Repositories
             return await _context.Events.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<IEnumerable<Event>> GetEventsPageAsync(int offset)
+        public async Task<Page<Event>> GetEventsPageAsync(
+            EventFilter eventFilter)
         {
-            // Hardcoded 25. add to configure, when it'll be necessary. 
-            // This number was approved with front-end
-            return await _context.Events.Skip(offset).Take(25)
-                .Include(e => e.Participants).ToListAsync();
+            var events = await _context.Events
+                .Where(e => (eventFilter.Languages != null) ?
+                    eventFilter.Languages.Contains(e.LanguageId) : true)
+                // TODO, need to discus with front
+                //.Where(e => (eventFilter.MaxDistance != null) ? true : true)
+                //.Where(e => (eventFilter.MinDistance != null) ? true : true)
+                .Where(e => (eventFilter.MaxNumberOfParticipants != null) ?
+                    e.MaxParticipants <= eventFilter.MaxNumberOfParticipants : true)
+                .Where(e => (eventFilter.MinNumberOfParticipants != null) ?
+                    e.MaxParticipants >= eventFilter.MaxNumberOfParticipants : true)
+                .Where(e => (eventFilter.MaxStartDate != null) ?
+                    e.StartTime <= eventFilter.MaxStartDate : true)
+                .Where(e => (eventFilter.MinStartDate != null) ?
+                    e.StartTime >= eventFilter.MaxStartDate : true)
+                .ToListAsync();
+
+            int totalAmount = events.Count();
+
+            if (eventFilter.PageSize == null)
+            {
+                eventFilter.PageSize = _deafultPageSize;
+            }
+
+            return new Page<Event>()
+            {
+                Entities = events
+                    .Skip((eventFilter.Page - 1) * eventFilter.PageSize.Value)
+                    .Take(eventFilter.PageSize.Value).ToList(),
+                PageNumber = eventFilter.Page,
+                PageSize = eventFilter.PageSize.Value,
+                TotalAmount = totalAmount
+            };
         }
 
-        public async Task<IEnumerable<UserEvent>> GetParticipantsPageAsync(
+        public async Task<Page<UserEvent>> GetParticipantsPageAsync(
             Guid eventId, 
-            int offset)
+            PageRequest pageRequest)
         {
-            var participants = await _context.Events
+            var ev = await _context.Events
                 .Include(e => e.Participants)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
-            return  participants.Participants.Skip(offset).Take(25).ToList();
+            if (pageRequest.PageSize == null)
+            {
+                pageRequest.PageSize = _deafultPageSize;
+            }
+
+            int totalAmount = ev.Participants.Count();
+
+            return new Page<UserEvent>()
+            {
+                Entities = ev.Participants
+                    .Skip((pageRequest.Page - 1) * pageRequest.PageSize.Value)
+                    .Take(pageRequest.PageSize.Value).ToList(),
+                PageNumber = pageRequest.Page,
+                PageSize = pageRequest.PageSize.Value,
+                TotalAmount = totalAmount
+            };
         }
 
         public async Task<bool> RemoveEventParticipant(Guid eventId, Guid userId)

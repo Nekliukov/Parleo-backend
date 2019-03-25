@@ -1,21 +1,19 @@
-using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Models.Pages;
 using System;
-using System.Collections.Generic;
 
 namespace Parleo.DAL.Models.Filters
 {
     public class EventFilter : PageRequest
     {
-        public int MinNumberOfParticipants { get; set; }
+        public int? MinNumberOfParticipants { get; set; }
 
-        public int MaxNumberOfParticipants { get; set; }
+        public int? MaxNumberOfParticipants { get; set; }
 
-        public int MinDistance { get; set; }
+        public int? MinDistance { get; set; }
 
-        public int MaxDistance { get; set; }
+        public int? MaxDistance { get; set; }
 
-        public List<Language> Languages { get; set; }
+        public Guid[] Languages { get; set; }
 
 
         // Will be possibly used in the future

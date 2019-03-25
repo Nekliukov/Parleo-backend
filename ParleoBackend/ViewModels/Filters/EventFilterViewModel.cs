@@ -1,21 +1,19 @@
-using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Pages;
 using System;
-using System.Collections.Generic;
 
 namespace ParleoBackend.ViewModels.Filters
 {
     public class EventFilterViewModel : PageRequestViewModel
     {
-        public int MinNumberOfParticipants { get; set; }
+        public int? MinNumberOfParticipants { get; set; }
 
-        public int MaxNumberOfParticipants { get; set; }
+        public int? MaxNumberOfParticipants { get; set; }
 
-        public int MinDistance { get; set; }
+        public int? MinDistance { get; set; }
 
-        public int MaxDistance { get; set; }
+        public int? MaxDistance { get; set; }
 
-        public List<LanguageViewModel> Languages { get; set; }
+        public Guid[] Languages { get; set; }
 
 
         // Will be possibly used in the future
