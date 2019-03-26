@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parleo.DAL.Contexts;
 using AppContext = Parleo.DAL.Contexts.AppContext;
@@ -10,9 +11,10 @@ using AppContext = Parleo.DAL.Contexts.AppContext;
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20190326102152_FixTablesNames")]
+    partial class FixTablesNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

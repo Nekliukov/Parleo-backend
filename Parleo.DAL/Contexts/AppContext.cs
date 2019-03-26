@@ -5,7 +5,7 @@ namespace Parleo.DAL.Contexts
 {
     public class AppContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> User { get; set; }
 
         public DbSet<Credentials> Credentials { get; set; }
 
