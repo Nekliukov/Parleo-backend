@@ -19,7 +19,7 @@ namespace Parleo.BLL.Interfaces
 
         Task<bool> DisableUserAsync(Guid id);
 
-        Task AddAcountToken(AccountTokenModel tokenModel);
+        Task AddAccountToken(AccountTokenModel tokenModel);
 
     }
 }

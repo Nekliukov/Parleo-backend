@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL;
 using Parleo.DAL;
+using ParleoBackend.Configuration;
 using ParleoBackend.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -49,6 +50,7 @@ namespace ParleoBackend
                 c.IncludeXmlComments(xmlPath);
             });
 
+            IJwtSettings jwtSettings = new JwtSettings(Configuration);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -58,7 +60,7 @@ namespace ParleoBackend
                         ValidateAudience = false,
                         ValidateLifetime = true,
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration.GetSection("JWTSecretKey").Value)
+                            Encoding.UTF8.GetBytes(jwtSettings.JWTKey)
                         ),
                         ValidateIssuerSigningKey = true,
                     };

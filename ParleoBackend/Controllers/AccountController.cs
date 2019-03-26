@@ -81,11 +81,13 @@ namespace ParleoBackend.Controllers
             }
 
             string tokenString = _jwtService.GetJWTToken(user);
-            await _accountService.AddAcountToken(new AccountTokenModel()
-            {
-                ExpirationDate = new DateTime().AddHours(2),
-                UserId = user.Id
-            });
+            await _accountService.AddAccountToken(
+                new AccountTokenModel()
+                {
+                    ExpirationDate = new DateTime().AddHours(2),
+                    UserId = user.Id
+                }
+            );
             await _emailService.SendEmailConfirmationLink(user.Email, tokenString);
             return NoContent();
         }

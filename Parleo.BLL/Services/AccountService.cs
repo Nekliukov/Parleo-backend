@@ -129,7 +129,7 @@ namespace Parleo.BLL.Services
             return await _repository.DisableAsync(id);
         }
 
-        public async Task AddAcountToken(AccountTokenModel tokenModel)
+        public async Task AddAccountToken(AccountTokenModel tokenModel)
         {
             await _repository.AddAccountToken(_mapper.Map<AccountToken>(tokenModel));
         }
