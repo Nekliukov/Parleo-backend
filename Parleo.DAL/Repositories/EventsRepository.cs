@@ -22,7 +22,7 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> AddEventParticipant(Guid eventId, Guid userId)
         {
-            Event targetEvent = await _context.Events
+            Event targetEvent = await _context.Event
                 .Include(e => e.Participants)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
@@ -39,7 +39,7 @@ namespace Parleo.DAL.Repositories
 
         public async Task<Event> CreateEventAsync(Event entity)
         {
-            var createdEvent = _context.Events.Add(entity);
+            var createdEvent = _context.Event.Add(entity);
             await _context.SaveChangesAsync();
 
             return createdEvent.Entity;
@@ -47,7 +47,7 @@ namespace Parleo.DAL.Repositories
 
         public async Task<Event> GetEventAsync(Guid id)
         {
-            return await _context.Events
+            return await _context.Event
                 .Include(e => e.Language)
                 .Include(e => e.Creator)
                 .Include(e => e.Participants)
@@ -58,7 +58,7 @@ namespace Parleo.DAL.Repositories
         public async Task<Page<Event>> GetEventsPageAsync(
             EventFilter eventFilter)
         {
-            var events = await _context.Events
+            var events = await _context.Event
                 .Where(e => (eventFilter.Languages != null) ?
                     eventFilter.Languages.Contains(e.LanguageId) : true)
                 // TODO, need to discus with front
@@ -100,7 +100,7 @@ namespace Parleo.DAL.Repositories
             Guid eventId, 
             PageRequest pageRequest)
         {
-            var targetEvent = await _context.Events
+            var targetEvent = await _context.Event
                 .Include(e => e.Participants)
                 .ThenInclude(ue => ue.User)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
@@ -125,7 +125,7 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> RemoveEventParticipant(Guid eventId, Guid userId)
         {
-            Event targetEvet = await _context.Events
+            Event targetEvet = await _context.Event
                 .Include(e => e.Participants)
                 .ThenInclude(ue => ue.User)
                 .FirstOrDefaultAsync(
@@ -152,7 +152,7 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> UpdateEventAsync(Guid eventId, Event entity)
         {
-            Event updatingEvent = await _context.Events.SingleOrDefaultAsync(
+            Event updatingEvent = await _context.Event.SingleOrDefaultAsync(
                 e => e.Id == eventId);
 
             if (updatingEvent != null)

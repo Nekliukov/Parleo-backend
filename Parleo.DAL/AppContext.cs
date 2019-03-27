@@ -9,7 +9,7 @@ namespace Parleo.DAL
 
         public DbSet<Credentials> Credentials { get; set; }
 
-        public DbSet<Event> Events { get; set; }
+        public DbSet<Event> Event { get; set; }
 
         public AppContext() : base()
         {
