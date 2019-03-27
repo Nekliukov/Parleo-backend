@@ -13,7 +13,7 @@ namespace Parleo.DAL.Repositories
     {
         private readonly AppContext _context;
 
-        private readonly int _deafultPageSize = 25;
+        private readonly int _defaultPageSize = 25;
 
         public EventsRepository(AppContext context)
         {
@@ -22,10 +22,11 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> AddEventParticipant(Guid eventId, Guid userId)
         {
-            Event ev = await _context.Events.Include(e => e.Participants)
+            Event targetEvent = await _context.Events
+                .Include(e => e.Participants)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
-            ev.Participants.Add(new UserEvent
+            targetEvent.Participants.Add(new UserEvent
             {
                 EventId = eventId,
                 UserId = userId
@@ -38,10 +39,10 @@ namespace Parleo.DAL.Repositories
 
         public async Task<Event> CreateEventAsync(Event entity)
         {
-            var ev = _context.Events.Add(entity);
+            var createdEvent = _context.Events.Add(entity);
             await _context.SaveChangesAsync();
 
-            return ev.Entity;
+            return createdEvent.Entity;
         }
 
         public async Task<Event> GetEventAsync(Guid id)
@@ -81,7 +82,7 @@ namespace Parleo.DAL.Repositories
 
             if (eventFilter.PageSize == null)
             {
-                eventFilter.PageSize = _deafultPageSize;
+                eventFilter.PageSize = _defaultPageSize;
             }
 
             return new Page<Event>()
@@ -99,21 +100,21 @@ namespace Parleo.DAL.Repositories
             Guid eventId, 
             PageRequest pageRequest)
         {
-            var ev = await _context.Events
+            var targetEvent = await _context.Events
                 .Include(e => e.Participants)
                 .ThenInclude(ue => ue.User)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
             if (pageRequest.PageSize == null)
             {
-                pageRequest.PageSize = _deafultPageSize;
+                pageRequest.PageSize = _defaultPageSize;
             }
 
-            int totalAmount = ev.Participants.Count();
+            int totalAmount = targetEvent.Participants.Count();
 
             return new Page<UserEvent>()
             {
-                Entities = ev.Participants
+                Entities = targetEvent.Participants
                     .Skip((pageRequest.Page - 1) * pageRequest.PageSize.Value)
                     .Take(pageRequest.PageSize.Value).ToList(),
                 PageNumber = pageRequest.Page,
@@ -124,20 +125,20 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> RemoveEventParticipant(Guid eventId, Guid userId)
         {
-            Event ev = await _context.Events                
+            Event targetEvet = await _context.Events
                 .Include(e => e.Participants)
                 .ThenInclude(ue => ue.User)
                 .FirstOrDefaultAsync(
                 e => e.Id == eventId);
 
-            if (ev != null)
+            if (targetEvet != null)
             {
-                UserEvent userEvent = ev.Participants                    
+                UserEvent userEvent = targetEvet.Participants
                     .FirstOrDefault(ue => ue.UserId == userId);
 
                 if (userEvent != null)
                 {
-                    ev.Participants.Remove(userEvent);
+                    targetEvet.Participants.Remove(userEvent);
                     var result = await _context.SaveChangesAsync();
 
                     return result != 0;
@@ -151,21 +152,21 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> UpdateEventAsync(Guid eventId, Event entity)
         {
-            Event ev = await _context.Events.SingleOrDefaultAsync(
+            Event updatingEvent = await _context.Events.SingleOrDefaultAsync(
                 e => e.Id == eventId);
 
-            if (ev != null)
+            if (updatingEvent != null)
             {                
-                ev.CreatorId = entity.CreatorId;
-                ev.Description = entity.Description;
-                ev.EndDate = entity.EndDate;
-                ev.IsFinished = entity.IsFinished;
-                ev.LanguageId = entity.LanguageId;
-                ev.Latitude = entity.Latitude;
-                ev.Longitude = entity.Longitude;
-                ev.MaxParticipants = entity.MaxParticipants;
-                ev.Name = entity.Name;
-                ev.StartTime = entity.StartTime;                
+                updatingEvent.CreatorId = entity.CreatorId;
+                updatingEvent.Description = entity.Description;
+                updatingEvent.EndDate = entity.EndDate;
+                updatingEvent.IsFinished = entity.IsFinished;
+                updatingEvent.LanguageId = entity.LanguageId;
+                updatingEvent.Latitude = entity.Latitude;
+                updatingEvent.Longitude = entity.Longitude;
+                updatingEvent.MaxParticipants = entity.MaxParticipants;
+                updatingEvent.Name = entity.Name;
+                updatingEvent.StartTime = entity.StartTime;
             }
 
             var result = await _context.SaveChangesAsync();

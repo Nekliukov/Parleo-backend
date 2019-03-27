@@ -52,8 +52,8 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<ActionResult> GetEventAsync(Guid eventId)
         {
-            var e = await _service.GetEventAsync(eventId);
-            return Ok(_mapper.Map<EventViewModel>(e));
+            var foundEvent = await _service.GetEventAsync(eventId);
+            return Ok(_mapper.Map<EventViewModel>(foundEvent));
         }
 
         [HttpGet("{eventId}/page")]
@@ -73,13 +73,13 @@ namespace ParleoBackend.Controllers
         public async Task<ActionResult> CreateEventAsync(
             [FromQuery] CreateOrUpdateEventViewModel entity)
         {
-            var ev = await _service.CreateEventAsync(
+            var createdEvent = await _service.CreateEventAsync(
                 _mapper.Map<CreateOrUpdateEventModel>(entity));
 
-            return Ok(_mapper.Map<EventViewModel>(ev));
+            return Ok(_mapper.Map<EventViewModel>(createdEvent));
         }
 
-        [HttpPut("{eventId}/update")]
+        [HttpPut("{eventId}")]
         [Authorize]
         public async Task<ActionResult> UpdateEventAsync(
             Guid eventId,

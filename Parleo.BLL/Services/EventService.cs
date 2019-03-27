@@ -32,17 +32,17 @@ namespace Parleo.BLL.Services
         public async Task<EventModel> CreateEventAsync(
             CreateOrUpdateEventModel entity)
         {
-            Event ev = await _repository.CreateEventAsync(
+            Event createdEvent = await _repository.CreateEventAsync(
                 _mapper.Map<Event>(entity));
 
-            return _mapper.Map<EventModel>(ev);
+            return _mapper.Map<EventModel>(createdEvent);
         }
 
         public async Task<EventModel> GetEventAsync(Guid id)
         {
-            Event ev = await _repository.GetEventAsync(id);
+            Event foundEvent = await _repository.GetEventAsync(id);
 
-            return _mapper.Map<EventModel>(ev);
+            return _mapper.Map<EventModel>(foundEvent);
         }
 
         public async Task<PageModel<EventModel>> GetEventsPageAsync(
