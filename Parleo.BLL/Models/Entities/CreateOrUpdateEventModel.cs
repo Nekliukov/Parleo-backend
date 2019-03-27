@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ParleoBackend.ViewModels.Entities
+namespace Parleo.BLL.Models.Entities
 {
-    public class UpdateEventViewModel
+    public class CreateOrUpdateEventModel
     {
         public string Name { get; set; }
 

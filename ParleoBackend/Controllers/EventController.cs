@@ -71,9 +71,10 @@ namespace ParleoBackend.Controllers
         [HttpPost("create")]
         [Authorize]
         public async Task<ActionResult> CreateEventAsync(
-            [FromQuery] UpdateEventViewModel entity)
+            [FromQuery] CreateOrUpdateEventViewModel entity)
         {
-            var ev = await _service.CreateEventAsync(_mapper.Map<UpdateEventModel>(entity));
+            var ev = await _service.CreateEventAsync(
+                _mapper.Map<CreateOrUpdateEventModel>(entity));
 
             return Ok(_mapper.Map<EventViewModel>(ev));
         }
@@ -82,10 +83,10 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<ActionResult> UpdateEventAsync(
             Guid eventId,
-            [FromQuery] UpdateEventViewModel entity)
+            [FromQuery] CreateOrUpdateEventViewModel entity)
         {
             var result = await _service.UpdateEventAsync(eventId,
-                _mapper.Map<UpdateEventModel>(entity));
+                _mapper.Map<CreateOrUpdateEventModel>(entity));
 
             return Ok();
         }

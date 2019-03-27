@@ -35,7 +35,7 @@ namespace Parleo.BLL.Extensions
                     .ForMember(em => em.ParticipantsCount,
                         opt => opt.MapFrom(e => e.Participants.Count));                           
                 
-                mc.CreateMap<UpdateEventModel, DataAccessEvent>();                
+                mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();
 
                 mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
                     .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.UserId))

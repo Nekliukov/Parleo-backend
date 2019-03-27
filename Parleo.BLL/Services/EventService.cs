@@ -29,9 +29,11 @@ namespace Parleo.BLL.Services
             return await _repository.AddEventParticipant(eventId, userId);       
         }
 
-        public async Task<EventModel> CreateEventAsync(UpdateEventModel entity)
+        public async Task<EventModel> CreateEventAsync(
+            CreateOrUpdateEventModel entity)
         {
-            Event ev = await _repository.CreateEventAsync(_mapper.Map<Event>(entity));
+            Event ev = await _repository.CreateEventAsync(
+                _mapper.Map<Event>(entity));
 
             return _mapper.Map<EventModel>(ev);
         }
@@ -75,9 +77,11 @@ namespace Parleo.BLL.Services
             return await _repository.RemoveEventParticipant(eventId, userId);
         }
 
-        public async Task<bool> UpdateEventAsync(Guid eventId, UpdateEventModel entity)
+        public async Task<bool> UpdateEventAsync(Guid eventId, 
+            CreateOrUpdateEventModel entity)
         {
-            return await _repository.UpdateEventAsync(eventId, _mapper.Map<Event>(entity));
+            return await _repository.UpdateEventAsync(
+                eventId, _mapper.Map<Event>(entity));
         }
     }
 }
