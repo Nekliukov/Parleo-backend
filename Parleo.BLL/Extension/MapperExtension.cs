@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using Parleo.BLL.Models;
-using DataAccessAuth = Parleo.DAL.Entities.Credentials;
-using DataAccessUser = Parleo.DAL.Entities.User;
-using DataAccessLanguage = Parleo.DAL.Entities.Language;
-using DataAccessEvent = Parleo.DAL.Entities.Event;
-using DataAccessUserLanguage = Parleo.DAL.Entities.UserLanguage;
+using Parleo.BLL.Models.Entities;
+using Parleo.BLL.Models.Filters;
+using Parleo.DAL.Models.Filters;
+using Parleo.DAL.Models.Pages;
+using Parleo.BLL.Models.Pages;
+using DataAccessAuth = Parleo.DAL.Models.Entities.Credentials;
+using DataAccessUser = Parleo.DAL.Models.Entities.User;
+using DataAccessLanguage = Parleo.DAL.Models.Entities.Language;
+using DataAccessEvent = Parleo.DAL.Models.Entities.Event;
+using DataAccessUserLanguage = Parleo.DAL.Models.Entities.UserLanguage;
 
 namespace Parleo.BLL.Extensions
 {
@@ -15,28 +19,23 @@ namespace Parleo.BLL.Extensions
         {
             var mappingConfig = new MapperConfiguration(mc =>
             {
+                // entities
                 mc.CreateMap<DataAccessAuth, AuthorizationModel>();
                 mc.CreateMap<AuthorizationModel, DataAccessAuth>();
 
                 mc.CreateMap<UserModel, DataAccessUser>();
                 mc.CreateMap<DataAccessUser, UserModel>()
                     .ForMember(ui => ui.Email, 
-                        opt => opt.MapFrom(uivm => uivm.Credentials.Email));
+                        opt => opt.MapFrom(uivm => uivm.Credentials.Email));                
 
                 mc.CreateMap<DataAccessLanguage, LanguageModel>();
                 mc.CreateMap<LanguageModel, DataAccessLanguage>();
 
                 mc.CreateMap<DataAccessEvent, EventModel>()
                     .ForMember(em => em.ParticipantsCount,
-                        opt => opt.MapFrom(e => e.Participants.Count))
-                    .ForMember(em => em.CreatorId,
-                        opt => opt.MapFrom(e => e.Creator.Id));
-                mc.CreateMap<EventModel, DataAccessEvent>()
-                    .ForMember(e => e.Creator,
-                        opt => opt.MapFrom(em => new DataAccessUser()
-                        {
-                            Id = em.Id
-                        }));
+                        opt => opt.MapFrom(e => e.Participants.Count));                           
+                
+                mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();
 
                 mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
                     .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.UserId))
@@ -44,6 +43,23 @@ namespace Parleo.BLL.Extensions
                         opt => opt.MapFrom(ulvm => ulvm.Language.Name));
 
                 mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
+
+                // filters
+                mc.CreateMap<ChatFilterModel, ChatFilter>();
+                mc.CreateMap<ChatFilter, ChatFilterModel>();
+
+                mc.CreateMap<EventFilterModel, EventFilter>();
+                mc.CreateMap<EventFilter, EventFilterModel>();
+
+                mc.CreateMap<UserFilterModel, UserFilter>();
+                mc.CreateMap<UserFilter, UserFilterModel>();
+
+                // pages
+                mc.CreateMap(typeof(PageModel<>), typeof(Page<>));
+                mc.CreateMap(typeof(Page<>), typeof(PageModel<>));
+
+                mc.CreateMap<PageRequestModel, PageRequest>();
+                mc.CreateMap<PageRequest, PageRequestModel>();
             });
 
             IMapper mapper = mappingConfig.CreateMapper();

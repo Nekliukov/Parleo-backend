@@ -1,6 +1,6 @@
 ﻿using Parleo.BLL.Interfaces;
-using Parleo.BLL.Models;
-using Parleo.DAL.Entities;
+using Parleo.BLL.Models.Entities;
+using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
