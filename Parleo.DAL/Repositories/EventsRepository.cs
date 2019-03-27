@@ -67,7 +67,7 @@ namespace Parleo.DAL.Repositories
                 .Where(e => (eventFilter.MaxNumberOfParticipants != null) ?
                     e.MaxParticipants <= eventFilter.MaxNumberOfParticipants : true)
                 .Where(e => (eventFilter.MinNumberOfParticipants != null) ?
-                    e.MaxParticipants >= eventFilter.MaxNumberOfParticipants : true)
+                    e.MaxParticipants >= eventFilter.MinNumberOfParticipants : true)
                 .Where(e => (eventFilter.MaxStartDate != null) ?
                     e.StartTime <= eventFilter.MaxStartDate : true)
                 .Where(e => (eventFilter.MinStartDate != null) ?
@@ -156,7 +156,7 @@ namespace Parleo.DAL.Repositories
                 e => e.Id == eventId);
 
             if (updatingEvent != null)
-            {                
+            {
                 updatingEvent.CreatorId = entity.CreatorId;
                 updatingEvent.Description = entity.Description;
                 updatingEvent.EndDate = entity.EndDate;
