@@ -150,24 +150,9 @@ namespace Parleo.DAL.Repositories
             return false;
         }
 
-        public async Task<bool> UpdateEventAsync(Guid eventId, Event entity)
+        public async Task<bool> UpdateEventAsync(Event entity)
         {
-            Event updatingEvent = await _context.Event.SingleOrDefaultAsync(
-                e => e.Id == eventId);
-
-            if (updatingEvent != null)
-            {
-                updatingEvent.CreatorId = entity.CreatorId;
-                updatingEvent.Description = entity.Description;
-                updatingEvent.EndDate = entity.EndDate;
-                updatingEvent.IsFinished = entity.IsFinished;
-                updatingEvent.LanguageId = entity.LanguageId;
-                updatingEvent.Latitude = entity.Latitude;
-                updatingEvent.Longitude = entity.Longitude;
-                updatingEvent.MaxParticipants = entity.MaxParticipants;
-                updatingEvent.Name = entity.Name;
-                updatingEvent.StartTime = entity.StartTime;
-            }
+            _context.Event.Update(entity);
 
             var result = await _context.SaveChangesAsync();
 

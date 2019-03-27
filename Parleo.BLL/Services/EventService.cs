@@ -80,8 +80,11 @@ namespace Parleo.BLL.Services
         public async Task<bool> UpdateEventAsync(Guid eventId, 
             CreateOrUpdateEventModel entity)
         {
-            return await _repository.UpdateEventAsync(
-                eventId, _mapper.Map<Event>(entity));
+            var updatingEvent = await _repository.GetEventAsync(eventId);
+
+            _mapper.Map(entity, updatingEvent);
+
+            return await _repository.UpdateEventAsync(updatingEvent);
         }
     }
 }
