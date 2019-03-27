@@ -5,11 +5,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Parleo.DAL.Contexts;
 
 namespace Parleo.DAL.Migrations
 {
-    [DbContext(typeof(Contexts.AppContext))]
+    [DbContext(typeof(AppContext))]
     [Migration("20190310161547_CreateInitialModels")]
     partial class CreateInitialModels
     {

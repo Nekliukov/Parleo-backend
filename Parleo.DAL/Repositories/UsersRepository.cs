@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Parleo.DAL.Contexts;
 using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
 
@@ -11,9 +10,9 @@ namespace Parleo.DAL.Repositories
 {
     public class UsersRepository : IUsersRepository
     {
-        private readonly Contexts.AppContext _context;
+        private readonly AppContext _context;
 
-        public UsersRepository(Contexts.AppContext context)
+        public UsersRepository(AppContext context)
         {
             _context = context;
         }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Parleo.DAL.Models.Entities;
 
-namespace Parleo.DAL.Contexts
+namespace Parleo.DAL
 {
     public class AppContext : DbContext
     {

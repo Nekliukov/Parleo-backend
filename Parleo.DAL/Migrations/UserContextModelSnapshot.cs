@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Parleo.DAL.Contexts;
-using AppContext = Parleo.DAL.Contexts.AppContext;
 
 namespace Parleo.DAL.Migrations
 {

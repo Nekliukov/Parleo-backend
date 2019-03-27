@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Parleo.DAL.Contexts;
 using Parleo.DAL.Interfaces;
 using Parleo.DAL.Repositories;
 

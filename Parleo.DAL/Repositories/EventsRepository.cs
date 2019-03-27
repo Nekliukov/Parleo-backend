@@ -11,11 +11,11 @@ namespace Parleo.DAL.Repositories
 {
     public class EventsRepository : IEventsRepository
     {
-        private readonly Contexts.AppContext _context;
+        private readonly AppContext _context;
 
         private readonly int _deafultPageSize = 25;
 
-        public EventsRepository(Contexts.AppContext context)
+        public EventsRepository(AppContext context)
         {
             _context = context;
         }
