@@ -33,9 +33,7 @@ namespace Parleo.BLL.Services
                 _emailClientSettings.UserName,
                 _emailClientSettings.Password
             );
-
-            client.EnableSsl = true;
-
+            
             await client.SendMailAsync(message);
         }
 
