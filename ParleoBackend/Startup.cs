@@ -64,6 +64,7 @@ namespace ParleoBackend
                     };
                 });
 
+            // TODO: refactor this and specify origins
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",
