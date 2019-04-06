@@ -17,8 +17,8 @@ namespace ParleoBackend.ViewModels.Filters
 
 
         // Will be possibly used in the future
-        public DateTimeOffset MinStartDate { get; set; }
+        public DateTimeOffset? MinStartDate { get; set; }
 
-        public DateTimeOffset MaxStartDate { get; set; }
+        public DateTimeOffset? MaxStartDate { get; set; }
     }
 }
