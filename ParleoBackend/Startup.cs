@@ -64,6 +64,19 @@ namespace ParleoBackend
                     };
                 });
 
+            // TODO: refactor this and specify origins
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                    });
+            });
 
             MapperExtension.Configure(services);
 
@@ -89,6 +102,7 @@ namespace ParleoBackend
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
+            app.UseCors("AllowAll");
             app.UseMvc();
             app.UseSwagger();
 
