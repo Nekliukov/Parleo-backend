@@ -31,7 +31,6 @@ namespace ParleoBackend
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSwaggerDocumentation();
-
             MapperExtension.Configure(services);
             BLServices.AddServices(services);
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));

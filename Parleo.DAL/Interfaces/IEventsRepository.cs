@@ -1,18 +1,20 @@
-﻿using Parleo.DAL.Entities;
+﻿using Parleo.DAL.Models.Entities;
+using Parleo.DAL.Models.Filters;
+using Parleo.DAL.Models.Pages;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Parleo.DAL.Interfaces
 {
     public interface IEventsRepository
     {
-        Task<IEnumerable<Event>> GetEventsPageAsync(int offset);
-
-        // By filters
+        Task<Page<Event>> GetEventsPageAsync(
+            EventFilter eventFilter);
+        
         Task<Event> GetEventAsync(Guid id);
 
-        Task<IEnumerable<UserEvent>> GetParticipantsPageAsync(Guid eventId, int offset);
+        Task<Page<UserEvent>> GetParticipantsPageAsync(
+            Guid eventId, PageRequest pageRequest);
 
         Task<Event> CreateEventAsync(Event entity);
 

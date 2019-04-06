@@ -1,22 +1,24 @@
-﻿using Parleo.BLL.Models;
+﻿using Parleo.BLL.Models.Entities;
+using Parleo.BLL.Models.Filters;
+using Parleo.BLL.Models.Pages;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Parleo.BLL.Interfaces
 {
     public interface IEventService
     {
-        Task<IEnumerable<EventModel>> GetEventsPageAsync(int offset);
-
-        // By filters
+        Task<PageModel<EventModel>> GetEventsPageAsync(
+            EventFilterModel eventFilter);
+        
         Task<EventModel> GetEventAsync(Guid id);
 
-        Task<IEnumerable<UserModel>> GetParticipantsPageAsync(Guid eventId, int offset);
+        Task<PageModel<UserModel>> GetParticipantsPageAsync(
+            Guid eventId, PageRequestModel pageRequest);
 
-        Task<EventModel> CreateEventAsync(EventModel entity);
+        Task<EventModel> CreateEventAsync(CreateOrUpdateEventModel entity);
 
-        Task<bool> UpdateEventAsync(EventModel entity);
+        Task<bool> UpdateEventAsync(Guid eventId, CreateOrUpdateEventModel entity);
 
         Task<bool> AddEventParticipant(Guid eventId, Guid userId);
 
