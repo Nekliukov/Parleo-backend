@@ -19,5 +19,6 @@ namespace Parleo.BLL.Interfaces
 
         Task<bool> DisableUserAsync(Guid id);
 
+        Task InsertUserAccountImageAsync(string imageName, Guid userId);
     }
 }

@@ -13,6 +13,9 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using Parleo.BLL;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using ParleoBackend.Contracts;
 
 namespace ParleoBackend.Controllers
 {
@@ -22,6 +25,7 @@ namespace ParleoBackend.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
+        private readonly IAccountImageSettings _accountImageSettings;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
@@ -29,13 +33,15 @@ namespace ParleoBackend.Controllers
             IAccountService accountService,
             IMapper mapper,
             IConfiguration configuration,
-            ILogger<AccountController> logger
+            ILogger<AccountController> logger,
+            IAccountImageSettings accountImageSettings
         )
         {
             _accountService = accountService;
             _configuration = configuration; 
             _mapper = mapper;
             _logger = logger;
+            _accountImageSettings = accountImageSettings;
         }
 
         [HttpGet]
@@ -139,6 +145,39 @@ namespace ParleoBackend.Controllers
             }
 
             return Ok(_mapper.Map<UserViewModel>(user));
+        }
+
+        [HttpPut("account-image")]
+        [Authorize]
+        public async Task<IActionResult> AddUserAccountImage(IFormFile image)
+        {
+            string accountImagePath = _accountImageSettings.DestPath;
+            Guid userId = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+            UserModel user = await _accountService.GetUserByIdAsync(userId);
+
+            if (user.AccountImage != null)
+            {
+                System.IO.File.Delete(Path.Combine(accountImagePath, user.AccountImage));
+            }
+
+            string accountImageUniqueId = Guid.NewGuid().ToString();
+            string accountImageExtension = Path.GetExtension(image.FileName);
+            string path = Path.Combine(accountImagePath, accountImageUniqueId + accountImageExtension);
+
+            if (image != null && image.Length > 0)
+            {
+                using (FileStream stream = new FileStream(path, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+            }
+
+            await _accountService.InsertUserAccountImageAsync(
+                accountImageUniqueId,
+                userId
+            );
+
+            return Ok();
         }
     }
 }
