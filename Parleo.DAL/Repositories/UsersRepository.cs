@@ -54,5 +54,17 @@ namespace Parleo.DAL.Repositories
         {
             return await _context.Credentials.Include(c => c.User).FirstOrDefaultAsync(с => с.Email == email);
         }
+
+        public async Task InsertAccountImageNameAsync(string imageName, Guid userId)
+        {
+            User user = new User()
+            {
+                Id = userId,
+                AccountImage = imageName
+            };
+            _context.User.Attach(user);
+            _context.Entry(user).Property(x => x.AccountImage).IsModified = true;
+            await _context.SaveChangesAsync();
+        }
     }
 }
