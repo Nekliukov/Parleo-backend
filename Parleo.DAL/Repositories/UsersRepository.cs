@@ -42,7 +42,8 @@ namespace Parleo.DAL.Repositories
                     u.Gender == userFilter.Gender : true)
                 .Where(u => (userFilter.Languages != null &&
                         userFilter.Languages.Count() != 0) ?
-                    userFilter.Languages.Any(l => u.Languages.Contains(l)) : true)
+                    userFilter.Languages.Any(l => u.Languages.Any(
+                        ul => ul.LanguageId == l.LanguageId)) : true)
                 // TODO, need to discus with front
                 //.Where(u => (userFilter.MaxDistance != null) ? true : true)
                 //.Where(u => (userFilter.MinDistance != null) ? true : true))

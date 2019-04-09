@@ -15,6 +15,7 @@ using System.Net;
 using Parleo.BLL;
 using ParleoBackend.ViewModels.Filters;
 using Parleo.BLL.Models.Filters;
+using ParleoBackend.ViewModels.Pages;
 
 namespace ParleoBackend.Controllers
 {
@@ -55,7 +56,7 @@ namespace ParleoBackend.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<IEnumerable<UserViewModel>>(users));
+            return Ok(_mapper.Map<PageViewModel<UserViewModel>>(users));
         }
 
         [HttpPost("register")]
