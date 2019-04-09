@@ -1,6 +1,7 @@
 ﻿using Parleo.BLL.Models.Entities;
+using Parleo.BLL.Models.Filters;
+using Parleo.BLL.Models.Pages;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Parleo.BLL.Interfaces
@@ -9,7 +10,7 @@ namespace Parleo.BLL.Interfaces
     {
         Task<UserModel> AuthenticateAsync(AuthorizationModel authorizationModel);
 
-        Task<IEnumerable<UserModel>> GetUsersPageAsync(int number);
+        Task<PageModel<UserModel>> GetUsersPageAsync(UserFilterModel pageRequest);
 
         Task<UserModel> GetUserByIdAsync(Guid id);
 
