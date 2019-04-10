@@ -96,8 +96,10 @@ namespace Parleo.DAL.Repositories
 
         private int GetAge(DateTimeOffset birth)
         {
-            return new DateTime(
-                DateTime.Now.Subtract(birth.DateTime).Ticks).Year - 1;
+            int age = new DateTime(
+                DateTime.Now.Subtract(birth.DateTime).Ticks).Year;
+
+            return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
         }
     }
 }

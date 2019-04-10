@@ -54,7 +54,6 @@ namespace Parleo.BLL.Services
             return _mapper.Map<UserModel>(user.User);
         }
 
-        //TODO: add filters
         public async Task<PageModel<UserModel>> GetUsersPageAsync(
             UserFilterModel pageRequest)
         {
