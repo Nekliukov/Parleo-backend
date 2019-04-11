@@ -16,6 +16,6 @@ namespace Parleo.DAL.Models.Filters
 
         public int? MaxDistance { get; set; }
 
-        public List<UserLanguage> Languages { get; set; }
+        public UserLanguage[] Languages { get; set; }
     }
 }
