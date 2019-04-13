@@ -71,6 +71,7 @@ namespace ParleoBackend
 
             BLServices.AddServices(services);
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
+            WebServices.AddServices(services);
 
             services
                 .AddMvc()
@@ -90,11 +91,11 @@ namespace ParleoBackend
             }
 
             IAccountImageSettings imageSettings = new AccountImageSettings(Configuration);
-
+            
             app.UseStaticFiles(new StaticFileOptions
                 {
                     FileProvider = new PhysicalFileProvider(
-                        imageSettings.DestPath
+                        Path.GetFullPath(imageSettings.DestPath)
                     ),
                     RequestPath = imageSettings.SourceUrl
                 }

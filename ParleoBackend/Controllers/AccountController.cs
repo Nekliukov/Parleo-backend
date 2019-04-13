@@ -147,10 +147,15 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<UserViewModel>(user));
         }
 
-        [HttpPut("account-image")]
+        [HttpPut("image")]
         [Authorize]
         public async Task<IActionResult> AddUserAccountImage(IFormFile image)
         {
+            if (image == null)
+            {
+                return BadRequest();
+            }
+
             string accountImagePath = _accountImageSettings.DestPath;
             Guid userId = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
             UserModel user = await _accountService.GetUserByIdAsync(userId);
@@ -173,7 +178,7 @@ namespace ParleoBackend.Controllers
             }
 
             await _accountService.InsertUserAccountImageAsync(
-                accountImageUniqueId,
+                accountImageUniqueId + accountImageExtension,
                 userId
             );
 
