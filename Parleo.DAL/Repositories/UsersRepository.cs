@@ -62,7 +62,6 @@ namespace Parleo.DAL.Repositories
                 Id = userId,
                 AccountImage = imageName
             };
-            _context.User.Attach(user);
             _context.Entry(user).Property(x => x.AccountImage).IsModified = true;
             await _context.SaveChangesAsync();
         }
