@@ -108,7 +108,7 @@ namespace ParleoBackend.Controllers
             return Ok(new { token = tokenString });
         }
 
-        [HttpPut("edit")]
+        [HttpPut("{userId}")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
@@ -132,13 +132,12 @@ namespace ParleoBackend.Controllers
             return NoContent();
         }
 
-        [HttpGet("getUser")]
+        [HttpGet("{userId}")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserAsync()
+        public async Task<IActionResult> GetUserAsync(string userId)
         {
-            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-            UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
+            UserModel user = await _accountService.GetUserByIdAsync(new Guid(userId));
             if (user == null)
             {
                 return BadRequest();
@@ -147,7 +146,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<UserViewModel>(user));
         }
 
-        [HttpPut("image")]
+        [HttpPut("{userId}/image")]
         [Authorize]
         public async Task<IActionResult> AddUserAccountImage(IFormFile image)
         {
