@@ -6,6 +6,8 @@ namespace Parleo.BLL.Models.Entities
     {
         public Guid Id { get; set; }
 
+        public string AccountImage { get; set; }
+
         public string Name { get; set; }
 
         public DateTime Birthdate { get; set; }
