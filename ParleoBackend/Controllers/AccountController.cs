@@ -164,20 +164,10 @@ namespace ParleoBackend.Controllers
                 System.IO.File.Delete(Path.Combine(accountImagePath, user.AccountImage));
             }
 
-            string accountImageUniqueId = Guid.NewGuid().ToString();
-            string accountImageExtension = Path.GetExtension(image.FileName);
-            string path = Path.Combine(accountImagePath, accountImageUniqueId + accountImageExtension);
-
-            if (image != null && image.Length > 0)
-            {
-                using (FileStream stream = new FileStream(path, FileMode.Create))
-                {
-                    await image.CopyToAsync(stream);
-                }
-            }
+            string accountImageUniqueName = await image.SaveAsync(accountImagePath);
 
             await _accountService.InsertUserAccountImageAsync(
-                accountImageUniqueId + accountImageExtension,
+                accountImageUniqueName,
                 userId
             );
 
