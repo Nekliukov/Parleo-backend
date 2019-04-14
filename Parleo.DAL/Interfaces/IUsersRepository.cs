@@ -1,13 +1,14 @@
 ﻿using Parleo.DAL.Models.Entities;
+using Parleo.DAL.Models.Filters;
+using Parleo.DAL.Models.Pages;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Parleo.DAL.Interfaces
 {
     public interface IUsersRepository
     {
-        Task<IList<User>> GetPageAsync(int number);
+        Task<Page<User>> GetPageAsync(UserFilter userFilter);
 
         Task<User> GetAsync(Guid id);
 

@@ -45,7 +45,7 @@ namespace ParleoBackend.Controllers
             var result = await _service.GetEventsPageAsync(
                 _mapper.Map<EventFilterModel>(eventFilter));
 
-            return Ok(result);
+            return Ok(_mapper.Map<PageViewModel<EventViewModel>>(result));
         }
 
         [HttpGet("{eventId}")]
@@ -56,7 +56,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<EventViewModel>(foundEvent));
         }
 
-        [HttpGet("{eventId}/page")]
+        [HttpGet("{eventId}/participants")]
         [Authorize]
         public async Task<ActionResult> GetParticipantsPageAsync(
             Guid eventId,

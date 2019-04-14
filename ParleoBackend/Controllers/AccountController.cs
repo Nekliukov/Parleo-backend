@@ -51,20 +51,18 @@ namespace ParleoBackend.Controllers
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUsers(int offset)
+        public async Task<IActionResult> GetUsersPageAsync(
+            [FromQuery] UserFilterViewModel userFilter)
         {
-            if(offset < 0)
-            {
-                return BadRequest();
-            }
+            var users = await _accountService.GetUsersPageAsync(
+                _mapper.Map<UserFilterModel>(userFilter));
 
-            IEnumerable<UserModel> users = await _accountService.GetUsersPageAsync(offset);
             if (users == null)
             {
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<IEnumerable<UserViewModel>>(users));
+            return Ok(_mapper.Map<PageViewModel<UserViewModel>>(users));
         }
 
         [HttpPost("register")]

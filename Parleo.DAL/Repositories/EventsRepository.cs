@@ -59,7 +59,8 @@ namespace Parleo.DAL.Repositories
             EventFilter eventFilter)
         {
             var events = await _context.Event
-                .Where(e => (eventFilter.Languages != null) ?
+                .Where(e => (eventFilter.Languages != null && 
+                        eventFilter.Languages.Count() != 0) ?
                     eventFilter.Languages.Contains(e.LanguageId) : true)
                 // TODO, need to discus with front
                 //.Where(e => (eventFilter.MaxDistance != null) ? true : true)
