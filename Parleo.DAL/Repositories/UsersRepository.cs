@@ -101,5 +101,16 @@ namespace Parleo.DAL.Repositories
 
             return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
         }
+
+        public async Task InsertAccountImageNameAsync(string imageName, Guid userId)
+        {
+            User user = new User()
+            {
+                Id = userId,
+                AccountImage = imageName
+            };
+            _context.Entry(user).Property(x => x.AccountImage).IsModified = true;
+            await _context.SaveChangesAsync();
+        }
     }
 }

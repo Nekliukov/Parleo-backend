@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+﻿using System.IO;
+using System.Reflection;
 using System.Text;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -7,10 +9,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL;
 using Parleo.DAL;
+using ParleoBackend.Configuration;
+using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
 using ParleoBackend.Validators;
 using ParleoBackend.Validators.User;
@@ -67,6 +72,7 @@ namespace ParleoBackend
 
             BLServices.AddServices(services);
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
+            WebServices.AddServices(services);
 
             services
                 .AddMvc()
@@ -92,6 +98,16 @@ namespace ParleoBackend
                 app.UseHsts();
             }
 
+            IAccountImageSettings imageSettings = new AccountImageSettings(Configuration);
+            
+            app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.GetFullPath(imageSettings.DestPath)
+                    ),
+                    RequestPath = imageSettings.SourceUrl
+                }
+            );
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
