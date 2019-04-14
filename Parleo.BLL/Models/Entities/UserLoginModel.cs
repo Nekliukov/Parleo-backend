@@ -1,6 +1,6 @@
 ﻿namespace Parleo.BLL.Models.Entities
 {
-    public class AuthorizationModel
+    public class UserLoginModel
     {
         public string Email { get; set; }
 
