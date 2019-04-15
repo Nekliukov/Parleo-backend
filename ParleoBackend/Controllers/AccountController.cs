@@ -6,16 +6,18 @@ using AutoMapper;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System;
-using System.Collections.Generic;
 using ParleoBackend.Extensions;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using Parleo.BLL;
 using ParleoBackend.ViewModels.Filters;
 using Parleo.BLL.Models.Filters;
 using ParleoBackend.ViewModels.Pages;
+using System.Linq;
+using ParleoBackend.Validators.User;
+using FluentValidation.Results;
+using Parleo.BLL.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using ParleoBackend.Contracts;
@@ -67,45 +69,45 @@ namespace ParleoBackend.Controllers
 
         [HttpPost("register")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RegisterAsync(AuthorizationViewModel authorizationViewModel)
+        public async Task<IActionResult> RegisterAsync(UserRegistrationViewModel registrationViewModel)
         {
-            AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationViewModel);
-            UserModel user;
-            try
+            var validator = new UserRegistrationViewModelValidator(_accountService);
+            ValidationResult result = validator.Validate(registrationViewModel);
+            if (!result.IsValid)
             {
-                user = await _accountService.CreateUserAsync(authorizationModel);
-            }
-            catch(AppException ex)
-            {
-                return BadRequest(ex.Error.ToString());
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
+            UserRegistrationModel authorizationModel = _mapper.Map<UserRegistrationModel>(registrationViewModel);
+            UserModel user = await _accountService.CreateUserAsync(authorizationModel);
             if (user == null)
             {
-                return BadRequest();
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_CREATION_FAILED));
             }
 
-            string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
+            string tokenString = AuthorizationExtension.GetJWTToken(user,_configuration.GetSection("JWTSecretKey").Value);
             return Ok(new { token = tokenString });
         }
 
         [HttpPost("login")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> LoginAsync(AuthorizationViewModel authorizationViewModel)
+        public async Task<IActionResult> LoginAsync(UserLoginViewModel loginViewModel)
         {
-            AuthorizationModel authorizationModel = _mapper.Map<AuthorizationModel>(authorizationViewModel);
-            UserModel user;
-            try
+            var validator = new UserLoginViewModelValidator(_accountService);
+            ValidationResult result = validator.Validate(loginViewModel);
+            if (!result.IsValid)
             {
-                user = await _accountService.AuthenticateAsync(authorizationModel);
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
-            catch (AppException ex)
-            {
-                return BadRequest(ex.Error.ToString());
-            }
- 
-            string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
 
+            UserLoginModel authorizationModel = _mapper.Map<UserLoginModel>(loginViewModel);
+            UserModel user = await _accountService.AuthenticateAsync(authorizationModel);
+            if(user == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_PASSWORD));
+            }
+                
+            string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
             return Ok(new { token = tokenString });
         }
 
@@ -115,19 +117,17 @@ namespace ParleoBackend.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> EditAsync(UserViewModel user)
         {
-            bool isEdited = false;
-            try
+            var validator = new UserViewModelValidator(_accountService);
+            ValidationResult result = validator.Validate(user);
+            if (!result.IsValid)
             {
-                isEdited = await _accountService.UpdateUserAsync(_mapper.Map<UserModel>(user));
-            }
-            catch(AppException ex)
-            {
-                return BadRequest(ex.Error.ToString());
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
+            bool isEdited = await _accountService.UpdateUserAsync(_mapper.Map<UserModel>(user));          
             if (!isEdited)
             {
-                return BadRequest();
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
             return NoContent();
@@ -138,10 +138,16 @@ namespace ParleoBackend.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserAsync(string userId)
         {
+            Guid userGuid;
+            if (!Guid.TryParse(userId, out userGuid))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.WRONG_GUID_FORMAT));
+            }
+
             UserModel user = await _accountService.GetUserByIdAsync(new Guid(userId));
             if (user == null)
             {
-                return BadRequest();
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
             return Ok(_mapper.Map<UserViewModel>(user));
