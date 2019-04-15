@@ -124,8 +124,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
-            bool isEdited = false;
-            isEdited = await _accountService.UpdateUserAsync(_mapper.Map<UserModel>(user));          
+            bool isEdited = await _accountService.UpdateUserAsync(_mapper.Map<UserModel>(user));          
             if (!isEdited)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
