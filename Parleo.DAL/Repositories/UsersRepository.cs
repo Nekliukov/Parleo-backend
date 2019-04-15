@@ -54,6 +54,7 @@ namespace Parleo.DAL.Repositories
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.Friends)
                 .Include(u => u.Languages)
+                .Include(u => u.Credentials)
                 .ToListAsync();
 
             int totalAmount = users.Count();
