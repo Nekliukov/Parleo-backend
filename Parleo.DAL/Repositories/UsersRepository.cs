@@ -93,14 +93,6 @@ namespace Parleo.DAL.Repositories
                 .FirstOrDefaultAsync(с => с.Email == email);
         }
 
-        private int GetAge(DateTimeOffset birth)
-        {
-            int age = new DateTime(
-                DateTime.Now.Subtract(birth.DateTime).Ticks).Year;
-
-            return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
-        }
-
         public async Task AddAccountTokenAsync(AccountToken accountToken)
         {
             _context.AccountTokens.Add(accountToken);
@@ -126,6 +118,15 @@ namespace Parleo.DAL.Repositories
             };
             _context.Entry(user).Property(x => x.AccountImage).IsModified = true;
             await _context.SaveChangesAsync();
+        }
+
+
+        private int GetAge(DateTimeOffset birth)
+        {
+            int age = new DateTime(
+                DateTime.Now.Subtract(birth.DateTime).Ticks).Year;
+
+            return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
         }
     }
 }
