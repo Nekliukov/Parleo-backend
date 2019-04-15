@@ -20,6 +20,18 @@ namespace Parleo.BLL.Services
             _accountConfirmationMessageSettings = accountConfirmationMessageSettings;
         }
 
+        public async Task SendEmailConfirmationLink(string to, string token)
+        {
+            string message = (await File.ReadAllTextAsync(_accountConfirmationMessageSettings.Message))
+                .Replace(
+                    "{{url}}",
+                    _accountConfirmationMessageSettings.InvitationUrl.Replace("{{token}}", $"{token}"
+                )
+            );
+
+            await Send(to, _accountConfirmationMessageSettings.Subject, message);
+        }
+
         private async Task Send(string to, string subject, string body)
         {
             MailMessage message = new MailMessage(_emailClientSettings.Sender, to);
@@ -33,20 +45,8 @@ namespace Parleo.BLL.Services
                 _emailClientSettings.UserName,
                 _emailClientSettings.Password
             );
-            
+
             await client.SendMailAsync(message);
-        }
-
-        public async Task SendEmailConfirmationLink(string to, string token)
-        {
-            string message = (await File.ReadAllTextAsync(_accountConfirmationMessageSettings.Message))
-                .Replace(
-                    "{{url}}",
-                    _accountConfirmationMessageSettings.InvitationUrl.Replace("{{token}}", $"{token}"
-                )
-            );
-
-            await Send(to, _accountConfirmationMessageSettings.Subject, message);
         }
     }
 }

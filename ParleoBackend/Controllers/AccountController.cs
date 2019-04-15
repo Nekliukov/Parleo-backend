@@ -88,7 +88,7 @@ namespace ParleoBackend.Controllers
             }
 
             string tokenString = _jwtService.GetJWTToken(user);
-            await _accountService.AddAccountToken(
+            await _accountService.AddAccountTokenAsync(
                 new AccountTokenModel()
                 {
                     ExpirationDate = DateTime.Now.AddHours(2),
@@ -96,6 +96,7 @@ namespace ParleoBackend.Controllers
                 }
             );
             await _emailService.SendEmailConfirmationLink(user.Email, tokenString);
+
             return NoContent();
         }
 
@@ -117,6 +118,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_PASSWORD));
             }
             string tokenString = _jwtService.GetJWTToken(user);
+
             return Ok(new {token = tokenString});
         }
 
@@ -174,7 +176,7 @@ namespace ParleoBackend.Controllers
 
             Guid userId = new Guid(userIdString);
 
-            AccountTokenModel accountToken = await _accountService.DeleteAccountToken(userId);
+            AccountTokenModel accountToken = await _accountService.DeleteAccountTokenAsync(userId);
 
             if (accountToken == null)
             {

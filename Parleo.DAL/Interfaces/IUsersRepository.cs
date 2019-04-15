@@ -20,10 +20,10 @@ namespace Parleo.DAL.Interfaces
 
         Task<Credentials> FindByEmailAsync(string email);
 
-        Task AddAccountToken(AccountToken accountToken);
+        Task AddAccountTokenAsync(AccountToken accountToken);
 
         Task InsertAccountImageNameAsync(string imageName, Guid userId);
 
-        Task<AccountToken> DeleteAccountTokenByUserId(Guid userId);
+        Task<AccountToken> DeleteAccountTokenByUserIdAsync(Guid userId);
     }
 }

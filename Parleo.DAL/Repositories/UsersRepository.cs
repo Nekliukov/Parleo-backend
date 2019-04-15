@@ -101,13 +101,13 @@ namespace Parleo.DAL.Repositories
             return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
         }
 
-        public async Task AddAccountToken(AccountToken accountToken)
+        public async Task AddAccountTokenAsync(AccountToken accountToken)
         {
             _context.AccountTokens.Add(accountToken);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<AccountToken> DeleteAccountTokenByUserId(Guid userId)
+        public async Task<AccountToken> DeleteAccountTokenByUserIdAsync(Guid userId)
         {
             AccountToken accountToken = await _context.AccountTokens.Include(c => c.User)
                 .FirstOrDefaultAsync(с => с.UserId == userId);

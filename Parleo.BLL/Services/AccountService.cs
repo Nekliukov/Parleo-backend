@@ -107,22 +107,21 @@ namespace Parleo.BLL.Services
             return await _repository.UpdateAsync(User);
         }
         
-        public async Task AddAccountToken(AccountTokenModel tokenModel)
+        public async Task AddAccountTokenAsync(AccountTokenModel tokenModel)
         {
-            await _repository.AddAccountToken(_mapper.Map<AccountToken>(tokenModel));
-		}
+            await _repository.AddAccountTokenAsync(_mapper.Map<AccountToken>(tokenModel));
+        }
 
-        public async Task<AccountTokenModel> DeleteAccountToken(Guid userId)
+        public async Task<AccountTokenModel> DeleteAccountTokenAsync(Guid userId)
         {
-            return _mapper.Map<AccountTokenModel>(await _repository.DeleteAccountTokenByUserId(userId));
+            return _mapper.Map<AccountTokenModel>(await _repository.DeleteAccountTokenByUserIdAsync(userId));
         }
 
         public async Task<bool> DisableUserAsync(Guid id)
             => await _repository.DisableAsync(id);
 
-        public async Task<bool> IsUserExists(string email)
+        public async Task<bool> IsUserExistsAsync(string email)
             => await _repository.FindByEmailAsync(email) != null;
-
 
         public async Task InsertUserAccountImageAsync(string imageName, Guid userId)
             => await _repository.InsertAccountImageNameAsync(imageName, userId);

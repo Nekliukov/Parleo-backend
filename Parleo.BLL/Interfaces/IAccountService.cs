@@ -20,12 +20,12 @@ namespace Parleo.BLL.Interfaces
 
         Task<bool> DisableUserAsync(Guid id);
 
-        Task AddAccountToken(AccountTokenModel tokenModel);
+        Task AddAccountTokenAsync(AccountTokenModel tokenModel);
 
-        Task<bool> IsUserExists(string email);
+        Task<bool> IsUserExistsAsync(string email);
       
         Task InsertUserAccountImageAsync(string imageName, Guid userId);
 
-        Task<AccountTokenModel> DeleteAccountToken(Guid userId);
+        Task<AccountTokenModel> DeleteAccountTokenAsync(Guid userId);
     }
 }
