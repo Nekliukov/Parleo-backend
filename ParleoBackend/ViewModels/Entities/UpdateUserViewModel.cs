@@ -21,6 +21,6 @@ namespace ParleoBackend.ViewModels.Entities
         [EmailAddress]
         public string Email { get; set; }
 
-        public ICollection<UserLanguageViewModel> Languages { get; set; }
+        public UserLanguageViewModel[] Languages { get; set; }
     }
 }

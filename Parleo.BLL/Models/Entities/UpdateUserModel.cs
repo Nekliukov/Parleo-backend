@@ -20,6 +20,6 @@ namespace Parleo.BLL.Models.Entities
         [EmailAddress]
         public string Email { get; set; }
 
-        public ICollection<UserLanguageModel> Languages { get; set; }
+        public UserLanguageModel[] Languages { get; set; }
     }
 }

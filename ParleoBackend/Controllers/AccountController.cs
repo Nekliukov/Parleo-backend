@@ -47,7 +47,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUsersPageAsync(
@@ -109,7 +109,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPut("{userId}")]
-        //[Authorize]
+        [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> EditAsync(
