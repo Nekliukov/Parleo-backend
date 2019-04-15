@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Parleo.BLL.Models;
+using Parleo.BLL.Models.Entities;
 using ParleoBackend.Contracts;
 using System;
 using System.IdentityModel.Tokens.Jwt;

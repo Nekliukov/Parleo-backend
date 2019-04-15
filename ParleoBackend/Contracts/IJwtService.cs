@@ -1,5 +1,4 @@
-﻿using Parleo.BLL.Models;
-using System;
+﻿using Parleo.BLL.Models.Entities;
 
 namespace ParleoBackend.Contracts
 {

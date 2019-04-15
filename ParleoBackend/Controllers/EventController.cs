@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Interfaces;
-using Parleo.BLL.Models;
-using ParleoBackend.ViewModels;
+using Parleo.BLL.Models.Entities;
+using Parleo.BLL.Models.Filters;
+using Parleo.BLL.Models.Pages;
+using ParleoBackend.ViewModels.Entities;
+using ParleoBackend.ViewModels.Filters;
+using ParleoBackend.ViewModels.Pages;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ParleoBackend.Controllers
@@ -26,7 +29,7 @@ namespace ParleoBackend.Controllers
         [HttpPut("{eventId}/addParticipant/{userId}")]
         [Authorize]
         public async Task<ActionResult> AddEventParticipant(
-            Guid eventId, 
+            Guid eventId,
             Guid userId)
         {
             var result = await _service.AddEventParticipant(eventId, userId);
@@ -34,43 +37,56 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        // TODO
-        // Add filter model and implement it (repo -> service -> controller)
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult> GetEventAsync(Guid id)
+        public async Task<IActionResult> GetEventsPageAsync(
+            [FromQuery] EventFilterViewModel eventFilter)
         {
-            await _service.GetEventAsync(id);
-            return Ok();
+            var result = await _service.GetEventsPageAsync(
+                _mapper.Map<EventFilterModel>(eventFilter));
+
+            return Ok(_mapper.Map<PageViewModel<EventViewModel>>(result));
         }
 
-        [HttpGet("{eventId}/page/{offset}")]
+        [HttpGet("{eventId}")]
+        [Authorize]
+        public async Task<ActionResult> GetEventAsync(Guid eventId)
+        {
+            var foundEvent = await _service.GetEventAsync(eventId);
+            return Ok(_mapper.Map<EventViewModel>(foundEvent));
+        }
+
+        [HttpGet("{eventId}/participants")]
         [Authorize]
         public async Task<ActionResult> GetParticipantsPageAsync(
-            Guid eventId, 
-            int offset)
+            Guid eventId,
+            [FromQuery] PageRequestViewModel pageRequest)
         {
             var participants = await _service.GetParticipantsPageAsync(
-                eventId, offset);
+                eventId, _mapper.Map<PageRequestModel>(pageRequest));
 
-            return Ok(_mapper.Map<IEnumerable<UserViewModel>>(participants));
+            return Ok(_mapper.Map<PageViewModel<UserViewModel>>(participants));
         }
 
         [HttpPost("create")]
         [Authorize]
-        public async Task<ActionResult> CreateEventAsync(EventViewModel entity)
+        public async Task<ActionResult> CreateEventAsync(
+            [FromQuery] CreateOrUpdateEventViewModel entity)
         {
-            var ev = await _service.CreateEventAsync(_mapper.Map<EventModel>(entity));
+            var createdEvent = await _service.CreateEventAsync(
+                _mapper.Map<CreateOrUpdateEventModel>(entity));
 
-            return Ok(_mapper.Map<EventViewModel>(ev));
+            return Ok(_mapper.Map<EventViewModel>(createdEvent));
         }
 
-        [HttpPut("update")]
+        [HttpPut("{eventId}")]
         [Authorize]
-        public async Task<ActionResult> UpdateEventAsync(EventViewModel entity)
+        public async Task<ActionResult> UpdateEventAsync(
+            Guid eventId,
+            [FromQuery] CreateOrUpdateEventViewModel entity)
         {
-            var result = await _service.UpdateEventAsync(
-                _mapper.Map<EventModel>(entity));
+            var result = await _service.UpdateEventAsync(eventId,
+                _mapper.Map<CreateOrUpdateEventModel>(entity));
 
             return Ok();
         }

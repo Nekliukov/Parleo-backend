@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Parleo.BLL.Interfaces;
-using Parleo.BLL.Models;
-using Parleo.DAL.Entities;
+using Parleo.BLL.Models.Entities;
+using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
+using Parleo.BLL.Models.Pages;
+using Parleo.BLL.Models.Filters;
+using Parleo.DAL.Models.Filters;
+using Parleo.DAL.Models.Pages;
+using System.Linq;
 
 namespace Parleo.BLL.Services
 {
@@ -26,29 +29,47 @@ namespace Parleo.BLL.Services
             return await _repository.AddEventParticipant(eventId, userId);       
         }
 
-        public async Task<EventModel> CreateEventAsync(EventModel entity)
+        public async Task<EventModel> CreateEventAsync(
+            CreateOrUpdateEventModel entity)
         {
-            Event ev = await _repository.CreateEventAsync(_mapper.Map<Event>(entity));
-            return _mapper.Map<EventModel>(ev);
+            Event createdEvent = await _repository.CreateEventAsync(
+                _mapper.Map<Event>(entity));
+
+            return _mapper.Map<EventModel>(createdEvent);
         }
 
-        public Task<EventModel> GetEventAsync(Guid id)
+        public async Task<EventModel> GetEventAsync(Guid id)
         {
-            throw new NotImplementedException();
+            Event foundEvent = await _repository.GetEventAsync(id);
+
+            return _mapper.Map<EventModel>(foundEvent);
         }
 
-        public async Task<IEnumerable<EventModel>> GetEventsPageAsync(int offset)
+        public async Task<PageModel<EventModel>> GetEventsPageAsync(
+            EventFilterModel pageRequest)
         {
-            var eventModels = await _repository.GetEventsPageAsync(offset);
+            var eventPageModels = await _repository.GetEventsPageAsync(
+                _mapper.Map<EventFilter>(pageRequest));
 
-            return _mapper.Map<IEnumerable<EventModel>>(eventModels);
+            return _mapper.Map<PageModel<EventModel>>(eventPageModels);
         }
 
-        public async Task<IEnumerable<UserModel>> GetParticipantsPageAsync(Guid eventId, int offset)
+        public async Task<PageModel<UserModel>> GetParticipantsPageAsync(
+            Guid eventId, PageRequestModel pageRequest)
         {
-            var participants = await _repository.GetParticipantsPageAsync(eventId, offset);
+            var participantsPageModel = await _repository.GetParticipantsPageAsync(
+                eventId, _mapper.Map<PageRequest>(pageRequest));
 
-            return participants.Select(p => _mapper.Map<UserModel>(p.User));
+            var mappedParticipantsPageModel = new PageModel<UserModel>()
+            {
+                Entities = participantsPageModel.Entities.Select(
+                    p => _mapper.Map<UserModel>(p.User)),
+                PageNumber = participantsPageModel.PageNumber,
+                PageSize = participantsPageModel.PageSize,
+                TotalAmount = participantsPageModel.TotalAmount
+            };
+
+            return mappedParticipantsPageModel;
         }
 
         public async Task<bool> RemoveEventParticipant(Guid eventId, Guid userId)
@@ -56,9 +77,14 @@ namespace Parleo.BLL.Services
             return await _repository.RemoveEventParticipant(eventId, userId);
         }
 
-        public async Task<bool> UpdateEventAsync(EventModel entity)
+        public async Task<bool> UpdateEventAsync(Guid eventId, 
+            CreateOrUpdateEventModel entity)
         {
-            return await _repository.UpdateEventAsync(_mapper.Map<Event>(entity));
+            var updatingEvent = await _repository.GetEventAsync(eventId);
+
+            _mapper.Map(entity, updatingEvent);
+
+            return await _repository.UpdateEventAsync(updatingEvent);
         }
     }
 }

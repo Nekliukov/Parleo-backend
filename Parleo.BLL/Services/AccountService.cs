@@ -1,12 +1,15 @@
 ﻿using Parleo.BLL.Interfaces;
-using Parleo.BLL.Models;
-using Parleo.DAL.Entities;
+using Parleo.BLL.Models.Entities;
+using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Parleo.BLL.Models.Filters;
+using Parleo.BLL.Models.Pages;
+using Parleo.DAL.Models.Filters;
 
 namespace Parleo.BLL.Services
 {
@@ -51,16 +54,18 @@ namespace Parleo.BLL.Services
             return _mapper.Map<UserModel>(user.User);
         }
 
-        //TODO: add filters
-        public async Task<IEnumerable<UserModel>> GetUsersPageAsync(int offset)
+        public async Task<PageModel<UserModel>> GetUsersPageAsync(
+            UserFilterModel pageRequest)
         {
-            IList<User> users = await _repository.GetPageAsync(offset);
-            if(users == null)
+            var usersPage = await _repository.GetPageAsync(
+                _mapper.Map<UserFilter>(pageRequest));
+
+            if(usersPage == null)
             {
                 return null;
             }
 
-            return _mapper.Map<IEnumerable<UserModel>>(users);
+            return _mapper.Map<PageModel<UserModel>>(usersPage);
         }
 
         public async Task<UserModel> GetUserByIdAsync(Guid id)

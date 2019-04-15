@@ -4,12 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Parleo.DAL.Contexts;
 
 namespace Parleo.DAL.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(AppContext))]
     [Migration("20190321111228_CreateAccountTokensTable")]
     partial class CreateAccountTokensTable
     {
