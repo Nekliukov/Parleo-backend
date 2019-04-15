@@ -16,6 +16,10 @@ namespace ParleoBackend.Validators.User
                 .NotEmpty().NotNull()
                 .EmailAddress()
                 .Must(IsExists).WithMessage(Constants.Errors.EMAIL_NOT_FOUND);
+
+            RuleFor(user => user.Password).
+                NotEmpty().NotNull()
+                .MinimumLength(8);
         }
 
         private bool IsExists(string email) => _accountService.IsUserExists(email).Result;

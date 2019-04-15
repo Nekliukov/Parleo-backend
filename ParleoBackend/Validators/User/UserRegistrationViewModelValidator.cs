@@ -21,11 +21,6 @@ namespace ParleoBackend.Validators.User
             RuleFor(user => user.Password)
                 .NotNull().NotEmpty()
                 .MinimumLength(8);           
-
-            RuleFor(user => user.ConfirmedPassword)
-                .NotNull().NotEmpty()
-                .MinimumLength(8)
-                .Equal(user => user.Password).WithMessage(Constants.Errors.PASSWORDS_DO_NOT_MATCH);
         }
 
         private bool IsUnique(string email) => !_accountService.IsUserExists(email).Result;

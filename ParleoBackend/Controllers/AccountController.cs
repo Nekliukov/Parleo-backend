@@ -138,10 +138,16 @@ namespace ParleoBackend.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserAsync(string userId)
         {
+            Guid userGuid;
+            if (!Guid.TryParse(userId, out userGuid))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.WRONG_GUID_FORMAT));
+            }
+
             UserModel user = await _accountService.GetUserByIdAsync(new Guid(userId));
             if (user == null)
             {
-                return BadRequest();
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
             return Ok(_mapper.Map<UserViewModel>(user));

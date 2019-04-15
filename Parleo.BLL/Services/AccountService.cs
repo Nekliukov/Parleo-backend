@@ -115,7 +115,6 @@ namespace Parleo.BLL.Services
 
         public async Task InsertUserAccountImageAsync(string imageName, Guid userId)
             => await _repository.InsertAccountImageNameAsync(imageName, userId);
-            
-        }
+           
     }
 }
