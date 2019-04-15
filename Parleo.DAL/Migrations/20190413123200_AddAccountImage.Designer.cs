@@ -3,34 +3,25 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parleo.DAL;
 
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20190413123200_AddAccountImage")]
+    partial class AddAccountImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Parleo.DAL.Models.Entities.AccountTokens", b =>
-                {
-                    b.Property<Guid>("UserId");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("AccountTokens");
-                });
-
-            modelBuilder.Entity("Parleo.DAL.Entities.Credentials", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>
                 {
                     b.Property<Guid>("UserId");
 
@@ -170,15 +161,7 @@ namespace Parleo.DAL.Migrations
                     b.ToTable("UserLanguage");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Models.Entities.AccountTokens", b =>
-                {
-                    b.HasOne("Parleo.DAL.Entities.User", "User")
-                        .WithOne("AccountTokens")
-                        .HasForeignKey("Parleo.DAL.Entities.AccountTokens", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Parleo.DAL.Entities.Credentials", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>
                 {
                     b.HasOne("Parleo.DAL.Models.Entities.User", "User")
                         .WithOne("Credentials")

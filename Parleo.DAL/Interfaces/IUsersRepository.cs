@@ -21,5 +21,7 @@ namespace Parleo.DAL.Interfaces
         Task<Credentials> FindByEmailAsync(string email);
 
         Task AddAccountToken(AccountToken accountToken);
+
+        Task InsertAccountImageNameAsync(string imageName, Guid userId);
     }
 }

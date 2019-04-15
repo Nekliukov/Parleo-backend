@@ -16,6 +16,9 @@ using ParleoBackend.ViewModels.Filters;
 using Parleo.BLL.Models.Filters;
 using ParleoBackend.ViewModels.Pages;
 using Parleo.BLL.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using ParleoBackend.Contracts;
 
 namespace ParleoBackend.Controllers
 {
@@ -26,6 +29,8 @@ namespace ParleoBackend.Controllers
         private readonly IAccountService _accountService;
         IEmailService _emailService;
         private readonly IJwtService _jwtService;
+        private readonly IConfiguration _configuration;
+        private readonly IAccountImageSettings _accountImageSettings;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
@@ -33,8 +38,10 @@ namespace ParleoBackend.Controllers
             IAccountService accountService,
             IMapper mapper,
             IJwtService jwtService,
-            ILogger<AccountController> logger,
             IEmailService emailService
+            IConfiguration configuration,
+            ILogger<AccountController> logger,
+            IAccountImageSettings accountImageSettings
         )
         {
             _accountService = accountService;
@@ -42,6 +49,7 @@ namespace ParleoBackend.Controllers
             _mapper = mapper;
             _logger = logger;
             _emailService = emailService;
+            _accountImageSettings = accountImageSettings;
         }
 
         [HttpGet]
@@ -113,7 +121,7 @@ namespace ParleoBackend.Controllers
             return Ok(new {token = tokenString});
         }
 
-        [HttpPut("edit")]
+        [HttpPut("{userId}")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
@@ -137,13 +145,12 @@ namespace ParleoBackend.Controllers
             return NoContent();
         }
 
-        [HttpGet("getUser")]
+        [HttpGet("{userId}")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserAsync()
+        public async Task<IActionResult> GetUserAsync(string userId)
         {
-            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-            UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
+            UserModel user = await _accountService.GetUserByIdAsync(new Guid(userId));
             if (user == null)
             {
                 return BadRequest();
@@ -151,6 +158,7 @@ namespace ParleoBackend.Controllers
 
             return Ok(_mapper.Map<UserViewModel>(user));
         }
+
 
         [HttpGet("activate")]
         public async Task<IActionResult> GetActivatedUserAccount(string token)
@@ -165,6 +173,36 @@ namespace ParleoBackend.Controllers
             UserModel user = await _accountService.GetUserByIdAsync(new Guid(userIdString));
 
             return Ok(user);
+        }
+
+
+        
+        [HttpPut("{userId}/image")]
+        [Authorize]
+        public async Task<IActionResult> AddUserAccountImage(IFormFile image)
+        {
+            if (image == null)
+            {
+                return BadRequest();
+            }
+
+            string accountImagePath = _accountImageSettings.DestPath;
+            Guid userId = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+            UserModel user = await _accountService.GetUserByIdAsync(userId);
+
+            if (user.AccountImage != null)
+            {
+                System.IO.File.Delete(Path.Combine(accountImagePath, user.AccountImage));
+            }
+
+            string accountImageUniqueName = await image.SaveAsync(accountImagePath);
+
+            await _accountService.InsertUserAccountImageAsync(
+                accountImageUniqueName,
+                userId
+            );
+
+            return Ok();
         }
     }
 }
