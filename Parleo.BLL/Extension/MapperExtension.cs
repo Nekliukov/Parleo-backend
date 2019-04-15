@@ -21,8 +21,11 @@ namespace Parleo.BLL.Extensions
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 // entities
-                mc.CreateMap<DataAccessAuth, AuthorizationModel>();
-                mc.CreateMap<AuthorizationModel, DataAccessAuth>();
+                mc.CreateMap<DataAccessAuth, UserLoginModel>();
+                mc.CreateMap<UserLoginModel, DataAccessAuth>();
+
+                mc.CreateMap<DataAccessAuth, UserRegistrationModel>();
+                mc.CreateMap<UserRegistrationModel, DataAccessAuth>();
 
                 mc.CreateMap<AccountTokenModel, AccountToken>();
                 mc.CreateMap<AccountToken, AccountTokenModel>();
