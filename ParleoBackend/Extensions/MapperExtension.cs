@@ -16,8 +16,11 @@ namespace ParleoBackend.Extensions
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 // entities
-                mc.CreateMap<AuthorizationModel, AuthorizationViewModel>();
-                mc.CreateMap<AuthorizationViewModel, AuthorizationModel>();
+                mc.CreateMap<UserLoginModel, UserLoginViewModel>();
+                mc.CreateMap<UserLoginViewModel, UserLoginModel>();
+
+                mc.CreateMap<UserRegistrationModel, UserRegistrationViewModel>();
+                mc.CreateMap<UserRegistrationViewModel, UserRegistrationModel>();
 
                 mc.CreateMap<UserViewModel, UserModel>();
                 mc.CreateMap<UserModel, UserViewModel>();

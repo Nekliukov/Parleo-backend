@@ -3,7 +3,6 @@ using Parleo.BLL.Models.Entities;
 using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
@@ -34,21 +33,14 @@ namespace Parleo.BLL.Services
             _logger = logger;
         }
 
-        public async Task<UserModel> AuthenticateAsync(AuthorizationModel authorizationModel)
+        public async Task<UserModel> AuthenticateAsync(UserLoginModel authorizationModel)
         {
             Credentials user = await _repository.FindByEmailAsync(authorizationModel.Email);
-     
-            if (user == null) // check if email exists
-            {
-                throw new AppException(ErrorType.EmailNotFound,
-                    $"{authorizationModel.Email} is not found");
-            }
                 
             if (!_securityService.VerifyPasswordHash(authorizationModel.Password,
                 user.PasswordHash, user.PasswordSalt))
             {
-                throw new AppException(ErrorType.InvalidPassword,
-                    $"Wrong password for {authorizationModel.Email}");
+                return null;
             }
                 
             return _mapper.Map<UserModel>(user.User);
@@ -79,13 +71,8 @@ namespace Parleo.BLL.Services
             return _mapper.Map<UserModel>(user);
         }
 
-        public async Task<UserModel> CreateUserAsync(AuthorizationModel authorizationModel)
+        public async Task<UserModel> CreateUserAsync(UserRegistrationModel authorizationModel)
         {
-            if (await _repository.FindByEmailAsync(authorizationModel.Email) != null)
-            {
-                throw new AppException(ErrorType.ExistingEmail, $"Email {authorizationModel.Email} is already exists");
-            }
-
             byte[] passwordHash, passwordSalt;
             _securityService.CreatePasswordHash(authorizationModel.Password, out passwordHash, out passwordSalt);
 
@@ -113,16 +100,7 @@ namespace Parleo.BLL.Services
             if (User == null)
             {
                 return false; //bad request
-            }
-                
-            if (user.Email != User.Credentials.Email)
-            {
-                if (await _repository.FindByEmailAsync(user.Email) != null)
-                {
-                    throw new AppException(ErrorType.ExistingEmail,
-                        "Email " + user.Email + " is already taken");
-                }                 
-            }
+            }            
 
             _mapper.Map(user, User);
 
@@ -130,13 +108,13 @@ namespace Parleo.BLL.Services
         }
 
         public async Task<bool> DisableUserAsync(Guid id)
-        {
-            return await _repository.DisableAsync(id);
-        }
+            => await _repository.DisableAsync(id);
+
+        public async Task<bool> IsUserExists(string email)
+            => await _repository.FindByEmailAsync(email) != null;
 
         public async Task InsertUserAccountImageAsync(string imageName, Guid userId)
-        {
-            await _repository.InsertAccountImageNameAsync(imageName, userId);
-        }
+            => await _repository.InsertAccountImageNameAsync(imageName, userId);
+           
     }
 }

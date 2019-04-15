@@ -1,6 +1,8 @@
+﻿using System.Globalization;
 ﻿using System.IO;
 using System.Reflection;
 using System.Text;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,7 +17,9 @@ using Parleo.DAL;
 using ParleoBackend.Configuration;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
-using Swashbuckle.AspNetCore.Swagger;
+using ParleoBackend.Validators;
+using ParleoBackend.Validators.User;
+using ParleoBackend.ViewModels.Entities;
 
 namespace ParleoBackend
 {
@@ -73,6 +77,12 @@ namespace ParleoBackend
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddTransient<IValidator<CreateOrUpdateEventViewModel>, CrateOrUpdateEventViewModelValidator>();
+            services.AddTransient<IValidator<UserRegistrationViewModel>, UserRegistrationViewModelValidator>();
+            services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
+            services.AddTransient<IValidator<UserViewModel>, UserViewModelValidator>();
+            ValidatorOptions.LanguageManager.Culture = new CultureInfo("en-GB");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
