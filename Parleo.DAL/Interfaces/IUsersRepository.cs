@@ -23,5 +23,7 @@ namespace Parleo.DAL.Interfaces
         Task AddAccountToken(AccountToken accountToken);
 
         Task InsertAccountImageNameAsync(string imageName, Guid userId);
+
+        Task<AccountToken> DeleteAccountTokenByUserId(Guid userId);
     }
 }

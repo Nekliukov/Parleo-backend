@@ -3,8 +3,6 @@ using Parleo.BLL.Interfaces;
 using ParleoBackend.Configuration;
 using ParleoBackend.Contracts;
 using ParleoBackend.Services;
-using ParleoBackend.Configuration;
-using ParleoBackend.Contracts;
 
 namespace ParleoBackend
 {

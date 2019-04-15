@@ -90,7 +90,7 @@ namespace ParleoBackend.Controllers
             await _accountService.AddAccountToken(
                 new AccountTokenModel()
                 {
-                    ExpirationDate = new DateTime().AddHours(2),
+                    ExpirationDate = DateTime.Now.AddHours(2),
                     UserId = user.Id
                 }
             );
@@ -165,14 +165,20 @@ namespace ParleoBackend.Controllers
                 return BadRequest();
             }
 
+            Guid userId = new Guid(userIdString);
 
-            UserModel user = await _accountService.GetUserByIdAsync(new Guid(userIdString));
+            AccountTokenModel accountToken = await _accountService.DeleteAccountToken(userId);
+
+            if (accountToken == null)
+            {
+                return BadRequest();
+            }
+
+            UserModel user = await _accountService.GetUserByIdAsync(userId);
 
             return Ok(user);
         }
 
-
-        
         [HttpPut("{userId}/image")]
         [Authorize]
         public async Task<IActionResult> AddUserAccountImage(IFormFile image)

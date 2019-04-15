@@ -25,6 +25,7 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<AuthorizationModel, DataAccessAuth>();
 
                 mc.CreateMap<AccountTokenModel, AccountToken>();
+                mc.CreateMap<AccountToken, AccountTokenModel>();
 
                 mc.CreateMap<UserModel, DataAccessUser>();
                 mc.CreateMap<DataAccessUser, UserModel>()

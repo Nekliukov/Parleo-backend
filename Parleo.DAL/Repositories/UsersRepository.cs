@@ -107,6 +107,16 @@ namespace Parleo.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<AccountToken> DeleteAccountTokenByUserId(Guid userId)
+        {
+            AccountToken accountToken = await _context.AccountTokens.Include(c => c.User)
+                .FirstOrDefaultAsync(с => с.UserId == userId);
+            _context.AccountTokens.Remove(accountToken);
+            _context.SaveChanges();
+
+            return accountToken;
+        }
+
         public async Task InsertAccountImageNameAsync(string imageName, Guid userId)
         {
             User user = new User()

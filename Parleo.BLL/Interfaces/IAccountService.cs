@@ -23,5 +23,7 @@ namespace Parleo.BLL.Interfaces
         Task AddAccountToken(AccountTokenModel tokenModel);
 
         Task InsertUserAccountImageAsync(string imageName, Guid userId);
+
+        Task<AccountTokenModel> DeleteAccountToken(Guid userId);
     }
 }

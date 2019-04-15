@@ -35,7 +35,9 @@ namespace ParleoBackend.Services
                 RequireExpirationTime = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_jwtSettings.JWTKey)
-                )
+                ),
+                ValidateAudience = false,
+                ValidateIssuer = false
             };
 
             ClaimsPrincipal principal = new JwtSecurityTokenHandler()
