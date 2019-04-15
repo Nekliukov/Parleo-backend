@@ -10,6 +10,8 @@ using DataAccessUser = Parleo.DAL.Models.Entities.User;
 using DataAccessLanguage = Parleo.DAL.Models.Entities.Language;
 using DataAccessEvent = Parleo.DAL.Models.Entities.Event;
 using DataAccessUserLanguage = Parleo.DAL.Models.Entities.UserLanguage;
+using System;
+using System.Linq;
 
 namespace Parleo.BLL.Extensions
 {
@@ -25,21 +27,46 @@ namespace Parleo.BLL.Extensions
 
                 mc.CreateMap<UserModel, DataAccessUser>();
                 mc.CreateMap<DataAccessUser, UserModel>()
-                    .ForMember(ui => ui.Email, 
-                        opt => opt.MapFrom(uivm => uivm.Credentials.Email));                
+                    .ForMember(ui => ui.Email,
+                        opt => opt.MapFrom(uivm => uivm.Credentials.Email))
+                    .ForMember(um => um.CreatedEvents,
+                        opt => opt.MapFrom(u =>
+                            u.CreatedEvents.Select(e => new MiniatureModel
+                            {
+                                Id = e.Id,
+                                // TODO for Ксюшенька
+                                // AccountImage = e.EventImage
+                                AccountImage = "FakeImage"
+                            })))
+                    .ForMember(um => um.Friends,
+                        opt => opt.MapFrom(u =>
+                            u.Friends.Select(f => new MiniatureModel
+                            {
+                                Id = f.UserToId,
+                                AccountImage = f.UserTo.AccountImage
+                            })))
+                     .ForMember(um => um.AttendingEvents, 
+                        opt => opt.MapFrom(u => 
+                        u.AttendingEvents.Select(e => new MiniatureModel
+                            {
+                                Id = e.EventId,
+                                // TODO for Ксюшенька
+                                // AccountImage = e.Event.EventImage
+                                AccountImage = "FakeImage"
+                            })));
 
                 mc.CreateMap<DataAccessLanguage, LanguageModel>();
                 mc.CreateMap<LanguageModel, DataAccessLanguage>();
 
                 mc.CreateMap<DataAccessEvent, EventModel>()
                     .ForMember(em => em.ParticipantsCount,
-                        opt => opt.MapFrom(e => e.Participants.Count));                           
-                
+                        opt => opt.MapFrom(e => e.Participants.Count));
+
                 mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();
 
                 mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
                     .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.UserId))
-                    .ForMember(ul => ul.Name, 
+                    .ForMember(ul => ul.Name,
                         opt => opt.MapFrom(ulvm => ulvm.Language.Name));
 
                 mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
