@@ -6,7 +6,6 @@ using AutoMapper;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -15,10 +14,9 @@ using ParleoBackend.Contracts;
 using ParleoBackend.ViewModels.Filters;
 using Parleo.BLL.Models.Filters;
 using ParleoBackend.ViewModels.Pages;
-using Parleo.BLL.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using ParleoBackend.Contracts;
+using ParleoBackend.Extensions;
 
 namespace ParleoBackend.Controllers
 {
@@ -27,9 +25,8 @@ namespace ParleoBackend.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        IEmailService _emailService;
+        private readonly IEmailService _emailService;
         private readonly IJwtService _jwtService;
-        private readonly IConfiguration _configuration;
         private readonly IAccountImageSettings _accountImageSettings;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
@@ -38,8 +35,7 @@ namespace ParleoBackend.Controllers
             IAccountService accountService,
             IMapper mapper,
             IJwtService jwtService,
-            IEmailService emailService
-            IConfiguration configuration,
+            IEmailService emailService,
             ILogger<AccountController> logger,
             IAccountImageSettings accountImageSettings
         )

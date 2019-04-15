@@ -28,7 +28,7 @@ namespace Parleo.BLL.Services
             message.IsBodyHtml = true;
 
             SmtpClient client = new SmtpClient(_emailClientSettings.Host, _emailClientSettings.Port);
-
+            client.EnableSsl = true;
             client.Credentials = new NetworkCredential(
                 _emailClientSettings.UserName,
                 _emailClientSettings.Password
