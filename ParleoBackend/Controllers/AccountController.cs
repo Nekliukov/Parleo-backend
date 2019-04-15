@@ -6,7 +6,6 @@ using AutoMapper;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System;
-using System.Collections.Generic;
 using ParleoBackend.Extensions;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
@@ -48,7 +47,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUsersPageAsync(
@@ -110,15 +109,18 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPut("{userId}")]
-        [Authorize]
+        //[Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> EditAsync(UserViewModel user)
+        public async Task<IActionResult> EditAsync(
+            Guid userId,
+            [FromQuery] UpdateUserViewModel entity)
         {
             bool isEdited = false;
             try
             {
-                isEdited = await _accountService.UpdateUserAsync(_mapper.Map<UserModel>(user));
+                isEdited = await _accountService.UpdateUserAsync(
+                    userId, _mapper.Map<UpdateUserModel>(entity));
             }
             catch(AppException ex)
             {

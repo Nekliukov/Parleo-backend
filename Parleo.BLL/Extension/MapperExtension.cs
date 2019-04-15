@@ -55,6 +55,8 @@ namespace Parleo.BLL.Extensions
                                 AccountImage = "FakeImage"
                             })));
 
+                mc.CreateMap<UpdateUserModel, DataAccessUser>();
+
                 mc.CreateMap<DataAccessLanguage, LanguageModel>();
                 mc.CreateMap<LanguageModel, DataAccessLanguage>();
 
@@ -65,7 +67,7 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();
 
                 mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
-                    .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.UserId))
+                    .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.LanguageId))
                     .ForMember(ul => ul.Name,
                         opt => opt.MapFrom(ulvm => ulvm.Language.Name));
 

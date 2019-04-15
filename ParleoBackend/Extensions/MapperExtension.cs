@@ -37,6 +37,9 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<MiniatureModel, MiniatureViewModel>();
                 mc.CreateMap<MiniatureViewModel, MiniatureModel>();
 
+                mc.CreateMap<UpdateUserViewModel, UpdateUserModel>();
+                mc.CreateMap<UpdateUserModel, UpdateUserViewModel>();
+
                 // filters
                 mc.CreateMap<ChatFilterViewModel, ChatFilterModel>();
                 mc.CreateMap<ChatFilterModel, ChatFilterViewModel>();

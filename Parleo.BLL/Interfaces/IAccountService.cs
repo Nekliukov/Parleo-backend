@@ -16,7 +16,7 @@ namespace Parleo.BLL.Interfaces
 
         Task<UserModel> CreateUserAsync(AuthorizationModel authorizationModel);
 
-        Task<bool> UpdateUserAsync(UserModel user);
+        Task<bool> UpdateUserAsync(Guid userId, UpdateUserModel user);
 
         Task<bool> DisableUserAsync(Guid id);
 
