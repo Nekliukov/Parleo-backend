@@ -11,7 +11,6 @@ namespace ParleoBackend.Validators
             RuleFor(ev => ev.LanguageId).NotNull().NotEmpty();
             RuleFor(ev => ev.Latitude).NotNull().NotEmpty();
             RuleFor(ev => ev.Longitude).NotNull().NotEmpty();
-            RuleFor(ev => ev.IsFinished).NotEqual(true);
             RuleFor(ev => ev.MaxParticipants)
                 .GreaterThanOrEqualTo(1)
                 .LessThan(30);
