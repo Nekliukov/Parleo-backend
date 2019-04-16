@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parleo.DAL.Migrations
 {
-    public partial class CreateAccountTokensTable : Migration
+    public partial class AddAccountTokenTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AccountTokens",
+                name: "AccountToken",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false),
@@ -16,9 +16,9 @@ namespace Parleo.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccountTokens", x => x.UserId);
+                    table.PrimaryKey("PK_AccountToken", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_AccountTokens_User_UserId",
+                        name: "FK_AccountToken_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
@@ -29,7 +29,7 @@ namespace Parleo.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AccountTokens");
+                name: "AccountToken");
         }
     }
 }

@@ -15,9 +15,20 @@ namespace Parleo.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.AccountToken", b =>
+                {
+                    b.Property<Guid>("UserId");
+
+                    b.Property<DateTime>("ExpirationDate");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("AccountToken");
+                });
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>
                 {
@@ -159,6 +170,14 @@ namespace Parleo.DAL.Migrations
                     b.HasIndex("LanguageCode");
 
                     b.ToTable("UserLanguage");
+                });
+
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.AccountToken", b =>
+                {
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "User")
+                        .WithOne("AccountToken")
+                        .HasForeignKey("Parleo.DAL.Models.Entities.AccountToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>

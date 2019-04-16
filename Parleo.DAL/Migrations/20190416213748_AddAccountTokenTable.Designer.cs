@@ -4,22 +4,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Parleo.DAL;
 
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20190321111228_CreateAccountTokensTable")]
-    partial class CreateAccountTokensTable
+    [Migration("20190416213748_AddAccountTokenTable")]
+    partial class AddAccountTokenTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Parleo.DAL.Entities.AccountTokens", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.AccountToken", b =>
                 {
                     b.Property<Guid>("UserId");
 
@@ -27,10 +29,10 @@ namespace Parleo.DAL.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("AccountTokens");
+                    b.ToTable("AccountToken");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.Credentials", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>
                 {
                     b.Property<Guid>("UserId");
 
@@ -47,13 +49,13 @@ namespace Parleo.DAL.Migrations
                     b.ToTable("Credentials");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.Event", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Event", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<Guid?>("CreatorId");
+                    b.Property<Guid>("CreatorId");
 
                     b.Property<string>("Description");
 
@@ -61,7 +63,9 @@ namespace Parleo.DAL.Migrations
 
                     b.Property<bool>("IsFinished");
 
-                    b.Property<Guid?>("LanguageId");
+                    b.Property<string>("LanguageCode");
+
+                    b.Property<Guid>("LanguageId");
 
                     b.Property<decimal>("Latitude")
                         .HasColumnType("decimal(10, 2)");
@@ -79,29 +83,31 @@ namespace Parleo.DAL.Migrations
 
                     b.HasIndex("CreatorId");
 
-                    b.HasIndex("LanguageId");
+                    b.HasIndex("LanguageCode");
 
                     b.ToTable("Event");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.Language", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Language", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Code")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("varchar(2)");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Image");
 
-                    b.HasKey("Id");
+                    b.HasKey("Code");
 
                     b.ToTable("Language");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.User", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("NEWID()");
+
+                    b.Property<string>("AccountImage");
 
                     b.Property<DateTime>("Birthdate")
                         .HasColumnType("Date");
@@ -125,7 +131,7 @@ namespace Parleo.DAL.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.UserEvent", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.UserEvent", b =>
                 {
                     b.Property<Guid>("UserId");
 
@@ -138,7 +144,7 @@ namespace Parleo.DAL.Migrations
                     b.ToTable("UserEvent");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.UserFriends", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.UserFriends", b =>
                 {
                     b.Property<Guid>("UserToId");
 
@@ -153,82 +159,83 @@ namespace Parleo.DAL.Migrations
                     b.ToTable("UserFriends");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.UserLanguage", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.UserLanguage", b =>
                 {
                     b.Property<Guid>("UserId");
 
-                    b.Property<Guid>("LanguageId");
+                    b.Property<string>("LanguageCode");
 
                     b.Property<byte>("Level");
 
-                    b.HasKey("UserId", "LanguageId");
+                    b.HasKey("UserId", "LanguageCode");
 
-                    b.HasIndex("LanguageId");
+                    b.HasIndex("LanguageCode");
 
                     b.ToTable("UserLanguage");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.AccountTokens", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.AccountToken", b =>
                 {
-                    b.HasOne("Parleo.DAL.Entities.User", "User")
-                        .WithOne("AccountTokens")
-                        .HasForeignKey("Parleo.DAL.Entities.AccountTokens", "UserId")
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "User")
+                        .WithOne("AccountToken")
+                        .HasForeignKey("Parleo.DAL.Models.Entities.AccountToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.Credentials", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>
                 {
-                    b.HasOne("Parleo.DAL.Entities.User", "User")
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "User")
                         .WithOne("Credentials")
-                        .HasForeignKey("Parleo.DAL.Entities.Credentials", "UserId")
+                        .HasForeignKey("Parleo.DAL.Models.Entities.Credentials", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.Event", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Event", b =>
                 {
-                    b.HasOne("Parleo.DAL.Entities.User", "Creator")
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "Creator")
                         .WithMany("CreatedEvents")
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Parleo.DAL.Entities.Language", "Language")
+                    b.HasOne("Parleo.DAL.Models.Entities.Language", "Language")
                         .WithMany("Events")
-                        .HasForeignKey("LanguageId");
+                        .HasForeignKey("LanguageCode");
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.UserEvent", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.UserEvent", b =>
                 {
-                    b.HasOne("Parleo.DAL.Entities.Event", "Event")
+                    b.HasOne("Parleo.DAL.Models.Entities.Event", "Event")
                         .WithMany("Participants")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Parleo.DAL.Entities.User", "User")
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "User")
                         .WithMany("AttendingEvents")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.UserFriends", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.UserFriends", b =>
                 {
-                    b.HasOne("Parleo.DAL.Entities.User", "UserFrom")
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "UserFrom")
                         .WithMany()
                         .HasForeignKey("UserFromId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Parleo.DAL.Entities.User", "UserTo")
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "UserTo")
                         .WithMany("Friends")
                         .HasForeignKey("UserToId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Parleo.DAL.Entities.UserLanguage", b =>
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.UserLanguage", b =>
                 {
-                    b.HasOne("Parleo.DAL.Entities.Language", "Language")
+                    b.HasOne("Parleo.DAL.Models.Entities.Language", "Language")
                         .WithMany("UserLanguages")
-                        .HasForeignKey("LanguageId")
+                        .HasForeignKey("LanguageCode")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Parleo.DAL.Entities.User", "User")
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "User")
                         .WithMany("Languages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

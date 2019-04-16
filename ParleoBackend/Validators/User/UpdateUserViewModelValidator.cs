@@ -21,6 +21,6 @@ namespace ParleoBackend.Validators.User
                 .MaximumLength(60);
         }
 
-        private bool IsUnique(string email) => !_accountService.IsUserExists(email).Result;
+        private bool IsUnique(string email) => !_accountService.IsUserExistsAsync(email).Result;
     }
 }
