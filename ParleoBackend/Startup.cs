@@ -37,12 +37,9 @@ namespace ParleoBackend
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddSwaggerDocumentation();
 
             IJwtSettings jwtSettings = new JwtSettings(Configuration);
-
-            services.AddSwaggerDocumentation();
-           
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
