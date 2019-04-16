@@ -22,7 +22,7 @@ namespace Parleo.BLL.Interfaces
 
         Task AddAccountTokenAsync(AccountTokenModel tokenModel);
 
-        Task<bool> IsUserExistsAsync(string email);
+        Task<bool> UserExistsAsync(string email);
       
         Task InsertUserAccountImageAsync(string imageName, Guid userId);
 

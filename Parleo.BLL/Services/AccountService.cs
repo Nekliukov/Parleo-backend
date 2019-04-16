@@ -120,7 +120,7 @@ namespace Parleo.BLL.Services
         public async Task<bool> DisableUserAsync(Guid id)
             => await _repository.DisableAsync(id);
 
-        public async Task<bool> IsUserExistsAsync(string email)
+        public async Task<bool> UserExistsAsync(string email)
             => await _repository.FindByEmailAsync(email) != null;
 
         public async Task InsertUserAccountImageAsync(string imageName, Guid userId)

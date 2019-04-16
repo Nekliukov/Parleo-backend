@@ -22,6 +22,6 @@ namespace ParleoBackend.Validators.User
                 .MinimumLength(8);
         }
 
-        private bool IsExists(string email) => _accountService.IsUserExistsAsync(email).Result;
+        private bool IsExists(string email) => _accountService.UserExistsAsync(email).Result;
     }
 }
