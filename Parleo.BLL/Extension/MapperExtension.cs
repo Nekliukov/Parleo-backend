@@ -10,7 +10,6 @@ using DataAccessUser = Parleo.DAL.Models.Entities.User;
 using DataAccessLanguage = Parleo.DAL.Models.Entities.Language;
 using DataAccessEvent = Parleo.DAL.Models.Entities.Event;
 using DataAccessUserLanguage = Parleo.DAL.Models.Entities.UserLanguage;
-using System;
 using System.Linq;
 
 namespace Parleo.BLL.Extensions
@@ -38,15 +37,15 @@ namespace Parleo.BLL.Extensions
                             {
                                 Id = e.Id,
                                 // TODO for Ксюшенька
-                                // AccountImage = e.EventImage
-                                AccountImage = "FakeImage"
+                                // Image = e.EventImage
+                                Image = "FakeImage"
                             })))
                     .ForMember(um => um.Friends,
                         opt => opt.MapFrom(u =>
                             u.Friends.Select(f => new MiniatureModel
                             {
                                 Id = f.UserToId,
-                                AccountImage = f.UserTo.AccountImage
+                                Image = f.UserTo.AccountImage
                             })))
                      .ForMember(um => um.AttendingEvents, 
                         opt => opt.MapFrom(u => 
@@ -54,8 +53,8 @@ namespace Parleo.BLL.Extensions
                             {
                                 Id = e.EventId,
                                 // TODO for Ксюшенька
-                                // AccountImage = e.Event.EventImage
-                                AccountImage = "FakeImage"
+                                // Image = e.Event.EventImage
+                                Image = "FakeImage"
                             })));
 
                 mc.CreateMap<UpdateUserModel, DataAccessUser>();
@@ -69,7 +68,7 @@ namespace Parleo.BLL.Extensions
                             e.Participants.Select(p => new MiniatureModel
                             {
                                 Id = p.UserId,
-                                AccountImage = p.User.AccountImage
+                                Image = p.User.AccountImage
                             })));
 
                 mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();

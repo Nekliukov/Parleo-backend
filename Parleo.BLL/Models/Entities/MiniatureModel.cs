@@ -8,6 +8,6 @@ namespace Parleo.BLL.Models.Entities
     {
         public Guid Id { get; set; }
 
-        public string AccountImage { get; set; }
+        public string Image { get; set; }
     }
 }
