@@ -37,15 +37,17 @@ namespace Parleo.BLL.Extensions
                             {
                                 Id = e.Id,
                                 // TODO for Ксюшенька
-                                // Image = e.EventImage
-                                Image = "FakeImage"
+                                // Image = e.EventImage,
+                                Image = "FakeImage",
+                                Name = e.Name
                             })))
                     .ForMember(um => um.Friends,
                         opt => opt.MapFrom(u =>
                             u.Friends.Select(f => new MiniatureModel
                             {
                                 Id = f.UserToId,
-                                Image = f.UserTo.AccountImage
+                                Image = f.UserTo.AccountImage,
+                                Name = f.UserTo.Name
                             })))
                      .ForMember(um => um.AttendingEvents, 
                         opt => opt.MapFrom(u => 
@@ -53,8 +55,9 @@ namespace Parleo.BLL.Extensions
                             {
                                 Id = e.EventId,
                                 // TODO for Ксюшенька
-                                // Image = e.Event.EventImage
-                                Image = "FakeImage"
+                                // Image = e.Event.EventImage,
+                                Image = "FakeImage",
+                                Name = e.Event.Name
                             })));
 
                 mc.CreateMap<UpdateUserModel, DataAccessUser>();
@@ -68,7 +71,8 @@ namespace Parleo.BLL.Extensions
                             e.Participants.Select(p => new MiniatureModel
                             {
                                 Id = p.UserId,
-                                Image = p.User.AccountImage
+                                Image = p.User.AccountImage,
+                                Name = p.User.Name
                             })));
 
                 mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();
