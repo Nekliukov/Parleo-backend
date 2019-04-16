@@ -78,13 +78,11 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();
 
                 mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
-                    .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.LanguageId))
-                    .ForMember(ul => ul.Name,
-                        opt => opt.MapFrom(ulvm => ulvm.Language.Name));
+                    .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.LanguageCode));
 
                 mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
                 mc.CreateMap<UserLanguageModel, DataAccessUserLanguage>()
-                    .ForMember(ul => ul.LanguageId, opt => opt.MapFrom(l => l.Id));
+                    .ForMember(ul => ul.LanguageCode, opt => opt.MapFrom(l => l.Id));
 
                 // filters
                 mc.CreateMap<ChatFilterModel, ChatFilter>();
