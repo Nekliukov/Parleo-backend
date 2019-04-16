@@ -9,7 +9,9 @@ namespace Parleo.DAL.Models.Entities
         [Key]
         [ForeignKey("User")]
         public Guid UserId { get; set; }
+
         public DateTime ExpirationDate { get; set; }
+
         public User User { get; set; }
     }
 }

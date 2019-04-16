@@ -34,17 +34,21 @@ namespace Parleo.BLL.Services
 
         private async Task Send(string to, string subject, string body)
         {
-            MailMessage message = new MailMessage(_emailClientSettings.Sender, to);
-            message.Subject = subject;
-            message.Body = body;
-            message.IsBodyHtml = true;
+            MailMessage message = new MailMessage(_emailClientSettings.Sender, to)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
 
-            SmtpClient client = new SmtpClient(_emailClientSettings.Host, _emailClientSettings.Port);
-            client.EnableSsl = true;
-            client.Credentials = new NetworkCredential(
-                _emailClientSettings.UserName,
-                _emailClientSettings.Password
-            );
+            SmtpClient client = new SmtpClient(_emailClientSettings.Host, _emailClientSettings.Port)
+            {
+                EnableSsl = true,
+                Credentials = new NetworkCredential(
+                    _emailClientSettings.UserName,
+                    _emailClientSettings.Password
+                )
+            };
 
             await client.SendMailAsync(message);
         }

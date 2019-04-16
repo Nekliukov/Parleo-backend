@@ -11,7 +11,7 @@ namespace Parleo.DAL
 
         public DbSet<Event> Event { get; set; }
 
-        public DbSet<AccountToken> AccountTokens { get; set; }
+        public DbSet<AccountToken> AccountToken { get; set; }
 
         public AppContext() : base()
         {
@@ -36,7 +36,7 @@ namespace Parleo.DAL
 
             modelBuilder.Entity<AccountToken>()
                 .HasOne(c => c.User)
-                .WithOne(ui => ui.AccountTokens)
+                .WithOne(ui => ui.AccountToken)
                 .HasForeignKey<AccountToken>(c => c.UserId);
 
             modelBuilder.Entity<User>()

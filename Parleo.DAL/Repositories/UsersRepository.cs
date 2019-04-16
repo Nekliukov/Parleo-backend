@@ -95,15 +95,15 @@ namespace Parleo.DAL.Repositories
 
         public async Task AddAccountTokenAsync(AccountToken accountToken)
         {
-            _context.AccountTokens.Add(accountToken);
+            _context.AccountToken.Add(accountToken);
             await _context.SaveChangesAsync();
         }
 
         public async Task<AccountToken> DeleteAccountTokenByUserIdAsync(Guid userId)
         {
-            AccountToken accountToken = await _context.AccountTokens.Include(c => c.User)
+            AccountToken accountToken = await _context.AccountToken.Include(c => c.User)
                 .FirstOrDefaultAsync(с => с.UserId == userId);
-            _context.AccountTokens.Remove(accountToken);
+            _context.AccountToken.Remove(accountToken);
             _context.SaveChanges();
 
             return accountToken;
