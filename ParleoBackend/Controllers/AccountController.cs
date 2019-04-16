@@ -126,16 +126,21 @@ namespace ParleoBackend.Controllers
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> EditAsync(UserViewModel user)
+        public async Task<IActionResult> EditAsync(
+            Guid userId,
+            [FromQuery] UpdateUserViewModel entity)
         {
-            var validator = new UserViewModelValidator(_accountService);
-            ValidationResult result = validator.Validate(user);
+            var validator = new UpdateUserViewModelValidator(_accountService);
+            ValidationResult result = validator.Validate(entity);
+
             if (!result.IsValid)
             {
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
-            bool isEdited = await _accountService.UpdateUserAsync(_mapper.Map<UserModel>(user));          
+            bool isEdited = await _accountService.UpdateUserAsync(
+                    userId, _mapper.Map<UpdateUserModel>(entity));
+
             if (!isEdited)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));

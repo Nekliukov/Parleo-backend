@@ -11,6 +11,7 @@ using DataAccessLanguage = Parleo.DAL.Models.Entities.Language;
 using DataAccessEvent = Parleo.DAL.Models.Entities.Event;
 using DataAccessUserLanguage = Parleo.DAL.Models.Entities.UserLanguage;
 using Parleo.DAL.Models.Entities;
+using System.Linq;
 
 namespace Parleo.BLL.Extensions
 {
@@ -32,26 +33,60 @@ namespace Parleo.BLL.Extensions
 
                 mc.CreateMap<UserModel, DataAccessUser>();
                 mc.CreateMap<DataAccessUser, UserModel>()
-                    .ForMember(ui => ui.Email, 
-                        opt => opt.MapFrom(uivm => uivm.Credentials.Email));                
+                    .ForMember(ui => ui.Email,
+                        opt => opt.MapFrom(uivm => uivm.Credentials.Email))
+                    .ForMember(um => um.CreatedEvents,
+                        opt => opt.MapFrom(u =>
+                            u.CreatedEvents.Select(e => new MiniatureModel
+                            {
+                                Id = e.Id,
+                                // TODO for Ксюшенька
+                                // Image = e.EventImage,
+                                Image = "FakeImage",
+                                Name = e.Name
+                            })))
+                    .ForMember(um => um.Friends,
+                        opt => opt.MapFrom(u =>
+                            u.Friends.Select(f => new MiniatureModel
+                            {
+                                Id = f.UserToId,
+                                Image = f.UserTo.AccountImage,
+                                Name = f.UserTo.Name
+                            })))
+                     .ForMember(um => um.AttendingEvents, 
+                        opt => opt.MapFrom(u => 
+                        u.AttendingEvents.Select(e => new MiniatureModel
+                            {
+                                Id = e.EventId,
+                                // TODO for Ксюшенька
+                                // Image = e.Event.EventImage,
+                                Image = "FakeImage",
+                                Name = e.Event.Name
+                            })));
+
+                mc.CreateMap<UpdateUserModel, DataAccessUser>();
 
                 mc.CreateMap<DataAccessLanguage, LanguageModel>();
                 mc.CreateMap<LanguageModel, DataAccessLanguage>();
 
                 mc.CreateMap<DataAccessEvent, EventModel>()
-                    .ForMember(em => em.ParticipantsCount,
-                        opt => opt.MapFrom(e => e.Participants.Count));                           
-                
+                    .ForMember(em => em.Participants,
+                        opt => opt.MapFrom(e => 
+                            e.Participants.Select(p => new MiniatureModel
+                            {
+                                Id = p.UserId,
+                                Image = p.User.AccountImage,
+                                Name = p.User.Name
+                            })));
+
                 mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();
 
                 mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
-                    .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.UserId))
-                    .ForMember(ul => ul.Name, 
-                        opt => opt.MapFrom(ulvm => ulvm.Language.Name));
+                    .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.LanguageCode));
 
                 mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
                 mc.CreateMap<UserLanguageModel, DataAccessUserLanguage>()
-                    .ForMember(ul => ul.LanguageId, opt => opt.MapFrom(l => l.Id));
+                    .ForMember(ul => ul.LanguageCode, opt => opt.MapFrom(l => l.Id));
 
                 // filters
                 mc.CreateMap<ChatFilterModel, ChatFilter>();

@@ -42,7 +42,7 @@ namespace Parleo.DAL.Repositories
                 .Where(u => (userFilter.Languages != null &&
                         userFilter.Languages.Count() != 0) ?
                     userFilter.Languages.Any(l => u.Languages.Any(
-                        ul => ul.LanguageId == l.LanguageId)) : true)
+                        ul => ul.LanguageCode == l.LanguageCode)) : true)
                 // TODO, need to discus with front
                 //.Where(u => (userFilter.MaxDistance != null) ? true : true)
                 //.Where(u => (userFilter.MinDistance != null) ? true : true))
@@ -52,7 +52,10 @@ namespace Parleo.DAL.Repositories
                     GetAge(u.Birthdate) >= userFilter.MinAge : true)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.Friends)
+                    .ThenInclude(f => f.UserTo)
                 .Include(u => u.Languages)
+                    .ThenInclude(ul => ul.Language)
+                .Include(u => u.Credentials)
                 .ToListAsync();
 
             int totalAmount = users.Count();

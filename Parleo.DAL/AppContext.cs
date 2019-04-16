@@ -25,7 +25,6 @@ namespace Parleo.DAL
         {
             modelBuilder.Entity<Event>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<User>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
-            modelBuilder.Entity<Language>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
 
             modelBuilder.Entity<User>().Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
@@ -47,7 +46,7 @@ namespace Parleo.DAL
                 .WithOne(e => e.Language);
 
             #region User-Language m2m
-            modelBuilder.Entity<UserLanguage>().HasKey(k => new { k.UserId, k.LanguageId });
+            modelBuilder.Entity<UserLanguage>().HasKey(k => new { k.UserId, k.LanguageCode });
             modelBuilder.Entity<UserLanguage>()
                 .HasOne(ul => ul.User)
                 .WithMany(u => u.Languages)
@@ -55,7 +54,7 @@ namespace Parleo.DAL
             modelBuilder.Entity<UserLanguage>()
                 .HasOne(ul => ul.Language)
                 .WithMany(lng => lng.UserLanguages)
-                .HasForeignKey(ul => ul.LanguageId);
+                .HasForeignKey(ul => ul.LanguageCode);
             #endregion
 
             #region User-User m2m

@@ -29,6 +29,7 @@
     <Compile Remove="Migrations\20190310155912_CreateInitialModels.Designer.cs" />
     <Compile Remove="Migrations\20190310160227_CreateInitialModels.cs" />
     <Compile Remove="Migrations\20190310160227_CreateInitialModels.Designer.cs" />
+    <Compile Remove="Migrations\20190416132317_ChangeLanguagePrimaryKey.cs" />
   </ItemGroup>
 
   <ItemGroup>
