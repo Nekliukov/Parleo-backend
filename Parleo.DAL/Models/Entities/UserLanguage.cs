@@ -8,7 +8,7 @@ namespace Parleo.DAL.Models.Entities
 
         public User User { get; set; }
 
-        public Guid LanguageId { get; set; }
+        public string LanguageCode { get; set; }
 
         public Language Language { get; set; }
 
