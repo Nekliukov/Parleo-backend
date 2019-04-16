@@ -81,7 +81,7 @@ namespace ParleoBackend
             services.AddTransient<IValidator<CreateOrUpdateEventViewModel>, CrateOrUpdateEventViewModelValidator>();
             services.AddTransient<IValidator<UserRegistrationViewModel>, UserRegistrationViewModelValidator>();
             services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
-            services.AddTransient<IValidator<UserViewModel>, UserViewModelValidator>();
+            services.AddTransient<IValidator<UpdateUserViewModel>, UpdateUserViewModelValidator>();
             ValidatorOptions.LanguageManager.Culture = new CultureInfo("en-GB");
         }
 

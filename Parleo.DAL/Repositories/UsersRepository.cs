@@ -53,7 +53,10 @@ namespace Parleo.DAL.Repositories
                     GetAge(u.Birthdate) >= userFilter.MinAge : true)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.Friends)
+                    .ThenInclude(f => f.UserTo)
                 .Include(u => u.Languages)
+                    .ThenInclude(ul => ul.Language)
+                .Include(u => u.Credentials)
                 .ToListAsync();
 
             int totalAmount = users.Count();

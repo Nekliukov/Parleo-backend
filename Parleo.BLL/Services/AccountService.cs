@@ -93,16 +93,16 @@ namespace Parleo.BLL.Services
             return _mapper.Map<UserModel>(user);
         }
 
-        public async Task<bool> UpdateUserAsync(UserModel user)
+        public async Task<bool> UpdateUserAsync(Guid userId, UpdateUserModel user)
         {
-            User User = await _repository.GetAsync(user.Id);
+            User User = await _repository.GetAsync(userId);
 
             if (User == null)
             {
                 return false; //bad request
             }            
 
-            User = _mapper.Map<User>(user);
+            _mapper.Map(user, User);
 
             return await _repository.UpdateAsync(User);
         }
