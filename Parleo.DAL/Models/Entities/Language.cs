@@ -11,6 +11,9 @@ namespace Parleo.DAL.Models.Entities
         [Column(TypeName = "varchar(2)")]
         public string Code { get; set; }
 
+        //TODO to Ксюшенька(наверное): add icons to languages
+        public string Image { get; set; }
+
         public ICollection<Event> Events { get; set; }
 
         public ICollection<UserLanguage> UserLanguages { get; set; }

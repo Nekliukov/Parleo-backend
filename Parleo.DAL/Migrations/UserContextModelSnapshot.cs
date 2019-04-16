@@ -15,7 +15,7 @@ namespace Parleo.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -80,6 +80,8 @@ namespace Parleo.DAL.Migrations
                     b.Property<string>("Code")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(2)");
+
+                    b.Property<string>("Image");
 
                     b.HasKey("Code");
 

@@ -39,9 +39,10 @@ namespace Parleo.DAL.Migrations
                 name: "Id",
                 table: "Language");
 
-            migrationBuilder.DropColumn(
+            migrationBuilder.RenameColumn(
                 name: "Name",
-                table: "Language");
+                table: "Language",
+                newName: "Image");
 
             migrationBuilder.AddColumn<string>(
                 name: "LanguageCode",
@@ -136,6 +137,11 @@ namespace Parleo.DAL.Migrations
                 name: "LanguageCode",
                 table: "Event");
 
+            migrationBuilder.RenameColumn(
+                name: "Image",
+                table: "Language",
+                newName: "Name");
+
             migrationBuilder.AddColumn<Guid>(
                 name: "LanguageId",
                 table: "UserLanguage",
@@ -147,11 +153,6 @@ namespace Parleo.DAL.Migrations
                 table: "Language",
                 nullable: false,
                 defaultValueSql: "NEWID()");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Name",
-                table: "Language",
-                nullable: true);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_UserLanguage",

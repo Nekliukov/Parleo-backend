@@ -10,14 +10,14 @@ using Parleo.DAL;
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20190416132317_ChangeLanguagePrimaryKey")]
+    [Migration("20190416202200_ChangeLanguagePrimaryKey")]
     partial class ChangeLanguagePrimaryKey
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -82,6 +82,8 @@ namespace Parleo.DAL.Migrations
                     b.Property<string>("Code")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(2)");
+
+                    b.Property<string>("Image");
 
                     b.HasKey("Code");
 
