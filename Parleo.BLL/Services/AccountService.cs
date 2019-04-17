@@ -3,10 +3,12 @@ using Parleo.BLL.Models.Entities;
 using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Parleo.BLL.Models.Filters;
+using Parleo.BLL.Models.Pages;
+using Parleo.DAL.Models.Filters;
 
 namespace Parleo.BLL.Services
 {
@@ -31,36 +33,31 @@ namespace Parleo.BLL.Services
             _logger = logger;
         }
 
-        public async Task<UserModel> AuthenticateAsync(AuthorizationModel authorizationModel)
+        public async Task<UserModel> AuthenticateAsync(UserLoginModel authorizationModel)
         {
             Credentials user = await _repository.FindByEmailAsync(authorizationModel.Email);
-     
-            if (user == null) // check if email exists
-            {
-                throw new AppException(ErrorType.EmailNotFound,
-                    $"{authorizationModel.Email} is not found");
-            }
                 
             if (!_securityService.VerifyPasswordHash(authorizationModel.Password,
                 user.PasswordHash, user.PasswordSalt))
             {
-                throw new AppException(ErrorType.InvalidPassword,
-                    $"Wrong password for {authorizationModel.Email}");
+                return null;
             }
                 
             return _mapper.Map<UserModel>(user.User);
         }
 
-        //TODO: add filters
-        public async Task<IEnumerable<UserModel>> GetUsersPageAsync(int offset)
+        public async Task<PageModel<UserModel>> GetUsersPageAsync(
+            UserFilterModel pageRequest)
         {
-            IList<User> users = await _repository.GetPageAsync(offset);
-            if(users == null)
+            var usersPage = await _repository.GetPageAsync(
+                _mapper.Map<UserFilter>(pageRequest));
+
+            if(usersPage == null)
             {
                 return null;
             }
 
-            return _mapper.Map<IEnumerable<UserModel>>(users);
+            return _mapper.Map<PageModel<UserModel>>(usersPage);
         }
 
         public async Task<UserModel> GetUserByIdAsync(Guid id)
@@ -74,13 +71,8 @@ namespace Parleo.BLL.Services
             return _mapper.Map<UserModel>(user);
         }
 
-        public async Task<UserModel> CreateUserAsync(AuthorizationModel authorizationModel)
+        public async Task<UserModel> CreateUserAsync(UserRegistrationModel authorizationModel)
         {
-            if (await _repository.FindByEmailAsync(authorizationModel.Email) != null)
-            {
-                throw new AppException(ErrorType.ExistingEmail, $"Email {authorizationModel.Email} is already exists");
-            }
-
             byte[] passwordHash, passwordSalt;
             _securityService.CreatePasswordHash(authorizationModel.Password, out passwordHash, out passwordSalt);
 
@@ -101,32 +93,38 @@ namespace Parleo.BLL.Services
             return _mapper.Map<UserModel>(user);
         }
 
-        public async Task<bool> UpdateUserAsync(UserModel user)
+        public async Task<bool> UpdateUserAsync(Guid userId, UpdateUserModel user)
         {
-            User User = await _repository.GetAsync(user.Id);
+            User User = await _repository.GetAsync(userId);
 
             if (User == null)
             {
                 return false; //bad request
-            }
-                
-            if (user.Email != User.Credentials.Email)
-            {
-                if (await _repository.FindByEmailAsync(user.Email) != null)
-                {
-                    throw new AppException(ErrorType.ExistingEmail,
-                        "Email " + user.Email + " is already taken");
-                }                 
-            }
+            }            
 
-            User = _mapper.Map<User>(user);
+            _mapper.Map(user, User);
 
             return await _repository.UpdateAsync(User);
         }
+        
+        public async Task AddAccountTokenAsync(AccountTokenModel tokenModel)
+        {
+            await _repository.AddAccountTokenAsync(_mapper.Map<AccountToken>(tokenModel));
+        }
+
+        public async Task<AccountTokenModel> DeleteAccountTokenAsync(Guid userId)
+        {
+            return _mapper.Map<AccountTokenModel>(await _repository.DeleteAccountTokenByUserIdAsync(userId));
+        }
 
         public async Task<bool> DisableUserAsync(Guid id)
-        {
-            return await _repository.DisableAsync(id);
-        }
+            => await _repository.DisableAsync(id);
+
+        public async Task<bool> UserExistsAsync(string email)
+            => await _repository.FindByEmailAsync(email) != null;
+
+        public async Task InsertUserAccountImageAsync(string imageName, Guid userId)
+            => await _repository.InsertAccountImageNameAsync(imageName, userId);
+           
     }
 }

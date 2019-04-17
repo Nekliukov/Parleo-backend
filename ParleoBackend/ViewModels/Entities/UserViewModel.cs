@@ -1,11 +1,13 @@
 using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace ParleoBackend.ViewModels.Entities
 {
     public class UserViewModel
     {
         public Guid Id { get; set; }
+
+        public string AccountImage { get; set; }
 
         public string Name { get; set; }
 
@@ -17,13 +19,14 @@ namespace ParleoBackend.ViewModels.Entities
 
         public decimal Longitude { get; set; }
 
-        [EmailAddress]
         public string Email { get; set; }
 
-        /*public ICollection<EventViewModel> CreatedEvents { get; set; }
+        public ICollection<MiniatureViewModel> CreatedEvents { get; set; }
 
         public ICollection<UserLanguageViewModel> Languages { get; set; }
 
-        public ICollection<UserFriendsViewModel> Friends { get; set; }   */     
+        public ICollection<MiniatureViewModel> Friends { get; set; }
+
+        public ICollection<MiniatureViewModel> AttendingEvents { get; set; }
     }
 }

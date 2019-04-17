@@ -17,7 +17,7 @@ namespace Parleo.DAL.Models.Entities
         public byte[] PasswordSalt { get; set; }
 
         public DateTimeOffset LastLogin { get; set; }
-        
+
         public User User { get; set; }
     }
 }

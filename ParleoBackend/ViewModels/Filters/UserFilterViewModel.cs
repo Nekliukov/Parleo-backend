@@ -16,6 +16,6 @@ namespace ParleoBackend.ViewModels.Filters
 
         public int? MaxDistance { get; set; }
 
-        public List<UserLanguageViewModel> Languages { get; set; }
+        public UserLanguageViewModel[] Languages { get; set; }
     }
 }

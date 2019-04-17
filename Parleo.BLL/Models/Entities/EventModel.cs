@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Parleo.BLL.Models.Entities
 {
     public class EventModel
@@ -25,6 +27,6 @@ namespace Parleo.BLL.Models.Entities
 
         public LanguageModel Language { get; set; }
 
-        public int ParticipantsCount { get; set; }
+        public ICollection<MiniatureModel> Participants { get; set; }
     }
 }

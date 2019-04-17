@@ -1,14 +1,18 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Parleo.BLL.Exceptions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
+using ParleoBackend.Validators;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Filters;
 using ParleoBackend.ViewModels.Pages;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ParleoBackend.Controllers
@@ -28,9 +32,7 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{eventId}/addParticipant/{userId}")]
         [Authorize]
-        public async Task<ActionResult> AddEventParticipant(
-            Guid eventId,
-            Guid userId)
+        public async Task<ActionResult> AddEventParticipant(Guid eventId, Guid userId)
         {
             var result = await _service.AddEventParticipant(eventId, userId);
 
@@ -45,7 +47,7 @@ namespace ParleoBackend.Controllers
             var result = await _service.GetEventsPageAsync(
                 _mapper.Map<EventFilterModel>(eventFilter));
 
-            return Ok(result);
+            return Ok(_mapper.Map<PageViewModel<EventViewModel>>(result));
         }
 
         [HttpGet("{eventId}")]
@@ -56,7 +58,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<EventViewModel>(foundEvent));
         }
 
-        [HttpGet("{eventId}/page")]
+        [HttpGet("{eventId}/participants")]
         [Authorize]
         public async Task<ActionResult> GetParticipantsPageAsync(
             Guid eventId,
@@ -73,6 +75,13 @@ namespace ParleoBackend.Controllers
         public async Task<ActionResult> CreateEventAsync(
             [FromQuery] CreateOrUpdateEventViewModel entity)
         {
+            var validator = new CrateOrUpdateEventViewModelValidator();
+            ValidationResult result = validator.Validate(entity);
+            if (!result.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
+            }
+
             var createdEvent = await _service.CreateEventAsync(
                 _mapper.Map<CreateOrUpdateEventModel>(entity));
 
@@ -85,7 +94,14 @@ namespace ParleoBackend.Controllers
             Guid eventId,
             [FromQuery] CreateOrUpdateEventViewModel entity)
         {
-            var result = await _service.UpdateEventAsync(eventId,
+            var validator = new CrateOrUpdateEventViewModelValidator();
+            ValidationResult result = validator.Validate(entity);
+            if (!result.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
+            }
+
+            var updateResult = await _service.UpdateEventAsync(eventId,
                 _mapper.Map<CreateOrUpdateEventModel>(entity));
 
             return Ok();

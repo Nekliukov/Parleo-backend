@@ -19,6 +19,17 @@ namespace Parleo.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.AccountToken", b =>
+                {
+                    b.Property<Guid>("UserId");
+
+                    b.Property<DateTime>("ExpirationDate");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("AccountToken");
+                });
+
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>
                 {
                     b.Property<Guid>("UserId");
@@ -50,6 +61,8 @@ namespace Parleo.DAL.Migrations
 
                     b.Property<bool>("IsFinished");
 
+                    b.Property<string>("LanguageCode");
+
                     b.Property<Guid>("LanguageId");
 
                     b.Property<decimal>("Latitude")
@@ -68,20 +81,20 @@ namespace Parleo.DAL.Migrations
 
                     b.HasIndex("CreatorId");
 
-                    b.HasIndex("LanguageId");
+                    b.HasIndex("LanguageCode");
 
                     b.ToTable("Event");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Language", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Code")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValueSql("NEWID()");
+                        .HasColumnType("varchar(2)");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Image");
 
-                    b.HasKey("Id");
+                    b.HasKey("Code");
 
                     b.ToTable("Language");
                 });
@@ -91,6 +104,8 @@ namespace Parleo.DAL.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("NEWID()");
+
+                    b.Property<string>("AccountImage");
 
                     b.Property<DateTime>("Birthdate")
                         .HasColumnType("Date");
@@ -146,15 +161,23 @@ namespace Parleo.DAL.Migrations
                 {
                     b.Property<Guid>("UserId");
 
-                    b.Property<Guid>("LanguageId");
+                    b.Property<string>("LanguageCode");
 
                     b.Property<byte>("Level");
 
-                    b.HasKey("UserId", "LanguageId");
+                    b.HasKey("UserId", "LanguageCode");
 
-                    b.HasIndex("LanguageId");
+                    b.HasIndex("LanguageCode");
 
                     b.ToTable("UserLanguage");
+                });
+
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.AccountToken", b =>
+                {
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "User")
+                        .WithOne("AccountToken")
+                        .HasForeignKey("Parleo.DAL.Models.Entities.AccountToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>
@@ -174,8 +197,7 @@ namespace Parleo.DAL.Migrations
 
                     b.HasOne("Parleo.DAL.Models.Entities.Language", "Language")
                         .WithMany("Events")
-                        .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("LanguageCode");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.UserEvent", b =>
@@ -208,7 +230,7 @@ namespace Parleo.DAL.Migrations
                 {
                     b.HasOne("Parleo.DAL.Models.Entities.Language", "Language")
                         .WithMany("UserLanguages")
-                        .HasForeignKey("LanguageId")
+                        .HasForeignKey("LanguageCode")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Parleo.DAL.Models.Entities.User", "User")

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ParleoBackend.ViewModels.Entities
 {
@@ -26,6 +27,6 @@ namespace ParleoBackend.ViewModels.Entities
 
         public LanguageViewModel Language { get; set; }
 
-        public int ParticipantsCount { get; set; }
+        public ICollection<MiniatureViewModel> Participants { get; set; }
     }
 }
