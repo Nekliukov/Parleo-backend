@@ -95,7 +95,7 @@ namespace ParleoBackend.Controllers
                     UserId = user.Id
                 }
             );
-            await _emailService.SendEmailConfirmationLink(user.Email, tokenString);
+            await _emailService.SendEmailConfirmationLinkAsync(user.Email, tokenString);
 
             return NoContent();
         }
