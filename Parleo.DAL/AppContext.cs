@@ -13,6 +13,8 @@ namespace Parleo.DAL
 
         public DbSet<AccountToken> AccountToken { get; set; }
 
+        public DbSet<Chat> Chat { get; set; }
+
         public AppContext() : base()
         {
         }
@@ -25,13 +27,22 @@ namespace Parleo.DAL
         {
             modelBuilder.Entity<Event>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<User>().Property(e => e.Id).HasDefaultValueSql("NEWID()");
-
+            modelBuilder.Entity<Chat>().Property(c => c.Id).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<User>().Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
             modelBuilder.Entity<Credentials>()
                 .HasOne(c => c.User)
                 .WithOne(ui => ui.Credentials)
                 .HasForeignKey<Credentials>(c => c.UserId);
+
+            modelBuilder.Entity<Chat>()
+                .HasMany(chat => chat.Messages)
+                .WithOne(message => message.Chat)
+                .HasForeignKey(message => message.ChatId);
+
+            modelBuilder.Entity<Event>()
+                .HasOne(ev => ev.Chat)
+                .WithOne();  //Or withMany()
 
             modelBuilder.Entity<AccountToken>()
                 .HasOne(c => c.User)
@@ -82,6 +93,20 @@ namespace Parleo.DAL
                 .HasOne(ue => ue.Event)
                 .WithMany(e => e.Participants)
                 .HasForeignKey(ue => ue.EventId)
+                .OnDelete(DeleteBehavior.Restrict);
+            #endregion
+
+            #region Chat-User m2m
+            modelBuilder.Entity<ChatUser>().HasKey(chatUser => new { chatUser.ChatId, chatUser.UserId });
+            modelBuilder.Entity<ChatUser>()
+                .HasOne(chatUser => chatUser.Chat)
+                .WithMany(user => user.Members)
+                .HasForeignKey(chatUser => chatUser.ChatId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<ChatUser>()
+                .HasOne(chatUser => chatUser.User)
+                .WithMany(user => user.Chats)
+                .HasForeignKey(chatUser => chatUser.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
             #endregion
         }
