@@ -57,7 +57,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<PageViewModel<MessageViewModel>>(messages));
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("user")]
         public async Task<ActionResult> GetChatWithUser(string myUserId, [FromQuery] Guid userId)
         {
             //string userId = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
