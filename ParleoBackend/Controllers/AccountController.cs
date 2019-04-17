@@ -190,7 +190,10 @@ namespace ParleoBackend.Controllers
 
             UserModel user = await _accountService.GetUserByIdAsync(userId);
 
-            return Ok(user);
+            return Ok(new {
+                id = user.Id,
+                token = _jwtService.GetJWTToken(user)
+            });
         }
 
         [HttpPut("{userId}/image")]
