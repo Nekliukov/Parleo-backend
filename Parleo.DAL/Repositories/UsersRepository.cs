@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -97,12 +96,20 @@ namespace Parleo.DAL.Repositories
                 .FirstOrDefaultAsync(с => с.Email == email);
         }
 
-        private int GetAge(DateTimeOffset birth)
+        public async Task AddAccountTokenAsync(AccountToken accountToken)
         {
-            int age = new DateTime(
-                DateTime.Now.Subtract(birth.DateTime).Ticks).Year;
+            _context.AccountToken.Add(accountToken);
+            await _context.SaveChangesAsync();
+        }
 
-            return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
+        public async Task<AccountToken> DeleteAccountTokenByUserIdAsync(Guid userId)
+        {
+            AccountToken accountToken = await _context.AccountToken.Include(c => c.User)
+                .FirstOrDefaultAsync(с => с.UserId == userId);
+            _context.AccountToken.Remove(accountToken);
+            _context.SaveChanges();
+
+            return accountToken;
         }
 
         public async Task InsertAccountImageNameAsync(string imageName, Guid userId)
@@ -114,6 +121,15 @@ namespace Parleo.DAL.Repositories
             };
             _context.Entry(user).Property(x => x.AccountImage).IsModified = true;
             await _context.SaveChangesAsync();
+        }
+
+
+        private int GetAge(DateTimeOffset birth)
+        {
+            int age = new DateTime(
+                DateTime.Now.Subtract(birth.DateTime).Ticks).Year;
+
+            return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
         }
     }
 }

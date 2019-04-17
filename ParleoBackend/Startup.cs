@@ -38,7 +38,8 @@ namespace ParleoBackend
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSwaggerDocumentation();
-           
+
+            IJwtSettings jwtSettings = new JwtSettings(Configuration);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -48,7 +49,7 @@ namespace ParleoBackend
                         ValidateAudience = false,
                         ValidateLifetime = true,
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration.GetSection("JWTSecretKey").Value)
+                            Encoding.UTF8.GetBytes(jwtSettings.JWTKey)
                         ),
                         ValidateIssuerSigningKey = true,
                     };

@@ -1,4 +1,4 @@
-﻿using Parleo.BLL.Models.Entities;
+using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
 using System;
@@ -20,8 +20,12 @@ namespace Parleo.BLL.Interfaces
 
         Task<bool> DisableUserAsync(Guid id);
 
-        Task<bool> IsUserExists(string email);
+        Task AddAccountTokenAsync(AccountTokenModel tokenModel);
+
+        Task<bool> UserExistsAsync(string email);
       
         Task InsertUserAccountImageAsync(string imageName, Guid userId);
+
+        Task<AccountTokenModel> DeleteAccountTokenAsync(Guid userId);
     }
 }

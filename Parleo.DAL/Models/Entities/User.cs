@@ -27,6 +27,8 @@ namespace Parleo.DAL.Models.Entities
 
         public Credentials Credentials { get; set; }
 
+        public AccountToken AccountToken { get; set; }
+
         public ICollection<Event> CreatedEvents { get; set; }
 
         public ICollection<UserLanguage> Languages { get; set; }

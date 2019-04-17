@@ -6,11 +6,11 @@ using AutoMapper;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System;
-using ParleoBackend.Extensions;
-using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using ParleoBackend.Contracts;
+using ParleoBackend.Extensions;
 using ParleoBackend.ViewModels.Filters;
 using Parleo.BLL.Models.Filters;
 using ParleoBackend.ViewModels.Pages;
@@ -20,7 +20,6 @@ using FluentValidation.Results;
 using Parleo.BLL.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using ParleoBackend.Contracts;
 
 namespace ParleoBackend.Controllers
 {
@@ -29,7 +28,8 @@ namespace ParleoBackend.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
+        private readonly IJwtService _jwtService;
         private readonly IAccountImageSettings _accountImageSettings;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
@@ -37,15 +37,17 @@ namespace ParleoBackend.Controllers
         public AccountController(
             IAccountService accountService,
             IMapper mapper,
-            IConfiguration configuration,
+            IJwtService jwtService,
+            IEmailService emailService,
             ILogger<AccountController> logger,
             IAccountImageSettings accountImageSettings
         )
         {
             _accountService = accountService;
-            _configuration = configuration; 
+            _jwtService = jwtService;
             _mapper = mapper;
             _logger = logger;
+            _emailService = emailService;
             _accountImageSettings = accountImageSettings;
         }
 
@@ -85,8 +87,17 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_CREATION_FAILED));
             }
 
-            string tokenString = AuthorizationExtension.GetJWTToken(user,_configuration.GetSection("JWTSecretKey").Value);
-            return Ok(new { token = tokenString });
+            string tokenString = _jwtService.GetJWTToken(user);
+            await _accountService.AddAccountTokenAsync(
+                new AccountTokenModel()
+                {
+                    ExpirationDate = DateTime.Now.AddHours(2),
+                    UserId = user.Id
+                }
+            );
+            await _emailService.SendEmailConfirmationLinkAsync(user.Email, tokenString);
+
+            return NoContent();
         }
 
         [HttpPost("login")]
@@ -106,9 +117,9 @@ namespace ParleoBackend.Controllers
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_PASSWORD));
             }
-                
-            string tokenString = AuthorizationExtension.GetJWTToken(user, _configuration.GetSection("JWTSecretKey").Value);
-            return Ok(new { token = tokenString });
+            string tokenString = _jwtService.GetJWTToken(user);
+
+            return Ok(new {token = tokenString});
         }
 
         [HttpPut("{userId}")]
@@ -156,6 +167,33 @@ namespace ParleoBackend.Controllers
             }
 
             return Ok(_mapper.Map<UserViewModel>(user));
+        }
+
+
+        [HttpGet("activate")]
+        public async Task<IActionResult> GetActivatedUserAccount(string token)
+        {
+            string userIdString = _jwtService.GetUserIdFromToken(token);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return BadRequest();
+            }
+
+            Guid userId = new Guid(userIdString);
+
+            AccountTokenModel accountToken = await _accountService.DeleteAccountTokenAsync(userId);
+
+            if (accountToken == null)
+            {
+                return BadRequest();
+            }
+
+            UserModel user = await _accountService.GetUserByIdAsync(userId);
+
+            return Ok(new {
+                id = user.Id,
+                token = _jwtService.GetJWTToken(user)
+            });
         }
 
         [HttpPut("{userId}/image")]
