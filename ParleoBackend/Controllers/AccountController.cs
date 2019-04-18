@@ -152,7 +152,7 @@ namespace ParleoBackend.Controllers
         [HttpGet("{userId}")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserAsync(string userId)
+        public async Task<IActionResult> GetUserByIdAsync(string userId)
         {
             Guid userGuid;
             if (!Guid.TryParse(userId, out userGuid))
@@ -161,6 +161,25 @@ namespace ParleoBackend.Controllers
             }
 
             UserModel user = await _accountService.GetUserByIdAsync(new Guid(userId));
+            if (user == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            return Ok(_mapper.Map<UserViewModel>(user));
+        }
+
+        [HttpGet("me")]
+        [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetUserByTokenAsync()
+        {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if (id == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+            UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
             if (user == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
