@@ -10,6 +10,8 @@ namespace Parleo.DAL.Models.Entities
 
         public string Name { get; set; }
 
+        public string About { get; set; }
+
         public string AccountImage { get; set; }
 
         [Column(TypeName = "Date")]
