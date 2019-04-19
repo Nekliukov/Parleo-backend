@@ -14,5 +14,7 @@ namespace Parleo.BLL.Models.Entities
 
         public MessageModel LastMessage { get; set; }
 
+        public int UnreadMessages { get; set; }
+
     }
 }

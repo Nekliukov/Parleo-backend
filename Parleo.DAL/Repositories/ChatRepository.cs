@@ -31,7 +31,9 @@ namespace Parleo.DAL.Repositories
             return await _context.Chat
                 .Include(c => c.Members)
                 .Where(c => c.Members.Select(cu => cu.User)
-                .Select(u => u.Id).Contains(userId)).ToListAsync();
+                .Select(u => u.Id)
+                .Contains(userId))
+                .ToListAsync();
         }
         public async Task<Page<Chat>> GetChatPageByUserId(Guid userId, PageRequest page)
         {

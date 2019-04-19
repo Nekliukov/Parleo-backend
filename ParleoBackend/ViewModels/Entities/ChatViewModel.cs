@@ -14,5 +14,7 @@ namespace ParleoBackend.ViewModels.Entities
         public Guid CreatorId { get; set; }
 
         public MessageViewModel LastMessage { get; set; }
+
+        public int UnreadMessages { get; set; }
     }
 }
