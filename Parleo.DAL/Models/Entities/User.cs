@@ -36,5 +36,7 @@ namespace Parleo.DAL.Models.Entities
         public ICollection<UserFriends> Friends { get; set; }
 
         public ICollection<UserEvent> AttendingEvents { get; set; }
+
+        public ICollection<UserHobby> Hobbies { get; set; }
     }
 }
