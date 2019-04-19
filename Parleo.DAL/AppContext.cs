@@ -113,7 +113,8 @@ namespace Parleo.DAL
             modelBuilder.Entity<ChatUser>()
                 .HasOne(chatUser => chatUser.User)
                 .WithMany(user => user.Chats)
-                .HasForeignKey(chatUser => chatUser.UserId)
+                .HasForeignKey(chatUser => chatUser.UserId);
+            #endregion
             #region User-Hobby m2m
             modelBuilder.Entity<UserHobby>().HasKey(k => new { k.UserId, k.HobbyName });
             modelBuilder.Entity<UserHobby>()
