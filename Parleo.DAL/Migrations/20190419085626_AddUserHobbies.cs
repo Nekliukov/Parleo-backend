@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Parleo.DAL.Migrations
 {
-    public partial class AddCategoriesAndHobbies : Migration
+    public partial class AddUserHobbies : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,30 +11,28 @@ namespace Parleo.DAL.Migrations
                 name: "Category",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.PrimaryKey("PK_Category", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Hobby",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    CategoryId = table.Column<Guid>(nullable: true)
+                    Name = table.Column<string>(nullable: false),
+                    CategoryName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Hobby", x => x.Id);
+                    table.PrimaryKey("PK_Hobby", x => x.Name);
                     table.ForeignKey(
-                        name: "FK_Hobby_Category_CategoryId",
-                        column: x => x.CategoryId,
+                        name: "FK_Hobby_Category_CategoryName",
+                        column: x => x.CategoryName,
                         principalTable: "Category",
-                        principalColumn: "Id",
+                        principalColumn: "Name",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -43,16 +41,16 @@ namespace Parleo.DAL.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false),
-                    HobbyId = table.Column<Guid>(nullable: false)
+                    HobbyName = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserHobby", x => new { x.UserId, x.HobbyId });
+                    table.PrimaryKey("PK_UserHobby", x => new { x.UserId, x.HobbyName });
                     table.ForeignKey(
-                        name: "FK_UserHobby_Hobby_HobbyId",
-                        column: x => x.HobbyId,
+                        name: "FK_UserHobby_Hobby_HobbyName",
+                        column: x => x.HobbyName,
                         principalTable: "Hobby",
-                        principalColumn: "Id",
+                        principalColumn: "Name",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_UserHobby_User_UserId",
@@ -63,14 +61,14 @@ namespace Parleo.DAL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Hobby_CategoryId",
+                name: "IX_Hobby_CategoryName",
                 table: "Hobby",
-                column: "CategoryId");
+                column: "CategoryName");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserHobby_HobbyId",
+                name: "IX_UserHobby_HobbyName",
                 table: "UserHobby",
-                column: "HobbyId");
+                column: "HobbyName");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -8,7 +8,7 @@ namespace Parleo.DAL.Models.Entities
 
         public User User { get; set; }
 
-        public Guid HobbyId { get; set; }
+        public string HobbyName { get; set; }
 
         public Hobby Hobby { get; set; }
     }

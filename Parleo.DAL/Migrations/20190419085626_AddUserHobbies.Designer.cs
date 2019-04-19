@@ -10,8 +10,8 @@ using Parleo.DAL;
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20190419075247_AddCategoriesAndHobbies")]
-    partial class AddCategoriesAndHobbies
+    [Migration("20190419085626_AddUserHobbies")]
+    partial class AddUserHobbies
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,12 +34,10 @@ namespace Parleo.DAL.Migrations
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Category", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Name")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
+                    b.HasKey("Name");
 
                     b.ToTable("Category");
                 });
@@ -102,16 +100,14 @@ namespace Parleo.DAL.Migrations
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Hobby", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Name")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("CategoryId");
+                    b.Property<string>("CategoryName");
 
-                    b.Property<string>("Name");
+                    b.HasKey("Name");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoryName");
 
                     b.ToTable("Hobby");
                 });
@@ -191,11 +187,11 @@ namespace Parleo.DAL.Migrations
                 {
                     b.Property<Guid>("UserId");
 
-                    b.Property<Guid>("HobbyId");
+                    b.Property<string>("HobbyName");
 
-                    b.HasKey("UserId", "HobbyId");
+                    b.HasKey("UserId", "HobbyName");
 
-                    b.HasIndex("HobbyId");
+                    b.HasIndex("HobbyName");
 
                     b.ToTable("UserHobby");
                 });
@@ -247,7 +243,7 @@ namespace Parleo.DAL.Migrations
                 {
                     b.HasOne("Parleo.DAL.Models.Entities.Category", "Category")
                         .WithMany("Hobbies")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryName");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.UserEvent", b =>
@@ -280,7 +276,7 @@ namespace Parleo.DAL.Migrations
                 {
                     b.HasOne("Parleo.DAL.Models.Entities.Hobby", "Hobby")
                         .WithMany("Users")
-                        .HasForeignKey("HobbyId")
+                        .HasForeignKey("HobbyName")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Parleo.DAL.Models.Entities.User", "User")

@@ -92,7 +92,7 @@ namespace Parleo.DAL
             #endregion
 
             #region User-Hobby m2m
-            modelBuilder.Entity<UserHobby>().HasKey(k => new { k.UserId, k.HobbyId });
+            modelBuilder.Entity<UserHobby>().HasKey(k => new { k.UserId, k.HobbyName });
             modelBuilder.Entity<UserHobby>()
                 .HasOne(uh => uh.User)
                 .WithMany(u => u.Hobbies)
@@ -101,7 +101,7 @@ namespace Parleo.DAL
             modelBuilder.Entity<UserHobby>()
                 .HasOne(uh => uh.Hobby)
                 .WithMany(h => h.Users)
-                .HasForeignKey(uh => uh.HobbyId)
+                .HasForeignKey(uh => uh.HobbyName)
                 .OnDelete(DeleteBehavior.Restrict);
             #endregion
         }
