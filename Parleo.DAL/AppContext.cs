@@ -28,22 +28,28 @@ namespace Parleo.DAL
 
             modelBuilder.Entity<User>().Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
+            #region One-to-One
             modelBuilder.Entity<Credentials>()
                 .HasOne(c => c.User)
                 .WithOne(ui => ui.Credentials)
                 .HasForeignKey<Credentials>(c => c.UserId);
-
             modelBuilder.Entity<AccountToken>()
                 .HasOne(c => c.User)
                 .WithOne(ui => ui.AccountToken)
                 .HasForeignKey<AccountToken>(c => c.UserId);
+            #endregion
 
+            #region One-to-Many
             modelBuilder.Entity<User>()
                 .HasMany(u => u.CreatedEvents)
                 .WithOne(e => e.Creator);
             modelBuilder.Entity<Language>()
                 .HasMany(lng => lng.Events)
                 .WithOne(e => e.Language);
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Hobbies)
+                .WithOne(h => h.Category);
+            #endregion
 
             #region User-Language m2m
             modelBuilder.Entity<UserLanguage>().HasKey(k => new { k.UserId, k.LanguageCode });
@@ -82,6 +88,20 @@ namespace Parleo.DAL
                 .HasOne(ue => ue.Event)
                 .WithMany(e => e.Participants)
                 .HasForeignKey(ue => ue.EventId)
+                .OnDelete(DeleteBehavior.Restrict);
+            #endregion
+
+            #region User-Hobby m2m
+            modelBuilder.Entity<UserHobby>().HasKey(k => new { k.UserId, k.HobbyName });
+            modelBuilder.Entity<UserHobby>()
+                .HasOne(uh => uh.User)
+                .WithMany(u => u.Hobbies)
+                .HasForeignKey(uh => uh.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<UserHobby>()
+                .HasOne(uh => uh.Hobby)
+                .WithMany(h => h.Users)
+                .HasForeignKey(uh => uh.HobbyName)
                 .OnDelete(DeleteBehavior.Restrict);
             #endregion
         }
