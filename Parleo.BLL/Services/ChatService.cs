@@ -40,36 +40,24 @@ namespace Parleo.BLL.Services
 
                 }, anotherUser.Name);
             }
-            var chatModel = _mapper.Map<ChatModel>(chat);
-            chatModel.LastMessage = _mapper.Map<MessageModel>(await _chatRepository.GetLastMessageAsync(chat.Id));
-            return chatModel;
+            return _mapper.Map<ChatModel>(chat);
         }
 
-        public async Task<ChatModel> GetChatByIdAsync(Guid chatId)
+        public async Task<ChatModel> GetChatByIdAsync(Guid chatId, Guid myUserId)
         {
-            var chat = await _chatRepository.GetChatByIdAsync(chatId);
+            var chat = await _chatRepository.GetChatByIdAsync(chatId, myUserId);
             if (chat == null)
             {
                 throw new AppException(ErrorType.InvalidId);
             }
-            var chatModel = _mapper.Map<ChatModel>(chat);
-            chatModel.LastMessage = _mapper.Map<MessageModel>(await _chatRepository.GetLastMessageAsync(chat.Id));
-            return chatModel;
+            return _mapper.Map<ChatModel>(chat);
         }
 
         public async Task<PageModel<ChatModel>> GetChatPageAsync(Guid userId, PageRequestModel pageRequest)
         {
             var page = await _chatRepository.GetChatPageByUserId(userId, _mapper.Map<PageRequest>(pageRequest));
 
-
-            var chatPage = _mapper.Map<PageModel<ChatModel>>(page);
-
-            foreach (var chatModel in chatPage.Entities)
-            {
-                chatModel.LastMessage = _mapper.Map<MessageModel>(await _chatRepository.GetLastMessageAsync(chatModel.Id));
-            }
-
-            return chatPage;
+            return _mapper.Map<PageModel<ChatModel>>(page);
         }
 
         public async Task AddMessagesAsync(Guid userId, ICollection<MessageModel> messages)
@@ -77,9 +65,10 @@ namespace Parleo.BLL.Services
             await _chatRepository.AddMessagesAsync(userId, _mapper.Map<ICollection<Message>>(messages));
         }
 
-        public async Task<PageModel<MessageModel>> GetMessagePageAsync(Guid userId, PageRequestModel pageRequest)
+        public async Task<PageModel<MessageModel>> GetMessagePageAsync(Guid userId, Guid myUserId,
+            PageRequestModel pageRequest)
         {
-            var page = await _chatRepository.GetChatPageByUserId(userId, _mapper.Map<PageRequest>(pageRequest));
+            var page = await _chatRepository.GetMessagePageAsync(userId, myUserId, _mapper.Map<PageRequest>(pageRequest));
 
             return _mapper.Map<PageModel<MessageModel>>(page);
         }

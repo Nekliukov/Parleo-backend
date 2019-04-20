@@ -91,7 +91,11 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<MessageModel, Message>();
                 mc.CreateMap<Message, MessageModel>();
 
-                mc.CreateMap<Chat, ChatModel>();
+                mc.CreateMap<Chat, ChatModel>()
+                    .ForMember(cm => cm.LastMessage,
+                        opt => opt.MapFrom(c => c.Messages
+                            .OrderBy(m => m.CreatedOn)
+                            .FirstOrDefault()));
                 mc.CreateMap<ChatModel, Chat>();
 
                 // filters

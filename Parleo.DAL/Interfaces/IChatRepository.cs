@@ -10,21 +10,17 @@ namespace Parleo.DAL.Interfaces
 {
     public interface IChatRepository
     {
-        Task<Chat> GetChatByIdAsync(Guid id);
-
-        Task<ICollection<Chat>> GetChatByUserId(Guid userId);
+        Task<Chat> GetChatByIdAsync(Guid id, Guid myUserId);
 
         Task<Page<Chat>> GetChatPageByUserId(Guid userId, PageRequest page);
 
         Task<Chat> GetPrivateChatAsync(Guid myUserId, Guid anotherUserId);
 
-        Task<Chat> CreateChatAsync(ICollection<User> members, string chatName);
+        Task<Chat> CreateChatAsync(ICollection<User> members, string chatName, User creator = null);
 
         Task AddMessagesAsync(Guid id, ICollection<Message> messages);
 
-        Task<Page<Message>> GetMessagePageAsync(Guid id, PageRequest page);
-
-        Task<Message> GetLastMessageAsync(Guid chatId);
+        Task<Page<Message>> GetMessagePageAsync(Guid chatId, Guid myUserId, PageRequest page);
 
 
     }

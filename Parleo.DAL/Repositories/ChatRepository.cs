@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Threading;
+using Microsoft.EntityFrameworkCore.Storage;
 using Parleo.DAL.Interfaces;
 using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Models.Pages;
@@ -14,6 +15,7 @@ namespace Parleo.DAL.Repositories
     public class ChatRepository : IChatRepository
     {
         private readonly AppContext _context;
+        private const int PAGE_SIZE = 20;
 
         public ChatRepository(AppContext context)
         {
@@ -21,47 +23,63 @@ namespace Parleo.DAL.Repositories
         }
 
 
-        public async Task<Chat> GetChatByIdAsync(Guid id)
+        public async Task<Chat> GetChatByIdAsync(Guid id, Guid myUserId)
         {
-            return await _context.Chat.FindAsync(id);
+            var chat = await _context.Chat
+                .Include(c => c.Members)
+                .ThenInclude(m => m.User)
+                .Include(c => c.Messages.OrderBy(m => m.CreatedOn).FirstOrDefault())
+                .FirstOrDefaultAsync(c => c.Id == id);
+            SetUpUnreadMessages(ref chat, myUserId);
+            return chat;
         }
 
-        public async Task<ICollection<Chat>> GetChatByUserId(Guid userId)
-        {
-            return await _context.Chat
-                .Include(c => c.Members)
-                .Where(c => c.Members.Select(cu => cu.User)
-                .Select(u => u.Id)
-                .Contains(userId))
-                .ToListAsync();
-        }
         public async Task<Page<Chat>> GetChatPageByUserId(Guid userId, PageRequest page)
         {
-            var chats = await GetChatByUserId(userId);
+            var chatPage = await _context.Chat
+                .Include(c => c.Members)
+                .ThenInclude(m => m.User)
+                .Include(c => c.Messages.OrderBy(m => m.CreatedOn).FirstOrDefault())
+                .Where(c => c.Members.Select(cu => cu.User)
+                    .Select(u => u.Id)
+                    .Contains(userId))
+                .OrderBy(c => c.Messages.OrderBy(m => m.CreatedOn))
+                .Skip((page.Page - 1) * page.PageSize ?? PAGE_SIZE)
+                .Take(page.PageSize ?? PAGE_SIZE)
+                .ToListAsync();
+
+            SetUpUnreadMessages(ref chatPage, userId);
 
             return new Page<Chat>()
             {
-                Entities = chats
+                Entities = chatPage,
+                PageNumber = page.Page,
+                PageSize = page.PageSize ?? PAGE_SIZE
             };
         }
 
         public async Task<Chat> GetPrivateChatAsync(Guid myUserId, Guid anotherUserId)
         {
-            var chats = await GetChatByUserId(myUserId);
-
-            var chat = chats.Where(c => c.Creator == null)
-                .FirstOrDefault(u => u.Id == anotherUserId);
-
+            var chat = await _context.Chat
+                .Include(c => c.Members)
+                .ThenInclude(m => m.User)
+                .Where(c => c.Members.Select(cu => cu.User)
+                    .Select(u => u.Id)
+                    .Contains(myUserId))
+                .Where(c => c.Creator == null)
+                .FirstOrDefaultAsync(u => u.Id == anotherUserId);
+            SetUpUnreadMessages(ref chat, myUserId);   
             return chat;
         }
 
-        public async Task<Chat> CreateChatAsync(ICollection<User> members, string chatName)
+        public async Task<Chat> CreateChatAsync(ICollection<User> members, string chatName, User creator = null)
         {
             var chat = new Chat()
             {
                 Members = new List<ChatUser>(),
                 Name = chatName,
-                Messages = new List<Message>()
+                Messages = new List<Message>(),
+                Creator = creator
             };
             foreach (var member in members)
             {
@@ -79,30 +97,67 @@ namespace Parleo.DAL.Repositories
 
         public async Task AddMessagesAsync(Guid id, ICollection<Message> messages)
         {
-            var chat = await GetChatByIdAsync(id);
+            var chat = _context.Chat
+                .Include(c => c.Messages)
+                .First(c => c.Id == id);
 
             chat.Messages.ToList().AddRange(messages);
 
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Page<Message>> GetMessagePageAsync(Guid id, PageRequest page)
+        public async Task<Page<Message>> GetMessagePageAsync(Guid chatId, Guid myUserId, PageRequest page)
         {
-            var chat = await GetChatByIdAsync(id);
-            var chatPage = new Page<Message>();
-           chatPage.Entities = chat.Messages
-                //.SkipWhile(m => m.Id < lastPageMessageId)  //m => m.CreatedOn < timeStamp
-                .Take(20)
-                .OrderBy(m => m.CreatedOn)
-                .ToList();
-           return chatPage;
+            var chat = await _context.Chat
+                .Include(c => c.Messages
+                    .OrderBy(m => m.CreatedOn))
+                .FirstOrDefaultAsync(c => c.Id == chatId);
+
+            var chatPage = new Page<Message>
+            {
+                Entities = chat.Messages
+                .SkipWhile(m => m.CreatedOn > page.TimeStamp)
+                .Skip((page.Page - 1) * page.PageSize ?? PAGE_SIZE)
+                .Take(page.PageSize ?? PAGE_SIZE)
+                .ToList()
+            };
+
+            ViewChat(chatId, myUserId);
+
+            return chatPage;
         }
 
-        public async Task<Message> GetLastMessageAsync(Guid chatId)
+        private void SetUpUnreadMessages(ref Chat chat, Guid userId)
         {
-            var chat = await GetChatByIdAsync(chatId);
+            if (chat != null)
+            {
+                var chatUser = chat.Members.First(m => m.UserId == userId);
 
-            return chat?.Messages?.OrderBy(m => m.CreatedOn)?.FirstOrDefault();
+                chatUser.UnreadMessages = chat.Messages.Count(m => m.CreatedOn > chatUser.TimeStamp);
+
+                _context.SaveChanges();
+            }
+        }
+
+        private void SetUpUnreadMessages(ref List<Chat> chatPage, Guid userId)
+        {
+            foreach (var chat in chatPage)
+            {
+                var chatUser = chat.Members.First(m => m.UserId == userId);
+
+                chatUser.UnreadMessages = chat.Messages.Count(m => m.CreatedOn > chatUser.TimeStamp);
+            }
+            _context.SaveChanges();
+        }
+
+        private void ViewChat(Guid chatId, Guid userId)
+        {
+            _context.Chat
+                .Include(c => c.Members)
+                .First(c => c.Id == chatId)
+                .Members
+                .First(m => m.UserId == userId)
+                .TimeStamp = new DateTimeOffset();
         }
     }
 }

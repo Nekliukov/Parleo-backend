@@ -26,7 +26,13 @@ namespace ParleoBackend.Controllers
             _chatService = chatService;
             _chatHub = chatHub;
         }
-
+        /// <summary>
+        /// Remove myUserId, when add auth attribute
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <param name="page"></param>
+        /// <param name="myUserId"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult> GetChatPage(string myUserId, [FromQuery] PageRequestViewModel page)
         {
@@ -34,29 +40,49 @@ namespace ParleoBackend.Controllers
 
             var chatsModel = await _chatService.GetChatPageAsync(new Guid(myUserId), _mapper.Map<PageRequestModel>(page));
 
-            await _chatHub.SubscribeOnChats(chatsModel.Entities.Select(c => c.Id).ToList());
+            //await _chatHub.SubscribeOnChats(chatsModel.Entities.Select(c => c.Id).ToList());
 
             return Ok(_mapper.Map<PageViewModel<ChatViewModel>>(chatsModel));
         }
 
+        /// <summary>
+        /// Remove myUserId, when add auth attribute
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <param name="page"></param>
+        /// <param name="myUserId"></param>
+        /// <returns></returns>
         [HttpGet("{chatId}")]
-        public async Task<ActionResult> GetChat(Guid chatId)
+        public async Task<ActionResult> GetChat(Guid chatId, [FromQuery] string myUserId)
         {
-            var chat = await _chatService.GetChatByIdAsync(chatId);
+            var chat = await _chatService.GetChatByIdAsync(chatId, new Guid(myUserId));
 
-            await _chatHub.SubscribeOnChat(chatId);
+            //await _chatHub.SubscribeOnChat(chatId);
 
             return Ok(_mapper.Map<ChatViewModel>(chat));
         }
-
+        /// <summary>
+        /// Remove myUserId, when add auth attribute
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <param name="page"></param>
+        /// <param name="myUserId"></param>
+        /// <returns></returns>
         [HttpGet("{chatId}/messages")]
-        public async Task<ActionResult> GetMessagePage(Guid chatId, [FromQuery] PageRequestViewModel page)
+        public async Task<ActionResult> GetMessagePage(Guid chatId, [FromQuery] PageRequestViewModel page, [FromQuery] string myUserId)
         {
-            var messages = await _chatService.GetMessagePageAsync(chatId, _mapper.Map<PageRequestModel>(page));
+            var messages = await _chatService.GetMessagePageAsync(chatId, new Guid(myUserId), _mapper.Map<PageRequestModel>(page));
 
             return Ok(_mapper.Map<PageViewModel<MessageViewModel>>(messages));
         }
 
+        /// <summary>
+        /// Remove myUserId, when add auth attribute
+        /// </summary>
+        /// <param name="chatId"></param>
+        /// <param name="page"></param>
+        /// <param name="myUserId"></param>
+        /// <returns></returns>
         [HttpGet("user")]
         public async Task<ActionResult> GetChatWithUser(string myUserId, [FromQuery] Guid userId)
         {
@@ -64,7 +90,7 @@ namespace ParleoBackend.Controllers
 
             var chatModel = await _chatService.GetChatWithUserAsync(new Guid(myUserId), userId);
 
-            await _chatHub.SubscribeOnChat(chatModel.Id);
+            //await _chatHub.SubscribeOnChat(chatModel.Id);
 
             return Ok(_mapper.Map<ChatViewModel>(chatModel));
         }

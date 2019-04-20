@@ -11,13 +11,13 @@ namespace Parleo.BLL.Interfaces
     {
         Task<ChatModel> GetChatWithUserAsync(Guid myId, Guid anotherUserId);
 
-        Task<ChatModel> GetChatByIdAsync(Guid chatId);
+        Task<ChatModel> GetChatByIdAsync(Guid chatId, Guid myUserId);
 
         Task<PageModel<ChatModel>> GetChatPageAsync(Guid userId, PageRequestModel pageRequest);
 
         Task AddMessagesAsync(Guid userId, ICollection<MessageModel> messages);
         
         Task<PageModel<MessageModel>> GetMessagePageAsync(
-            Guid id, PageRequestModel pageRequest);
+            Guid id, Guid myUserId, PageRequestModel pageRequest);
     }
 }

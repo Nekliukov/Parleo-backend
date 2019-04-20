@@ -14,7 +14,7 @@ namespace Parleo.DAL.Models.Entities
 
         public User User { get; set; }
 
-        public DateTime TimeStamp { get; set; }
+        public DateTimeOffset TimeStamp { get; set; }
 
         public int UnreadMessages { get; set; }
     }
