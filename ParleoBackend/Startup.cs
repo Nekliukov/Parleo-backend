@@ -64,10 +64,10 @@ namespace ParleoBackend
                     builder =>
                     {
                         builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .SetIsOriginAllowed((host) => true)
+                            .AllowCredentials();
                     });
             });
 
@@ -113,11 +113,11 @@ namespace ParleoBackend
             );
             app.UseAuthentication();
             app.UseHttpsRedirection();
+            app.UseCors("AllowAll");
             app.UseSignalR(route =>
             {
                 route.MapHub<ChatHub>("/chathub");
             });
-            app.UseCors("AllowAll");
             app.UseMvc();
             app.UseSwagger();
 
