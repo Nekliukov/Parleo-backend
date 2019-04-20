@@ -72,7 +72,6 @@ namespace ParleoBackend
             });
 
             MapperExtension.Configure(services);
-            services.AddScoped<ChatHub>();
             BLServices.AddServices(services);
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
             WebServices.AddServices(services);

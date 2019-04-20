@@ -7,10 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Parleo.BLL;
+using ParleoBackend.Contracts;
 
 namespace ParleoBackend.Hubs
 {
-    public class ChatHub : Hub
+    public class ChatHub : Hub, IChatHub
     {
         private readonly IChatService _chatService;
         private readonly IMapper _mapper;
@@ -28,11 +30,15 @@ namespace ParleoBackend.Hubs
 
         public Task SubscribeOnChat(Guid chatId)
         {
+            if(Context == null)
+                throw new NullReferenceException();
             return Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
         }
 
         public Task SubscribeOnChats(ICollection<Guid> chatIds)
         {
+            if(Context == null)
+                throw new NullReferenceException();
             return Task.WhenAll(chatIds.Select(SubscribeOnChat));
         }
 
@@ -41,7 +47,7 @@ namespace ParleoBackend.Hubs
             await Clients.Group(message.ChatId.ToString()).SendAsync("receiveMessage", message);
             await _chatService.AddMessagesAsync(message.SenderId,
                 new List<MessageModel>() { _mapper.Map<MessageModel>(message) });
-
+            //TODO: Create cache for sending message
         }
     }
 }

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Parleo.BLL.Exceptions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Pages;
+using ParleoBackend.Contracts;
 using ParleoBackend.Hubs;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Pages;
@@ -18,79 +22,79 @@ namespace ParleoBackend.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IChatService _chatService;
-        private readonly ChatHub _chatHub;
+        private readonly IChatHub _chatHub;
 
-        public ChatController(IMapper mapper, IChatService chatService, ChatHub chatHub)
+        public ChatController(IMapper mapper, IChatService chatService, IChatHub chatHub)
         {
             _mapper = mapper;
             _chatService = chatService;
             _chatHub = chatHub;
         }
-        /// <summary>
-        /// Remove myUserId, when add auth attribute
-        /// </summary>
-        /// <param name="chatId"></param>
-        /// <param name="page"></param>
-        /// <param name="myUserId"></param>
-        /// <returns></returns>
+
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult> GetChatPage(string myUserId, [FromQuery] PageRequestViewModel page)
+        public async Task<ActionResult> GetChatPage([FromQuery] PageRequestViewModel page)
         {
-            //string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            var chatsModel = await _chatService.GetChatPageAsync(new Guid(id), _mapper.Map<PageRequestModel>(page));
 
-            var chatsModel = await _chatService.GetChatPageAsync(new Guid(myUserId), _mapper.Map<PageRequestModel>(page));
-
-            await _chatHub.SubscribeOnChats(chatsModel.Entities.Select(c => c.Id).ToList());
+            try
+            {
+                await _chatHub.SubscribeOnChats(chatsModel.Entities.Select(c => c.Id).ToList());
+            }
+            catch (NullReferenceException)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.NO_CONNECION_TO_HUB));
+            }
 
             return Ok(_mapper.Map<PageViewModel<ChatViewModel>>(chatsModel));
         }
 
-        /// <summary>
-        /// Remove myUserId, when add auth attribute
-        /// </summary>
-        /// <param name="chatId"></param>
-        /// <param name="page"></param>
-        /// <param name="myUserId"></param>
-        /// <returns></returns>
+        [Authorize]
         [HttpGet("{chatId}")]
-        public async Task<ActionResult> GetChat(Guid chatId, [FromQuery] string myUserId)
+        public async Task<ActionResult> GetChat(Guid chatId)
         {
-            var chat = await _chatService.GetChatByIdAsync(chatId, new Guid(myUserId));
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            var chat = await _chatService.GetChatByIdAsync(chatId, new Guid(id));
 
-            await _chatHub.SubscribeOnChat(chatId);
+            try
+            {
+                await _chatHub.SubscribeOnChat(chatId);
+            }
+            catch (NullReferenceException)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.NO_CONNECION_TO_HUB));
+            }
 
             return Ok(_mapper.Map<ChatViewModel>(chat));
         }
-        /// <summary>
-        /// Remove myUserId, when add auth attribute
-        /// </summary>
-        /// <param name="chatId"></param>
-        /// <param name="page"></param>
-        /// <param name="myUserId"></param>
-        /// <returns></returns>
+        
+        [Authorize]
         [HttpGet("{chatId}/messages")]
-        public async Task<ActionResult> GetMessagePage(Guid chatId, [FromQuery] PageRequestViewModel page, [FromQuery] string myUserId)
+        public async Task<ActionResult> GetMessagePage(Guid chatId, [FromQuery] PageRequestViewModel page)
         {
-            var messages = await _chatService.GetMessagePageAsync(chatId, new Guid(myUserId), _mapper.Map<PageRequestModel>(page));
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+
+            var messages = await _chatService.GetMessagePageAsync(chatId, new Guid(id), _mapper.Map<PageRequestModel>(page));
 
             return Ok(_mapper.Map<PageViewModel<MessageViewModel>>(messages));
         }
 
-        /// <summary>
-        /// Remove myUserId, when add auth attribute
-        /// </summary>
-        /// <param name="chatId"></param>
-        /// <param name="page"></param>
-        /// <param name="myUserId"></param>
-        /// <returns></returns>
+        [Authorize]
         [HttpGet("user")]
-        public async Task<ActionResult> GetChatWithUser(string myUserId, [FromQuery] Guid userId)
+        public async Task<ActionResult> GetChatWithUser([FromQuery] Guid userId)
         {
-            //string userId = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            var chatModel = await _chatService.GetChatWithUserAsync(new Guid(id), userId);
 
-            var chatModel = await _chatService.GetChatWithUserAsync(new Guid(myUserId), userId);
-
-            await _chatHub.SubscribeOnChat(chatModel.Id);
+            try
+            {
+                await _chatHub.SubscribeOnChat(chatModel.Id);
+            }
+            catch (NullReferenceException)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.NO_CONNECION_TO_HUB));
+            }
 
             return Ok(_mapper.Map<ChatViewModel>(chatModel));
         }
