@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Exceptions;
+using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Filters;
@@ -24,10 +25,10 @@ namespace ParleoBackend.Controllers
         private readonly IEventService _service;
         private readonly IMapper _mapper;
 
-        public EventController(IEventService service, IMapper mapper)
+        public EventController(IEventService service, IMapperFactory mapperFactory)
         {
             _service = service;
-            _mapper = mapper;
+            _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
         }
 
         [HttpPut("{eventId}/addParticipant/{userId}")]

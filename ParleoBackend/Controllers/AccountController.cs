@@ -20,6 +20,7 @@ using FluentValidation.Results;
 using Parleo.BLL.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Parleo.BLL.Extensions;
 
 namespace ParleoBackend.Controllers
 {
@@ -36,7 +37,7 @@ namespace ParleoBackend.Controllers
 
         public AccountController(
             IAccountService accountService,
-            IMapper mapper,
+            IMapperFactory mapperFactory,
             IJwtService jwtService,
             IEmailService emailService,
             ILogger<AccountController> logger,
@@ -45,7 +46,7 @@ namespace ParleoBackend.Controllers
         {
             _accountService = accountService;
             _jwtService = jwtService;
-            _mapper = mapper;
+            _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
             _logger = logger;
             _emailService = emailService;
             _accountImageSettings = accountImageSettings;
