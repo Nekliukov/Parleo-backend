@@ -129,7 +129,7 @@ namespace ParleoBackend.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> EditAsync(
             Guid userId,
-            [FromQuery] UpdateUserViewModel entity)
+            [FromBody] UpdateUserViewModel entity)
         {
             var validator = new UpdateUserViewModelValidator();
             ValidationResult result = validator.Validate(entity);
@@ -246,7 +246,7 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{userId}/location")]
         [Authorize]
-        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromQuery] UserLocationViewModel entity)
+        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] UserLocationViewModel entity)
         {
             var validator = new UserLocationViewModelValidator();
             ValidationResult result = validator.Validate(entity);

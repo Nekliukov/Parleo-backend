@@ -74,7 +74,7 @@ namespace ParleoBackend.Controllers
         [HttpPost("create")]
         [Authorize]
         public async Task<ActionResult> CreateEventAsync(
-            [FromQuery] CreateOrUpdateEventViewModel entity)
+            [FromBody] CreateOrUpdateEventViewModel entity)
         {
             var validator = new CrateOrUpdateEventViewModelValidator();
             ValidationResult result = validator.Validate(entity);
@@ -93,7 +93,7 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<ActionResult> UpdateEventAsync(
             Guid eventId,
-            [FromQuery] CreateOrUpdateEventViewModel entity)
+            [FromBody] CreateOrUpdateEventViewModel entity)
         {
             var validator = new CrateOrUpdateEventViewModelValidator();
             ValidationResult result = validator.Validate(entity);
