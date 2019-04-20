@@ -42,6 +42,13 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<MiniatureModel, MiniatureViewModel>();
                 mc.CreateMap<MiniatureViewModel, MiniatureModel>();
 
+                mc.CreateMap<UpdateUserModel, UserLocationViewModel>()
+                    .ForMember(ulvm => ulvm.Latitude, opt => opt.MapFrom(uum => uum.Latitude))
+                    .ForMember(ulvm => ulvm.Longitude, opt => opt.MapFrom(uum => uum.Longitude))
+                    .ForAllOtherMembers(opt => opt.Ignore());
+                mc.CreateMap<UserLocationViewModel, UpdateUserModel>()
+                    .ForAllMembers(opt => opt.Ignore());
+
                 mc.CreateMap<UpdateUserViewModel, UpdateUserModel>();
                 mc.CreateMap<UpdateUserModel, UpdateUserViewModel>();
 

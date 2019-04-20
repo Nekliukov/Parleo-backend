@@ -130,7 +130,7 @@ namespace ParleoBackend.Controllers
             Guid userId,
             [FromQuery] UpdateUserViewModel entity)
         {
-            var validator = new UpdateUserViewModelValidator(_accountService);
+            var validator = new UpdateUserViewModelValidator();
             ValidationResult result = validator.Validate(entity);
 
             if (!result.IsValid)
@@ -241,6 +241,29 @@ namespace ParleoBackend.Controllers
             );
 
             return Ok();
+        }
+
+        [HttpPut("{userId}/location")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromQuery] UserLocationViewModel entity)
+        {
+            var validator = new UserLocationViewModelValidator();
+            ValidationResult result = validator.Validate(entity);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
+            }
+
+            bool isEdited = await _accountService.UpdateUserAsync(
+                userId, _mapper.Map<UpdateUserModel>(entity));
+
+            if (!isEdited)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            return NoContent();
         }
     }
 }
