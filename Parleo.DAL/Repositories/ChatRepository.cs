@@ -28,31 +28,54 @@ namespace Parleo.DAL.Repositories
             var chat = await _context.Chat
                 .Include(c => c.Members)
                 .ThenInclude(m => m.User)
-                .Include(c => c.Messages.OrderBy(m => m.CreatedOn).FirstOrDefault())
+                .Include(c => c.Messages)
                 .FirstOrDefaultAsync(c => c.Id == id);
             SetUpUnreadMessages(ref chat, myUserId);
-            return chat;
+            var result = new Chat()
+            {
+                Creator = chat.Creator,
+                Members = chat.Members,
+                Id = chat.Id,
+                Name = chat.Name,
+                Messages = chat.Messages.OrderBy(m => m.CreatedOn).Take(1).ToList()
+            };
+            return result;
         }
 
         public async Task<Page<Chat>> GetChatPageByUserId(Guid userId, PageRequest page)
         {
             var chatPage = await _context.Chat
                 .Include(c => c.Members)
-                .ThenInclude(m => m.User)
-                .Include(c => c.Messages.OrderBy(m => m.CreatedOn).FirstOrDefault())
-                .Where(c => c.Members.Select(cu => cu.User)
-                    .Select(u => u.Id)
+                    .ThenInclude(cu => cu.User)
+                .Include(c => c.Messages)
+                .Select(chat => new 
+                    {
+                        ChatInfo = chat,
+                        Messages = chat.Messages.OrderBy(m => m.CreatedOn).Take(1)
+                    }
+                )
+                .Where(c => c.ChatInfo.Members
+                    .Select(cu => cu.UserId)
                     .Contains(userId))
-                .OrderBy(c => c.Messages.OrderBy(m => m.CreatedOn))
+                .OrderBy(c => c.Messages.Select(m => m.CreatedOn).FirstOrDefault())
                 .Skip((page.Page - 1) * page.PageSize ?? PAGE_SIZE)
                 .Take(page.PageSize ?? PAGE_SIZE)
                 .ToListAsync();
 
-            SetUpUnreadMessages(ref chatPage, userId);
+            var chats = chatPage.Select(c => new Chat()
+            {
+                Creator = c.ChatInfo.Creator,
+                Id = c.ChatInfo.Id,
+                Members = c.ChatInfo.Members,
+                Messages = c.Messages.ToList(),
+                Name = c.ChatInfo.Name
+            }).ToList();
+
+            SetUpUnreadMessages (ref chats, userId);
 
             return new Page<Chat>()
             {
-                Entities = chatPage,
+                Entities = chats,
                 PageNumber = page.Page,
                 PageSize = page.PageSize ?? PAGE_SIZE
             };
@@ -63,12 +86,16 @@ namespace Parleo.DAL.Repositories
             var chat = await _context.Chat
                 .Include(c => c.Members)
                 .ThenInclude(m => m.User)
-                .Where(c => c.Members.Select(cu => cu.User)
-                    .Select(u => u.Id)
+                .Include(c => c.Messages)
+                .Where(c => c.Members
+                    .Select(cu => cu.UserId)
                     .Contains(myUserId))
                 .Where(c => c.Creator == null)
-                .FirstOrDefaultAsync(u => u.Id == anotherUserId);
-            SetUpUnreadMessages(ref chat, myUserId);   
+                .FirstOrDefaultAsync(u => u.Members
+                    .Select(m => m.UserId)
+                    .Contains(anotherUserId));
+            if (chat != null) 
+                SetUpUnreadMessages(ref chat, myUserId);   
             return chat;
         }
 
@@ -109,13 +136,12 @@ namespace Parleo.DAL.Repositories
         public async Task<Page<Message>> GetMessagePageAsync(Guid chatId, Guid myUserId, PageRequest page)
         {
             var chat = await _context.Chat
-                .Include(c => c.Messages
-                    .OrderBy(m => m.CreatedOn))
+                .Include(c => c.Messages)
                 .FirstOrDefaultAsync(c => c.Id == chatId);
 
             var chatPage = new Page<Message>
             {
-                Entities = chat.Messages
+                Entities = chat.Messages.OrderBy(m => m.CreatedOn)
                 .SkipWhile(m => m.CreatedOn > page.TimeStamp)
                 .Skip((page.Page - 1) * page.PageSize ?? PAGE_SIZE)
                 .Take(page.PageSize ?? PAGE_SIZE)
