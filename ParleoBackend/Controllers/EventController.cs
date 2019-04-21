@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Exceptions;
+using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Filters;
@@ -24,10 +25,10 @@ namespace ParleoBackend.Controllers
         private readonly IEventService _service;
         private readonly IMapper _mapper;
 
-        public EventController(IEventService service, IMapper mapper)
+        public EventController(IEventService service, IMapperFactory mapperFactory)
         {
             _service = service;
-            _mapper = mapper;
+            _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
         }
 
         [HttpPut("{eventId}/addParticipants/{userIds}")]
@@ -73,7 +74,7 @@ namespace ParleoBackend.Controllers
         [HttpPost("create")]
         [Authorize]
         public async Task<ActionResult> CreateEventAsync(
-            [FromQuery] CreateOrUpdateEventViewModel entity)
+            [FromBody] CreateOrUpdateEventViewModel entity)
         {
             var validator = new CrateOrUpdateEventViewModelValidator();
             ValidationResult result = validator.Validate(entity);
@@ -92,7 +93,7 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<ActionResult> UpdateEventAsync(
             Guid eventId,
-            [FromQuery] CreateOrUpdateEventViewModel entity)
+            [FromBody] CreateOrUpdateEventViewModel entity)
         {
             var validator = new CrateOrUpdateEventViewModelValidator();
             ValidationResult result = validator.Validate(entity);

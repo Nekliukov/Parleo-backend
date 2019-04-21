@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
 using Parleo.DAL.Models.Filters;
+using Parleo.BLL.Extensions;
 
 namespace Parleo.BLL.Services
 {
@@ -23,13 +24,13 @@ namespace Parleo.BLL.Services
         public AccountService(
             IUsersRepository repository,
             ISecurityHelper securityHelper,
-            IMapper mapper,
+            IMapperFactory mapperFactory,
             ILogger<AccountService> logger
         )
         {
             _repository = repository;
             _securityService = securityHelper;
-            _mapper = mapper;
+            _mapper = mapperFactory.GetMapper(typeof(BLServices).Name);
             _logger = logger;
         }
 

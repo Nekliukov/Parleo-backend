@@ -16,8 +16,6 @@ namespace Parleo.BLL.Models.Entities
 
         public decimal Longitude { get; set; }
 
-        public string Email { get; set; }
-
         public UserLanguageModel[] Languages { get; set; }
     }
 }

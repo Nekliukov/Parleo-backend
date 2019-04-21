@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
 using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
@@ -12,7 +11,7 @@ namespace ParleoBackend.Extensions
 {
     public static class MapperExtension
     {
-        public static void Configure(IServiceCollection services)
+        public static IMapper GetConfiguredMapper()
         {
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -42,6 +41,9 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<MiniatureModel, MiniatureViewModel>();
                 mc.CreateMap<MiniatureViewModel, MiniatureModel>();
 
+                mc.CreateMap<UpdateUserModel, UserLocationViewModel>();
+                mc.CreateMap<UserLocationViewModel, UpdateUserModel>();
+
                 mc.CreateMap<UpdateUserViewModel, UpdateUserModel>();
                 mc.CreateMap<UpdateUserModel, UpdateUserViewModel>();
 
@@ -69,9 +71,7 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<PageRequestModel, PageRequestViewModel>();
             });
 
-            IMapper mapper = mappingConfig.CreateMapper();
-
-            services.AddSingleton(mapper);
+            return mappingConfig.CreateMapper();
         }
     }
 }
