@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
 using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Filters;
 using Parleo.DAL.Models.Filters;
@@ -17,7 +16,7 @@ namespace Parleo.BLL.Extensions
 {
     public static class MapperExtension
     {
-        public static void Configure(IServiceCollection services)
+        public static IMapper GetConfiguredMapper()
         {
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -82,11 +81,19 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();
 
                 mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
-                    .ForMember(ul => ul.Id, opt => opt.MapFrom(ulvm => ulvm.LanguageCode));
+                    .ForMember(ul => ul.Code, opt => opt.MapFrom(ulvm => ulvm.LanguageCode));
+                mc.CreateMap<UserLanguageModel, DataAccessUserLanguage>()
+                    .ForMember(ul => ul.LanguageCode, opt => opt.MapFrom(l => l.Code));
 
                 mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
-                mc.CreateMap<UserLanguageModel, DataAccessUserLanguage>()
-                    .ForMember(ul => ul.LanguageCode, opt => opt.MapFrom(l => l.Id));
+
+                mc.CreateMap<MessageModel, Message>();
+                mc.CreateMap<Message, MessageModel>();
+
+                mc.CreateMap<Chat, ChatModel>()
+                    .ForMember(cm => cm.LastMessage,
+                        opt => opt.MapFrom(c => c.Messages.FirstOrDefault()));
+                mc.CreateMap<ChatModel, Chat>();
 
                 // filters
                 mc.CreateMap<ChatFilterModel, ChatFilter>();
@@ -106,9 +113,7 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<PageRequest, PageRequestModel>();
             });
 
-            IMapper mapper = mappingConfig.CreateMapper();
-
-            services.AddSingleton(mapper);
+            return mappingConfig.CreateMapper();
         }
     }
 }

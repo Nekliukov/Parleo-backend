@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 ﻿using System.IO;
-using System.Reflection;
 using System.Text;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,10 +12,12 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL;
+using Parleo.BLL.Extensions;
 using Parleo.DAL;
 using ParleoBackend.Configuration;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
+using ParleoBackend.Hubs;
 using ParleoBackend.Validators;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
@@ -35,6 +36,7 @@ namespace ParleoBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             services.AddSwaggerDocumentation();
@@ -62,15 +64,14 @@ namespace ParleoBackend
                     builder =>
                     {
                         builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .SetIsOriginAllowed((host) => true)
+                            .AllowCredentials();
                     });
             });
 
-            MapperExtension.Configure(services);
-
+            ConfigureMapperFactory(services);
             BLServices.AddServices(services);
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
             WebServices.AddServices(services);
@@ -112,6 +113,10 @@ namespace ParleoBackend
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
+            app.UseSignalR(route =>
+            {
+                route.MapHub<ChatHub>("/chathub");
+            });
             app.UseMvc();
             app.UseSwagger();
 
@@ -121,6 +126,16 @@ namespace ParleoBackend
             });
 
             loggerFactory.AddConsole();
+        }
+
+        private void ConfigureMapperFactory(IServiceCollection services)
+        {
+            var mapperFactory = new MapperFactory();
+
+            mapperFactory.Mappers.Add(typeof(BLServices).Name, BLServices.GetMapper());
+            mapperFactory.Mappers.Add(typeof(WebServices).Name, WebServices.GetMapper());
+
+            services.AddSingleton<IMapperFactory>(mapperFactory);
         }
     }
 }

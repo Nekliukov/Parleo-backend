@@ -2,12 +2,12 @@
 
 namespace Parleo.DAL.Migrations
 {
-    public partial class AddAccountImage : Migration
+    public partial class AddAboutPropertyToUser : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "AccountImage",
+                name: "About",
                 table: "User",
                 nullable: true);
         }
@@ -15,7 +15,7 @@ namespace Parleo.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "AccountImage",
+                name: "About",
                 table: "User");
         }
     }

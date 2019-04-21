@@ -6,6 +6,8 @@ namespace Parleo.BLL.Models.Entities
     {
         public string Name { get; set; }
 
+        public string About { get; set; }
+
         public DateTime Birthdate { get; set; }
 
         public bool Gender { get; set; }
@@ -13,8 +15,6 @@ namespace Parleo.BLL.Models.Entities
         public decimal Latitude { get; set; }
 
         public decimal Longitude { get; set; }
-
-        public string Email { get; set; }
 
         public UserLanguageModel[] Languages { get; set; }
     }

@@ -10,6 +10,8 @@ namespace Parleo.DAL.Models.Entities
 
         public string Name { get; set; }
 
+        public string About { get; set; }
+
         public string AccountImage { get; set; }
 
         [Column(TypeName = "Date")]
@@ -37,6 +39,8 @@ namespace Parleo.DAL.Models.Entities
 
         public ICollection<UserEvent> AttendingEvents { get; set; }
 
+        public ICollection<ChatUser> Chats { get; set; }
+        
         public ICollection<UserHobby> Hobbies { get; set; }
     }
 }

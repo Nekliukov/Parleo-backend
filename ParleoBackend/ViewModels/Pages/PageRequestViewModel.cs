@@ -1,3 +1,5 @@
+using System;
+
 namespace ParleoBackend.ViewModels.Pages
 {
     // This goes to back-end
@@ -6,5 +8,7 @@ namespace ParleoBackend.ViewModels.Pages
         public int Page { get; set; }
 
         public int? PageSize { get; set; }
+
+        public DateTimeOffset? TimeStamp { get; set; }
     }
 }

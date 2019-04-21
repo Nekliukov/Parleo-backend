@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Parleo.BLL.Extensions;
 using Parleo.BLL.Helpers;
 using Parleo.BLL.Interfaces;
@@ -14,7 +15,11 @@ namespace Parleo.BLL
             services.AddScoped<ISecurityHelper, SecurityHelper>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IEmailService, EmailService>();
-            MapperExtension.Configure(services);
+        }
+
+        public static IMapper GetMapper()
+        {
+            return MapperExtension.GetConfiguredMapper();
         }
     }
 }
