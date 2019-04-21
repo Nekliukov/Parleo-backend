@@ -30,7 +30,7 @@ namespace ParleoBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpPut("{eventId}/addParticipant/{userId}")]
+        [HttpPut("{eventId}/addParticipants/{userIds}")]
         [Authorize]
         public async Task<ActionResult> AddEventParticipants(Guid eventId, Guid[] users)
         {
