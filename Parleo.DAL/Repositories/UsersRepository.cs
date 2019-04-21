@@ -79,6 +79,11 @@ namespace Parleo.DAL.Repositories
         public async Task<User> GetAsync(Guid id)
         {
             return await _context.User.Include(u => u.Credentials)
+                .Include(u => u.Languages)
+                .Include(u => u.Hobbies)
+                .Include(u => u.Friends)
+                .Include(u => u.CreatedEvents)
+                .Include(u => u.AttendingEvents)
                 .FirstOrDefaultAsync(user => user.Id == id);
         }
 
