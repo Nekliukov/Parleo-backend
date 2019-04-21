@@ -16,6 +16,8 @@ namespace Parleo.DAL.Models.Entities
 
         public Guid ChatId { get; set; }
 
+        public string Image { get; set; }
+
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Latitude { get; set; }
 

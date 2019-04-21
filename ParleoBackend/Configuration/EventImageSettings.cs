@@ -3,15 +3,15 @@ using ParleoBackend.Contracts;
 
 namespace ParleoBackend.Configuration
 {
-    public class AccountImageSettings: IImageSettings
+    public class EventImageSettings: IImageSettings
     {
         private readonly IConfiguration _configuration;
 
-        public AccountImageSettings(
-            IConfiguration configuration    
+        public EventImageSettings(
+            IConfiguration configuration
         )
         {
-            _configuration = configuration.GetSection(nameof(AccountImageSettings));
+            _configuration = configuration.GetSection(nameof(EventImageSettings));
         }
 
         public string SourceUrl => _configuration.GetValue<string>(nameof(SourceUrl));

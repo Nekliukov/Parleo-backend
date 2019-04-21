@@ -100,7 +100,7 @@ namespace ParleoBackend
                 app.UseHsts();
             }
 
-            IAccountImageSettings imageSettings = new AccountImageSettings(Configuration);
+            IImageSettings imageSettings = new AccountImageSettings(Configuration);
             
             app.UseStaticFiles(new StaticFileOptions
                 {
