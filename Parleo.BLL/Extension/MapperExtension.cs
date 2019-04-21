@@ -65,8 +65,10 @@ namespace Parleo.BLL.Extensions
 
                 mc.CreateMap<UpdateUserModel, DataAccessUser>();
 
-                mc.CreateMap<DataAccessLanguage, LanguageModel>();
-                mc.CreateMap<LanguageModel, DataAccessLanguage>();
+                mc.CreateMap<DataAccessLanguage, LanguageModel>()
+                    .ForMember(d => d.Code, o => o.MapFrom(s => s.Code));
+                mc.CreateMap<LanguageModel, DataAccessLanguage>()
+                    .ForMember(d => d.Code, o => o.MapFrom(s => s.Code));
 
                 mc.CreateMap<DataAccessEvent, EventModel>()
                     .ForMember(em => em.Participants,
@@ -84,6 +86,10 @@ namespace Parleo.BLL.Extensions
                     .ForMember(ul => ul.Code, opt => opt.MapFrom(ulvm => ulvm.LanguageCode));
                 mc.CreateMap<UserLanguageModel, DataAccessUserLanguage>()
                     .ForMember(ul => ul.LanguageCode, opt => opt.MapFrom(l => l.Code));
+
+                mc.CreateMap<Hobby, HobbyModel>()
+                    .ForMember(hm => hm.Name, opt => opt.MapFrom(h => h.Name))
+                    .ForMember(hm => hm.Category, opt => opt.MapFrom(h => h.Category.Name));
 
                 mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
 

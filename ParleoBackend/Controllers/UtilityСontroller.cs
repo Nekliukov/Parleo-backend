@@ -1,26 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Interfaces;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Parleo.BLL.Models.Entities;
+using ParleoBackend.ViewModels.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ParleoBackend.Controllers
 {
     [Route("api/[controller]")]
-    public class UtilityСontroller : Controller
+    [ApiController]
+    public class UtilityController : ControllerBase
     {
         private readonly IUtilityService _utilityService;
+        private readonly IMapper _mapper;
 
-        public UtilityСontroller(
-            IUtilityService utilityService
+        public UtilityController(
+            IUtilityService utilityService,
+            IMapper mapper
         )
         {
             _utilityService = utilityService;
+            _mapper = mapper;
         }
 
+        [HttpGet("languages")]
+        public async Task<IReadOnlyCollection<LanguageViewModel>> GetLanguagesAsync()
+        {
+            IReadOnlyCollection<LanguageModel> languages = await _utilityService.GetLanguagesAsync();
+            return _mapper.Map<IReadOnlyCollection<LanguageModel>, IReadOnlyCollection<LanguageViewModel>>(languages);
+        }
 
+        [HttpGet("hobbies")]
+        public async Task<IReadOnlyCollection<HobbyViewModel>> GetHobbiesAsync()
+        {
+            IReadOnlyCollection<HobbyModel> hobbies = await _utilityService.GetHobbiesAsync();
+            return _mapper.Map<IReadOnlyCollection<HobbyModel>, IReadOnlyCollection<HobbyViewModel>>(hobbies);
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace Parleo.DAL.Interfaces
     public interface IUtilityRepository
     {
         Task<IReadOnlyCollection<Language>> GetLanguagesAsync();
+        Task<IReadOnlyCollection<Hobby>> GetHobbiesAsync();
     }
 }

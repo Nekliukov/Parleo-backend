@@ -1,7 +1,9 @@
-﻿using Parleo.DAL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Parleo.DAL.Interfaces;
 using Parleo.DAL.Models.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Parleo.DAL.Repositories
@@ -15,9 +17,14 @@ namespace Parleo.DAL.Repositories
             _context = context;
         }
 
-        public Task<IReadOnlyCollection<Language>> GetLanguagesAsync()
+        public async Task<IReadOnlyCollection<Language>> GetLanguagesAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Language.ToListAsync();
+        }
+
+        public async Task<IReadOnlyCollection<Hobby>> GetHobbiesAsync()
+        {
+            return await _context.Hobby.Include(hobby => hobby.Category).ToListAsync();
         }
     }
 }
