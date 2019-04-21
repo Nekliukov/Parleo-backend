@@ -1,9 +1,9 @@
 ﻿namespace ParleoBackend.ViewModels.Entities
 {
-    public class LanguageViewModel
+    public class HobbyViewModel
     {
-        public string Id { get; set; }
-
         public string Name { get; set; }
+
+        public string Category { get; set; }
     }
 }
