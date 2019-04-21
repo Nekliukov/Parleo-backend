@@ -14,7 +14,7 @@ namespace Parleo.DAL.Models.Entities
 
         public int MaxParticipants { get; set; }
 
-        // public Guid ChatId { get; set; }
+        public Guid ChatId { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Latitude { get; set; }
@@ -37,5 +37,7 @@ namespace Parleo.DAL.Models.Entities
         public Language Language { get; set; }
 
         public ICollection<UserEvent> Participants { get; set; }
+
+        public Chat Chat { get; set; }
     }
 }
