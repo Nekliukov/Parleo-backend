@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
 using Parleo.DAL.Interfaces;
@@ -14,12 +15,12 @@ namespace Parleo.BLL.Services
         private readonly IMapper _mapper;
 
         public UtilityService(
-            IUtilityRepository utilityRepository, 
-            IMapper mapper
+            IUtilityRepository utilityRepository,
+            IMapperFactory mapperFactory
         )
         {
             _utilityRepository = utilityRepository;
-            _mapper = mapper;
+            _mapper = mapperFactory.GetMapper(typeof(BLServices).Name);
         }
 
         public async Task<IReadOnlyCollection<LanguageModel>> GetLanguagesAsync()

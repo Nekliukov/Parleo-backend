@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
 using ParleoBackend.ViewModels.Entities;
@@ -10,6 +12,7 @@ namespace ParleoBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UtilityController : ControllerBase
     {
         private readonly IUtilityService _utilityService;
@@ -17,11 +20,11 @@ namespace ParleoBackend.Controllers
 
         public UtilityController(
             IUtilityService utilityService,
-            IMapper mapper
+            IMapperFactory mapperFactory
         )
         {
             _utilityService = utilityService;
-            _mapper = mapper;
+            _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
         }
 
         [HttpGet("languages")]
