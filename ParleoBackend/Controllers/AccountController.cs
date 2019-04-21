@@ -58,8 +58,10 @@ namespace ParleoBackend.Controllers
         public async Task<IActionResult> GetUsersPageAsync(
             [FromQuery] UserFilterViewModel userFilter)
         {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
             var users = await _accountService.GetUsersPageAsync(
-                _mapper.Map<UserFilterModel>(userFilter));
+                _mapper.Map<UserFilterModel>(userFilter), user);
 
             if (users == null)
             {

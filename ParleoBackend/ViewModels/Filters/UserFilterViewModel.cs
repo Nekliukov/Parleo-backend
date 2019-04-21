@@ -1,6 +1,5 @@
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Pages;
-using System.Collections.Generic;
 
 namespace ParleoBackend.ViewModels.Filters
 {

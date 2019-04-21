@@ -47,10 +47,10 @@ namespace Parleo.BLL.Services
         }
 
         public async Task<PageModel<UserModel>> GetUsersPageAsync(
-            UserFilterModel pageRequest)
+            UserFilterModel pageRequest, UserModel user)
         {
             var usersPage = await _repository.GetPageAsync(
-                _mapper.Map<UserFilter>(pageRequest));
+                _mapper.Map<UserFilter>(pageRequest), _mapper.Map<User>(user));
 
             if(usersPage == null)
             {

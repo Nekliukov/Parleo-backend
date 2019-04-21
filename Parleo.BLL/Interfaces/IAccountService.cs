@@ -10,7 +10,7 @@ namespace Parleo.BLL.Interfaces
     {
         Task<UserModel> AuthenticateAsync(UserLoginModel authorizationModel);
 
-        Task<PageModel<UserModel>> GetUsersPageAsync(UserFilterModel pageRequest);
+        Task<PageModel<UserModel>> GetUsersPageAsync(UserFilterModel pageRequest, UserModel user);
 
         Task<UserModel> GetUserByIdAsync(Guid id);
 

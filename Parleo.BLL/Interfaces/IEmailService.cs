@@ -4,6 +4,6 @@ namespace Parleo.BLL.Interfaces
 {
     public interface IEmailService
     {
-        Task SendEmailConfirmationLinkAsync(string to, string token);
+        Task<bool> SendEmailConfirmationLinkAsync(string to, string token);
     }
 }
