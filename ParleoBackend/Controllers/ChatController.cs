@@ -40,7 +40,7 @@ namespace ParleoBackend.Controllers
 
             try
             {
-                await _chatHub.SubscribeOnChats(chatsModel.Entities.Select(c => c.Id).ToList());
+                await _chatHub.SubscribeToChats(chatsModel.Entities.Select(c => c.Id).ToList());
             }
             catch (NullReferenceException)
             {
@@ -59,7 +59,7 @@ namespace ParleoBackend.Controllers
 
             try
             {
-                await _chatHub.SubscribeOnChat(chatId);
+                await _chatHub.SubscribeToChat(chatId);
             }
             catch (NullReferenceException)
             {
@@ -89,7 +89,7 @@ namespace ParleoBackend.Controllers
 
             try
             {
-                await _chatHub.SubscribeOnChat(chatModel.Id);
+                await _chatHub.SubscribeToChat(chatModel.Id);
             }
             catch (NullReferenceException)
             {

@@ -8,9 +8,9 @@ namespace ParleoBackend.Contracts
 {
     public interface IChatHub
     {
-         Task SubscribeOnChat(Guid chatId);
+         Task SubscribeToChat(Guid chatId);
 
-         Task SubscribeOnChats(ICollection<Guid> chatIds);
+         Task SubscribeToChats(ICollection<Guid> chatIds);
 
          Task SendMessage(MessageViewModel message);
 
