@@ -9,7 +9,7 @@ using Parleo.DAL;
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    partial class AppContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -40,6 +40,40 @@ namespace Parleo.DAL.Migrations
                     b.ToTable("Category");
                 });
 
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Chat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<Guid?>("CreatorId");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Chat");
+                });
+
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.ChatUser", b =>
+                {
+                    b.Property<Guid>("ChatId");
+
+                    b.Property<Guid>("UserId");
+
+                    b.Property<DateTimeOffset>("TimeStamp");
+
+                    b.Property<int>("UnreadMessages");
+
+                    b.HasKey("ChatId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChatUser");
+                });
+
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>
                 {
                     b.Property<Guid>("UserId");
@@ -62,6 +96,8 @@ namespace Parleo.DAL.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("NEWID()");
+
+                    b.Property<Guid>("ChatId");
 
                     b.Property<Guid>("CreatorId");
 
@@ -88,6 +124,9 @@ namespace Parleo.DAL.Migrations
                     b.Property<DateTimeOffset>("StartTime");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ChatId")
+                        .IsUnique();
 
                     b.HasIndex("CreatorId");
 
@@ -121,6 +160,35 @@ namespace Parleo.DAL.Migrations
                     b.HasKey("Code");
 
                     b.ToTable("Language");
+                });
+
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<Guid>("ChatId");
+
+                    b.Property<DateTimeOffset>("CreatedOn");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<Guid?>("SenderId");
+
+                    b.Property<string>("Status");
+
+                    b.Property<string>("Text");
+
+                    b.Property<DateTimeOffset>("ViewedOn");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.User", b =>
@@ -217,6 +285,26 @@ namespace Parleo.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Chat", b =>
+                {
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+                });
+
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.ChatUser", b =>
+                {
+                    b.HasOne("Parleo.DAL.Models.Entities.Chat", "Chat")
+                        .WithMany("Members")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "User")
+                        .WithMany("Chats")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Credentials", b =>
                 {
                     b.HasOne("Parleo.DAL.Models.Entities.User", "User")
@@ -227,6 +315,11 @@ namespace Parleo.DAL.Migrations
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Event", b =>
                 {
+                    b.HasOne("Parleo.DAL.Models.Entities.Chat", "Chat")
+                        .WithOne()
+                        .HasForeignKey("Parleo.DAL.Models.Entities.Event", "ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Parleo.DAL.Models.Entities.User", "Creator")
                         .WithMany("CreatedEvents")
                         .HasForeignKey("CreatorId")
@@ -242,6 +335,18 @@ namespace Parleo.DAL.Migrations
                     b.HasOne("Parleo.DAL.Models.Entities.Category", "Category")
                         .WithMany("Hobbies")
                         .HasForeignKey("CategoryName");
+                });
+
+            modelBuilder.Entity("Parleo.DAL.Models.Entities.Message", b =>
+                {
+                    b.HasOne("Parleo.DAL.Models.Entities.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Parleo.DAL.Models.Entities.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId");
                 });
 
             modelBuilder.Entity("Parleo.DAL.Models.Entities.UserEvent", b =>
