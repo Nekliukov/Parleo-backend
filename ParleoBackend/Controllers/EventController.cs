@@ -32,9 +32,9 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{eventId}/addParticipant/{userId}")]
         [Authorize]
-        public async Task<ActionResult> AddEventParticipant(Guid eventId, Guid userId)
+        public async Task<ActionResult> AddEventParticipants(Guid eventId, Guid[] users)
         {
-            var result = await _service.AddEventParticipant(eventId, userId);
+            var result = await _service.AddEventParticipant(eventId, users);
 
             return Ok();
         }

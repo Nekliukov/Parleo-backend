@@ -20,17 +20,20 @@ namespace Parleo.DAL.Repositories
             _context = context;
         }
 
-        public async Task<bool> AddEventParticipant(Guid eventId, Guid userId)
+        public async Task<bool> AddEventParticipant(Guid eventId, Guid[] users)
         {
             Event targetEvent = await _context.Event
                 .Include(e => e.Participants)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
-            targetEvent.Participants.Add(new UserEvent
+            foreach (Guid userId in users)
             {
-                EventId = eventId,
-                UserId = userId
-            });
+                targetEvent.Participants.Add(new UserEvent
+                {
+                    EventId = eventId,
+                    UserId = userId
+                });
+            }
 
             int result = await _context.SaveChangesAsync();
 
