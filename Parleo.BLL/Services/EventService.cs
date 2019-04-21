@@ -24,9 +24,9 @@ namespace Parleo.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<bool> AddEventParticipant(Guid eventId, Guid userId)
+        public async Task<bool> AddEventParticipant(Guid eventId, Guid[] users)
         {
-            return await _repository.AddEventParticipant(eventId, userId);       
+            return await _repository.AddEventParticipant(eventId, users);       
         }
 
         public async Task<EventModel> CreateEventAsync(

@@ -6,6 +6,8 @@ namespace ParleoBackend.ViewModels.Entities
     {
         public string Name { get; set; }
 
+        public string About { get; set; }
+
         public DateTime Birthdate { get; set; }
 
         public bool Gender { get; set; }

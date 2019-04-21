@@ -9,6 +9,8 @@ namespace Parleo.BLL.Models.Entities
 
         public string AccountImage { get; set; }
 
+        public string About { get; set; }
+
         public string Name { get; set; }
 
         public DateTime Birthdate { get; set; }

@@ -28,18 +28,18 @@ namespace ParleoBackend.Hubs
             return base.OnConnectedAsync();
         }
 
-        public Task SubscribeOnChat(Guid chatId)
+        public Task SubscribeToChat(Guid chatId)
         {
             if(Context == null)
                 throw new NullReferenceException();
             return Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
         }
 
-        public Task SubscribeOnChats(ICollection<Guid> chatIds)
+        public Task SubscribeToChats(ICollection<Guid> chatIds)
         {
             if(Context == null)
                 throw new NullReferenceException();
-            return Task.WhenAll(chatIds.Select(SubscribeOnChat));
+            return Task.WhenAll(chatIds.Select(SubscribeToChat));
         }
 
         public async Task SendMessage(MessageViewModel message)
