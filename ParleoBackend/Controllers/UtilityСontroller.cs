@@ -30,15 +30,17 @@ namespace ParleoBackend.Controllers
         [HttpGet("languages")]
         public async Task<IReadOnlyCollection<LanguageViewModel>> GetLanguagesAsync()
         {
-            IReadOnlyCollection<LanguageModel> languages = await _utilityService.GetLanguagesAsync();
-            return _mapper.Map<IReadOnlyCollection<LanguageModel>, IReadOnlyCollection<LanguageViewModel>>(languages);
+            return _mapper.Map<IReadOnlyCollection<LanguageModel>, IReadOnlyCollection<LanguageViewModel>>(
+                await _utilityService.GetLanguagesAsync()
+            );
         }
 
         [HttpGet("hobbies")]
         public async Task<IReadOnlyCollection<HobbyViewModel>> GetHobbiesAsync()
         {
-            IReadOnlyCollection<HobbyModel> hobbies = await _utilityService.GetHobbiesAsync();
-            return _mapper.Map<IReadOnlyCollection<HobbyModel>, IReadOnlyCollection<HobbyViewModel>>(hobbies);
+            return _mapper.Map<IReadOnlyCollection<HobbyModel>, IReadOnlyCollection<HobbyViewModel>>(
+                await _utilityService.GetHobbiesAsync()
+            );
         }
     }
 }

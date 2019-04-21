@@ -25,14 +25,16 @@ namespace Parleo.BLL.Services
 
         public async Task<IReadOnlyCollection<LanguageModel>> GetLanguagesAsync()
         {
-            IReadOnlyCollection<Language> languages = await _utilityRepository.GetLanguagesAsync();
-            return _mapper.Map<IReadOnlyCollection<Language>, IReadOnlyCollection<LanguageModel>>(languages);
+            return _mapper.Map<IReadOnlyCollection<Language>, IReadOnlyCollection<LanguageModel>>(
+                await _utilityRepository.GetLanguagesAsync()
+            );
         }
 
         public async Task<IReadOnlyCollection<HobbyModel>> GetHobbiesAsync()
         {
-            IReadOnlyCollection<Hobby> hobbies = await _utilityRepository.GetHobbiesAsync();
-            return _mapper.Map<IReadOnlyCollection<Hobby>, IReadOnlyCollection<HobbyModel>>(hobbies);
+            return _mapper.Map<IReadOnlyCollection<Hobby>, IReadOnlyCollection<HobbyModel>>(
+                await _utilityRepository.GetHobbiesAsync()
+            );
         }
     }
 }
