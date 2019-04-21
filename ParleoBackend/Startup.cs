@@ -17,6 +17,7 @@ using Parleo.DAL;
 using ParleoBackend.Configuration;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
+using ParleoBackend.Hubs;
 using ParleoBackend.Validators;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
@@ -35,6 +36,7 @@ namespace ParleoBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             services.AddSwaggerDocumentation();
@@ -62,15 +64,14 @@ namespace ParleoBackend
                     builder =>
                     {
                         builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .SetIsOriginAllowed((host) => true)
+                            .AllowCredentials();
                     });
             });
 
             ConfigureMapperFactory(services);
-
             BLServices.AddServices(services);
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
             WebServices.AddServices(services);
@@ -112,6 +113,10 @@ namespace ParleoBackend
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
+            app.UseSignalR(route =>
+            {
+                route.MapHub<ChatHub>("/chathub");
+            });
             app.UseMvc();
             app.UseSwagger();
 

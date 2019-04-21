@@ -4,6 +4,7 @@ using Parleo.BLL.Interfaces;
 using ParleoBackend.Configuration;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
+using ParleoBackend.Hubs;
 using ParleoBackend.Services;
 
 namespace ParleoBackend
@@ -18,6 +19,7 @@ namespace ParleoBackend
             services.AddScoped<IEmailClientSettings, EmailClientSettings>();
             services.AddScoped<IAccountConfirmationMessageSettings, AccountConfirmationMessageSettings>();
             services.AddScoped<IAccountImageSettings, AccountImageSettings>();
+            services.AddScoped<IChatHub, ChatHub>();
         }
 
         public static IMapper GetMapper()

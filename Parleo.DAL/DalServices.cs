@@ -11,6 +11,7 @@ namespace Parleo.DAL
         {
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<IEventsRepository, EventsRepository>();
+            services.AddScoped<IChatRepository, ChatRepository>();
             services.AddDbContext<AppContext>(
                 options => options.UseSqlServer(connectionString));            
         }

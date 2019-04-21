@@ -20,7 +20,7 @@ namespace Parleo.DAL.Interfaces
 
         Task<bool> UpdateEventAsync(Event entity);
 
-        Task<bool> AddEventParticipant(Guid eventId, Guid userId);
+        Task<bool> AddEventParticipant(Guid eventId, Guid[] users);
 
         Task<bool> RemoveEventParticipant(Guid eventId, Guid userId);
 

@@ -87,6 +87,14 @@ namespace Parleo.BLL.Extensions
 
                 mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
 
+                mc.CreateMap<MessageModel, Message>();
+                mc.CreateMap<Message, MessageModel>();
+
+                mc.CreateMap<Chat, ChatModel>()
+                    .ForMember(cm => cm.LastMessage,
+                        opt => opt.MapFrom(c => c.Messages.FirstOrDefault()));
+                mc.CreateMap<ChatModel, Chat>();
+
                 // filters
                 mc.CreateMap<ChatFilterModel, ChatFilter>();
                 mc.CreateMap<ChatFilter, ChatFilterModel>();

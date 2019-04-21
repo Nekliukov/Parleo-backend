@@ -31,11 +31,11 @@ namespace ParleoBackend.Controllers
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
         }
 
-        [HttpPut("{eventId}/addParticipant/{userId}")]
+        [HttpPut("{eventId}/addParticipants/{userIds}")]
         [Authorize]
-        public async Task<ActionResult> AddEventParticipant(Guid eventId, Guid userId)
+        public async Task<ActionResult> AddEventParticipants(Guid eventId, Guid[] users)
         {
-            var result = await _service.AddEventParticipant(eventId, userId);
+            var result = await _service.AddEventParticipant(eventId, users);
 
             return Ok();
         }

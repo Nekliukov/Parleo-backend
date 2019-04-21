@@ -1,3 +1,5 @@
+using System;
+
 namespace Parleo.BLL.Models.Pages
 {
     // This goes to back-end
@@ -6,5 +8,7 @@ namespace Parleo.BLL.Models.Pages
         public int Page { get; set; }
 
         public int? PageSize { get; set; }
+
+        public DateTimeOffset? TimeStamp { get; set; }
     }
 }
