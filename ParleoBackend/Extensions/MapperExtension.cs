@@ -67,6 +67,9 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UserFilterViewModel, UserFilterModel>();
                 mc.CreateMap<UserFilterModel, UserFilterViewModel>();
 
+                mc.CreateMap<FilteringLanguageModel, FilteringLanguageViewModel>();
+                mc.CreateMap<FilteringLanguageViewModel, FilteringLanguageModel>();
+
                 // pages
                 mc.CreateMap(typeof(PageViewModel<>), typeof(PageModel<>));
                 mc.CreateMap(typeof(PageModel<>), typeof(PageViewModel<>));

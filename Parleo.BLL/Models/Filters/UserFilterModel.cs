@@ -1,6 +1,4 @@
-using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Pages;
-using System.Collections.Generic;
 
 namespace Parleo.BLL.Models.Filters
 {
@@ -16,6 +14,6 @@ namespace Parleo.BLL.Models.Filters
 
         public int? MaxDistance { get; set; }
 
-        public UserLanguageModel[] Languages { get; set; }
+        public FilteringLanguageModel[] Languages { get; set; }
     }
 }

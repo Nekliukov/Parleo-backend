@@ -109,6 +109,9 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<UserFilterModel, UserFilter>();
                 mc.CreateMap<UserFilter, UserFilterModel>();
 
+                mc.CreateMap<FilteringLanguage, FilteringLanguageModel>();
+                mc.CreateMap<FilteringLanguageModel, FilteringLanguage>();
+
                 // pages
                 mc.CreateMap(typeof(PageModel<>), typeof(Page<>));
                 mc.CreateMap(typeof(Page<>), typeof(PageModel<>));

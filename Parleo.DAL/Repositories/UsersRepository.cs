@@ -41,8 +41,9 @@ namespace Parleo.DAL.Repositories
                     u.Gender == userFilter.Gender : true)
                 .Where(u => (userFilter.Languages != null &&
                         userFilter.Languages.Count() != 0) ?
-                    userFilter.Languages.Any(l => u.Languages.Any(
-                        ul => ul.LanguageCode == l.LanguageCode)) : true)
+                    userFilter.Languages.Any(fl => u.Languages.Any(
+                        ul => ul.LanguageCode == fl.LanguageCode && 
+                            LevelInRange(fl, ul))) : true)
                 // TODO, need to discus with front
                 //.Where(u => (userFilter.MaxDistance != null) ? true : true)
                 //.Where(u => (userFilter.MinDistance != null) ? true : true))
@@ -135,6 +136,16 @@ namespace Parleo.DAL.Repositories
                 DateTime.Now.Subtract(birth.DateTime).Ticks).Year;
 
             return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
+        }
+
+        private bool LevelInRange(
+            FilteringLanguage filteringLanguage, UserLanguage userLanguage)
+        {
+            bool lessOrEqualThanMax = filteringLanguage.MaxLevel == null ?
+                userLanguage.Level <= filteringLanguage.MaxLevel : true;
+
+            return lessOrEqualThanMax && filteringLanguage.MinLevel == null ?
+                userLanguage.Level >= filteringLanguage.MinLevel : true;
         }
     }
 }
