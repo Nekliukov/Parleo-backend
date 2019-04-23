@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Parleo.BLL.Models.Entities
+﻿namespace Parleo.BLL.Models.Entities
 {
     public class LanguageModel
     {

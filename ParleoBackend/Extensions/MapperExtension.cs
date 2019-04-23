@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
 using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
@@ -12,7 +11,7 @@ namespace ParleoBackend.Extensions
 {
     public static class MapperExtension
     {
-        public static void Configure(IServiceCollection services)
+        public static IMapper GetConfiguredMapper()
         {
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -31,16 +30,23 @@ namespace ParleoBackend.Extensions
 
                 mc.CreateMap<CreateOrUpdateEventViewModel, CreateOrUpdateEventModel>();
                 mc.CreateMap<CreateOrUpdateEventModel, CreateOrUpdateEventViewModel>();
-
+                
                 mc.CreateMap<LanguageModel, LanguageViewModel>()
-                    .ForMember(lvm => lvm.Name, opt => opt.MapFrom(lm => new CultureInfo(lm.Code).NativeName));
+                    .ForMember(lvm => lvm.Id, opt => opt.MapFrom(lm => lm.Code));
+
                 mc.CreateMap<LanguageViewModel, LanguageModel>();
+
+                mc.CreateMap<HobbyModel, HobbyViewModel>();
+                mc.CreateMap<HobbyViewModel, HobbyModel>();
 
                 mc.CreateMap<UserLanguageModel, UserLanguageViewModel>();
                 mc.CreateMap<UserLanguageViewModel, UserLanguageModel>();
 
                 mc.CreateMap<MiniatureModel, MiniatureViewModel>();
                 mc.CreateMap<MiniatureViewModel, MiniatureModel>();
+
+                mc.CreateMap<UpdateUserModel, UserLocationViewModel>();
+                mc.CreateMap<UserLocationViewModel, UpdateUserModel>();
 
                 mc.CreateMap<UpdateUserViewModel, UpdateUserModel>();
                 mc.CreateMap<UpdateUserModel, UpdateUserViewModel>();
@@ -61,6 +67,9 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UserFilterViewModel, UserFilterModel>();
                 mc.CreateMap<UserFilterModel, UserFilterViewModel>();
 
+                mc.CreateMap<FilteringLanguageModel, FilteringLanguageViewModel>();
+                mc.CreateMap<FilteringLanguageViewModel, FilteringLanguageModel>();
+
                 // pages
                 mc.CreateMap(typeof(PageViewModel<>), typeof(PageModel<>));
                 mc.CreateMap(typeof(PageModel<>), typeof(PageViewModel<>));
@@ -69,9 +78,7 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<PageRequestModel, PageRequestViewModel>();
             });
 
-            IMapper mapper = mappingConfig.CreateMapper();
-
-            services.AddSingleton(mapper);
+            return mappingConfig.CreateMapper();
         }
     }
 }

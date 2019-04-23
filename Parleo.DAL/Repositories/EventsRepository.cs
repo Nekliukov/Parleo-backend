@@ -20,17 +20,20 @@ namespace Parleo.DAL.Repositories
             _context = context;
         }
 
-        public async Task<bool> AddEventParticipant(Guid eventId, Guid userId)
+        public async Task<bool> AddEventParticipant(Guid eventId, Guid[] users)
         {
             Event targetEvent = await _context.Event
                 .Include(e => e.Participants)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
 
-            targetEvent.Participants.Add(new UserEvent
+            foreach (Guid userId in users)
             {
-                EventId = eventId,
-                UserId = userId
-            });
+                targetEvent.Participants.Add(new UserEvent
+                {
+                    EventId = eventId,
+                    UserId = userId
+                });
+            }
 
             int result = await _context.SaveChangesAsync();
 
@@ -61,7 +64,7 @@ namespace Parleo.DAL.Repositories
             var events = await _context.Event
                 .Where(e => (eventFilter.Languages != null && 
                         eventFilter.Languages.Count() != 0) ?
-                    eventFilter.Languages.Contains(e.LanguageId) : true)
+                    eventFilter.Languages.Contains(e.LanguageCode) : true)
                 // TODO, need to discus with front
                 //.Where(e => (eventFilter.MaxDistance != null) ? true : true)
                 //.Where(e => (eventFilter.MinDistance != null) ? true : true)

@@ -10,6 +10,7 @@ using Parleo.BLL.Models.Filters;
 using Parleo.DAL.Models.Filters;
 using Parleo.DAL.Models.Pages;
 using System.Linq;
+using Parleo.BLL.Extensions;
 
 namespace Parleo.BLL.Services
 {
@@ -18,15 +19,15 @@ namespace Parleo.BLL.Services
         private readonly IEventsRepository _repository;
         private readonly IMapper _mapper;
 
-        public EventService(IEventsRepository repository, IMapper mapper)
+        public EventService(IEventsRepository repository, IMapperFactory mapperFactory)
         {
             _repository = repository;
-            _mapper = mapper;
+            _mapper = mapperFactory.GetMapper(typeof(BLServices).Name);
         }
 
-        public async Task<bool> AddEventParticipant(Guid eventId, Guid userId)
+        public async Task<bool> AddEventParticipant(Guid eventId, Guid[] users)
         {
-            return await _repository.AddEventParticipant(eventId, userId);       
+            return await _repository.AddEventParticipant(eventId, users);       
         }
 
         public async Task<EventModel> CreateEventAsync(

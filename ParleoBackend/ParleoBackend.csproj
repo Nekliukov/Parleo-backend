@@ -26,4 +26,10 @@
     <ProjectReference Include="..\Parleo.BLL\Parleo.BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Templates\AccountConfirmation.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

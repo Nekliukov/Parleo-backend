@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 ﻿using System.IO;
-using System.Reflection;
 using System.Text;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +12,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL;
+using Parleo.BLL.Extensions;
 using Parleo.DAL;
 using ParleoBackend.Configuration;
 using ParleoBackend.Contracts;
@@ -71,7 +71,7 @@ namespace ParleoBackend
                     });
             });
 
-            MapperExtension.Configure(services);
+            ConfigureMapperFactory(services);
             BLServices.AddServices(services);
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
             WebServices.AddServices(services);
@@ -126,6 +126,16 @@ namespace ParleoBackend
             });
 
             loggerFactory.AddConsole();
+        }
+
+        private void ConfigureMapperFactory(IServiceCollection services)
+        {
+            var mapperFactory = new MapperFactory();
+
+            mapperFactory.Mappers.Add(typeof(BLServices).Name, BLServices.GetMapper());
+            mapperFactory.Mappers.Add(typeof(WebServices).Name, WebServices.GetMapper());
+
+            services.AddSingleton<IMapperFactory>(mapperFactory);
         }
     }
 }

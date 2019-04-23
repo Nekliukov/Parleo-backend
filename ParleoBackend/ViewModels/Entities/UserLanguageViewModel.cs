@@ -4,9 +4,7 @@ namespace ParleoBackend.ViewModels.Entities
 {
     public class UserLanguageViewModel
     {
-        public Guid Id { get; set; }
-
-        public string Name { get; set; }
+        public string Code { get; set; }
 	 
         public byte Level { get; set; }
     }

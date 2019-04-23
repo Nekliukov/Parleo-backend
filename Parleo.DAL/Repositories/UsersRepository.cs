@@ -54,11 +54,11 @@ namespace Parleo.DAL.Repositories
                     GetAge(u.Birthdate) <= userFilter.MaxAge : true)
                 .Where(u => (userFilter.MinAge != null) ?
                     GetAge(u.Birthdate) >= userFilter.MinAge : true)
+                .Include(u => u.Languages)
+                    .ThenInclude(ul => ul.Language)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.Friends)
                     .ThenInclude(f => f.UserTo)
-                .Include(u => u.Languages)
-                    .ThenInclude(ul => ul.Language)
                 .Include(u => u.Credentials)
                 .ToListAsync();
 
@@ -83,6 +83,11 @@ namespace Parleo.DAL.Repositories
         public async Task<User> GetAsync(Guid id)
         {
             return await _context.User.Include(u => u.Credentials)
+                .Include(u => u.Languages)
+                .Include(u => u.Hobbies)
+                .Include(u => u.Friends)
+                .Include(u => u.CreatedEvents)
+                .Include(u => u.AttendingEvents)
                 .FirstOrDefaultAsync(user => user.Id == id);
         }
 
@@ -134,6 +139,16 @@ namespace Parleo.DAL.Repositories
                 DateTime.Now.Subtract(birth.DateTime).Ticks).Year;
 
             return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
+        }
+
+        private bool LevelInRange(
+            FilteringLanguage filteringLanguage, UserLanguage userLanguage)
+        {
+            bool lessOrEqualThanMax = filteringLanguage.MaxLevel == null ?
+                userLanguage.Level <= filteringLanguage.MaxLevel : true;
+
+            return lessOrEqualThanMax && filteringLanguage.MinLevel == null ?
+                userLanguage.Level >= filteringLanguage.MinLevel : true;
         }
     }
 }
