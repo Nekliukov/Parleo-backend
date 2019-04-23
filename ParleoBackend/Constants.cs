@@ -11,7 +11,6 @@
             public const string EMAIL_NOT_FOUND = "User with such email does not exist";
             public const string EMAIL_NOT_EXISTS = "Such email does not exist";
             public const string WRONG_GUID_FORMAT = "Wrong GUID format";
-            public const string NO_CONNECION_TO_HUB = "No connection to hub";
         }
     }
 }

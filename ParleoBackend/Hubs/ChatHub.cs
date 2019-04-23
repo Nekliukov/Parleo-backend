@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Parleo.BLL;
+using Parleo.BLL.Extensions;
 using ParleoBackend.Contracts;
 
 namespace ParleoBackend.Hubs
@@ -17,10 +18,10 @@ namespace ParleoBackend.Hubs
         private readonly IChatService _chatService;
         private readonly IMapper _mapper;
 
-        public ChatHub(IChatService chatService, IMapper mapper)
+        public ChatHub(IMapperFactory mapperFactory, IChatService chatService)
         {
+            _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
             _chatService = chatService;
-            _mapper = mapper;
         }
 
         public override Task OnConnectedAsync()
@@ -30,15 +31,11 @@ namespace ParleoBackend.Hubs
 
         public Task SubscribeToChat(Guid chatId)
         {
-            if(Context == null)
-                throw new NullReferenceException();
             return Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
         }
 
         public Task SubscribeToChats(ICollection<Guid> chatIds)
         {
-            if(Context == null)
-                throw new NullReferenceException();
             return Task.WhenAll(chatIds.Select(SubscribeToChat));
         }
 
