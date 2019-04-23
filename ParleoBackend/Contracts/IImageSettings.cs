@@ -2,7 +2,9 @@
 {
     public interface IImageSettings
     {
-        string SourceUrl { get; }
-        string DestPath { get; }
+        string EventSourceUrl { get; }
+        string EventDestPath { get; }
+        string AccountSourceUrl { get; }
+        string AccountDestPath { get; }
     }
 }

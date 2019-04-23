@@ -225,7 +225,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest();
             }
 
-            string accountImagePath = _accountImageSettings.DestPath;
+            string accountImagePath = _accountImageSettings.AccountDestPath;
             Guid userId = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
             UserModel user = await _accountService.GetUserByIdAsync(userId);
 

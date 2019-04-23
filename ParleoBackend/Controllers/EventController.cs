@@ -138,7 +138,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest();
             }
 
-            string eventImagePath = _eventImageSettings.DestPath;
+            string eventImagePath = _eventImageSettings.EventDestPath;
             EventModel eventModel = await _service.GetEventAsync(eventId);
 
             if (eventModel.Image != null)

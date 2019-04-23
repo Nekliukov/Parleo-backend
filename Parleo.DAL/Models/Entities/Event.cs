@@ -14,7 +14,7 @@ namespace Parleo.DAL.Models.Entities
 
         public int MaxParticipants { get; set; }
 
-        public Guid ChatId { get; set; }
+        public Guid? ChatId { get; set; }
 
         public string Image { get; set; }
 
