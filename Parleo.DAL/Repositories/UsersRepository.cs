@@ -42,8 +42,9 @@ namespace Parleo.DAL.Repositories
                     u.Gender == userFilter.Gender : true)
                 .Where(u => (userFilter.Languages != null &&
                         userFilter.Languages.Count() != 0) ?
-                    userFilter.Languages.Any(l => u.Languages.Any(
-                        ul => ul.LanguageCode == l.LanguageCode)) : true)
+                    userFilter.Languages.Any(fl => u.Languages.Any(
+                        ul => ul.LanguageCode == fl.LanguageCode &&
+                            LevelInRange(fl, ul))) : true)
                 .Where(u => (userFilter.MaxDistance != null) ?
                     UserLocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
                     longtitude, latitude) <= userFilter.MaxDistance : true)
