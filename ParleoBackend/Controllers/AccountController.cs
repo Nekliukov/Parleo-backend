@@ -258,8 +258,11 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
+            UserModel user = await _accountService.GetUserByIdAsync(userId);
+            (user.Latitude, user.Longitude) = (entity.Latitude, entity.Longitude);
+
             bool isEdited = await _accountService.UpdateUserAsync(
-                userId, _mapper.Map<UpdateUserModel>(entity));
+                userId, _mapper.Map<UpdateUserModel>(user));
 
             if (!isEdited)
             {
