@@ -1,6 +1,4 @@
-using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Pages;
-using System.Collections.Generic;
 
 namespace ParleoBackend.ViewModels.Filters
 {
@@ -16,6 +14,6 @@ namespace ParleoBackend.ViewModels.Filters
 
         public int? MaxDistance { get; set; }
 
-        public UserLanguageViewModel[] Languages { get; set; }
+        public FilteringLanguageViewModel[] Languages { get; set; }
     }
 }

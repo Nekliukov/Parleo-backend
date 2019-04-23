@@ -30,10 +30,14 @@ namespace ParleoBackend.Extensions
 
                 mc.CreateMap<CreateOrUpdateEventViewModel, CreateOrUpdateEventModel>();
                 mc.CreateMap<CreateOrUpdateEventModel, CreateOrUpdateEventViewModel>();
-
+                
                 mc.CreateMap<LanguageModel, LanguageViewModel>()
-                    .ForMember(lvm => lvm.Name, opt => opt.MapFrom(lm => new CultureInfo(lm.Code).NativeName));
+                    .ForMember(lvm => lvm.Id, opt => opt.MapFrom(lm => lm.Code));
+
                 mc.CreateMap<LanguageViewModel, LanguageModel>();
+
+                mc.CreateMap<HobbyModel, HobbyViewModel>();
+                mc.CreateMap<HobbyViewModel, HobbyModel>();
 
                 mc.CreateMap<UserLanguageModel, UserLanguageViewModel>();
                 mc.CreateMap<UserLanguageViewModel, UserLanguageModel>();
@@ -62,6 +66,9 @@ namespace ParleoBackend.Extensions
 
                 mc.CreateMap<UserFilterViewModel, UserFilterModel>();
                 mc.CreateMap<UserFilterModel, UserFilterViewModel>();
+
+                mc.CreateMap<FilteringLanguageModel, FilteringLanguageViewModel>();
+                mc.CreateMap<FilteringLanguageViewModel, FilteringLanguageModel>();
 
                 // pages
                 mc.CreateMap(typeof(PageViewModel<>), typeof(PageModel<>));

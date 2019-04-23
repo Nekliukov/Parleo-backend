@@ -8,7 +8,7 @@ namespace ParleoBackend.Validators
         public CrateOrUpdateEventViewModelValidator()
         {
             RuleFor(ev => ev.Description).NotEmpty().MaximumLength(200);
-            RuleFor(ev => ev.LanguageId).NotNull().NotEmpty();
+            RuleFor(ev => ev.LanguageCode).NotNull().NotEmpty();
             RuleFor(ev => ev.Latitude).NotNull().NotEmpty();
             RuleFor(ev => ev.Longitude).NotNull().NotEmpty();
             RuleFor(ev => ev.MaxParticipants)

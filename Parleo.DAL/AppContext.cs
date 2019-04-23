@@ -15,6 +15,10 @@ namespace Parleo.DAL
 
         public DbSet<Chat> Chat { get; set; }
 
+        public DbSet<Language> Language { get; set; }
+
+        public DbSet<Hobby> Hobby { get; set; }
+
         public AppContext() : base()
         {
         }

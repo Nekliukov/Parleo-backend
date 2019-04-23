@@ -13,7 +13,7 @@ namespace Parleo.BLL.Models.Filters
 
         public int? MaxDistance { get; set; }
 
-        public Guid[] Languages { get; set; }
+        public string[] Languages { get; set; }
 
 
         // Will be possibly used in the future
