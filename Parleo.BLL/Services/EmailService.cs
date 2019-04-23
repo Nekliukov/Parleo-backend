@@ -20,7 +20,7 @@ namespace Parleo.BLL.Services
             _accountConfirmationMessageSettings = accountConfirmationMessageSettings;
         }
 
-        public async Task<bool> SendEmailConfirmationLinkAsync(string to, string token)
+        public async Task SendEmailConfirmationLinkAsync(string to, string token)
         {
             string message = (await File.ReadAllTextAsync(_accountConfirmationMessageSettings.Message))
                 .Replace(
@@ -29,10 +29,10 @@ namespace Parleo.BLL.Services
                 )
             );
 
-            return await SendAsync(to, _accountConfirmationMessageSettings.Subject, message);
+            await SendAsync(to, _accountConfirmationMessageSettings.Subject, message);
         }
 
-        private async Task<bool> SendAsync(string to, string subject, string body)
+        private async Task SendAsync(string to, string subject, string body)
         {
             MailMessage message = new MailMessage(_emailClientSettings.Sender, to)
             {
@@ -50,16 +50,7 @@ namespace Parleo.BLL.Services
                 )
             };
 
-            try
-            {
-                await client.SendMailAsync(message);
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
+            await client.SendMailAsync(message);
         }
     }
 }
