@@ -146,10 +146,10 @@ namespace ParleoBackend.Controllers
                 System.IO.File.Delete(Path.Combine(eventImagePath, eventModel.Image));
             }
 
-            string accountImageUniqueName = await image.SaveAsync(eventImagePath);
+            string eventImageUniqueName = await image.SaveAsync(eventImagePath);
 
             await _service.InsertEventImageAsync(
-                accountImageUniqueName,
+                eventImageUniqueName,
                 eventId
             );
 
