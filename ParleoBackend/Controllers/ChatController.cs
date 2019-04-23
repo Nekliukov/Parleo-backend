@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Exceptions;
+using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Pages;
 using ParleoBackend.Contracts;
@@ -22,79 +23,51 @@ namespace ParleoBackend.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IChatService _chatService;
-        private readonly IChatHub _chatHub;
 
-        public ChatController(IMapper mapper, IChatService chatService, IChatHub chatHub)
+        public ChatController(IMapperFactory mapperFactory, IChatService chatService)
         {
-            _mapper = mapper;
+            _mapper = mapperFactory.GetMapper(typeof(WebServices).Name); ;
             _chatService = chatService;
-            _chatHub = chatHub;
         }
 
-        [Authorize]
+        
         [HttpGet]
-        public async Task<ActionResult> GetChatPage([FromQuery] PageRequestViewModel page)
+        [Authorize]
+        public async Task<IActionResult> GetChatPage([FromQuery] PageRequestViewModel pageRequest)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-            var chatsModel = await _chatService.GetChatPageAsync(new Guid(id), _mapper.Map<PageRequestModel>(page));
-
-            try
-            {
-                await _chatHub.SubscribeToChats(chatsModel.Entities.Select(c => c.Id).ToList());
-            }
-            catch (NullReferenceException)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.NO_CONNECION_TO_HUB));
-            }
+            var chatsModel = await _chatService.GetChatPageAsync(new Guid(id), _mapper.Map<PageRequestModel>(pageRequest));
 
             return Ok(_mapper.Map<PageViewModel<ChatViewModel>>(chatsModel));
         }
 
         [Authorize]
         [HttpGet("{chatId}")]
-        public async Task<ActionResult> GetChat(Guid chatId)
+        public async Task<IActionResult> GetChat(Guid chatId)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             var chat = await _chatService.GetChatByIdAsync(chatId, new Guid(id));
-
-            try
-            {
-                await _chatHub.SubscribeToChat(chatId);
-            }
-            catch (NullReferenceException)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.NO_CONNECION_TO_HUB));
-            }
 
             return Ok(_mapper.Map<ChatViewModel>(chat));
         }
         
         [Authorize]
         [HttpGet("{chatId}/messages")]
-        public async Task<ActionResult> GetMessagePage(Guid chatId, [FromQuery] PageRequestViewModel page)
+        public async Task<IActionResult> GetMessagePage(Guid chatId, [FromQuery] PageRequestViewModel pageRequest)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
 
-            var messages = await _chatService.GetMessagePageAsync(chatId, new Guid(id), _mapper.Map<PageRequestModel>(page));
+            var messages = await _chatService.GetMessagePageAsync(chatId, new Guid(id), _mapper.Map<PageRequestModel>(pageRequest));
 
             return Ok(_mapper.Map<PageViewModel<MessageViewModel>>(messages));
         }
 
         [Authorize]
         [HttpGet("user")]
-        public async Task<ActionResult> GetChatWithUser([FromQuery] Guid userId)
+        public async Task<IActionResult> GetChatWithUser([FromQuery] Guid userId)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             var chatModel = await _chatService.GetChatWithUserAsync(new Guid(id), userId);
-
-            try
-            {
-                await _chatHub.SubscribeToChat(chatModel.Id);
-            }
-            catch (NullReferenceException)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.NO_CONNECION_TO_HUB));
-            }
 
             return Ok(_mapper.Map<ChatViewModel>(chatModel));
         }

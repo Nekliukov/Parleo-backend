@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Pages;
@@ -18,11 +19,11 @@ namespace Parleo.BLL.Services
         private readonly IChatRepository _chatRepository;
         private readonly IMapper _mapper;
 
-        public ChatService(IAccountService accountService, IChatRepository chatRepository, IMapper mapper)
+        public ChatService(IAccountService accountService, IChatRepository chatRepository, IMapperFactory mapperFactory)
         {
             _accountService = accountService;
             _chatRepository = chatRepository;
-            _mapper = mapper;
+            _mapper = mapperFactory.GetMapper(typeof(BLServices).Name); ;
         }
         public async Task<ChatModel> GetChatWithUserAsync(Guid myId, Guid anotherUserId)
         {
