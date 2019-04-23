@@ -36,7 +36,7 @@ namespace ParleoBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSignalR();
+            services.AddSignalR().AddAzureSignalR(Configuration.GetConnectionString("SignalRConnection"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             services.AddSwaggerDocumentation();
@@ -113,7 +113,7 @@ namespace ParleoBackend
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
-            app.UseSignalR(route =>
+            app.UseAzureSignalR(route =>
             {
                 route.MapHub<ChatHub>("/chathub");
             });
