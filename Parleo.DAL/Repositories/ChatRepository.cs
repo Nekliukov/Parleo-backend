@@ -130,7 +130,11 @@ namespace Parleo.DAL.Repositories
                 .Include(c => c.Messages)
                 .First(c => c.Id == id);
 
-            chat.Messages.ToList().AddRange(messages);
+            foreach(var message in messages)
+            {
+                chat.Messages.Add(message);
+            }
+            //chat.Messages.ToList().AddRange(messages);
 
             await _context.SaveChangesAsync();
         }

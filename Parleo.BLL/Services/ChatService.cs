@@ -61,9 +61,9 @@ namespace Parleo.BLL.Services
             return _mapper.Map<PageModel<ChatModel>>(page);
         }
 
-        public async Task AddMessagesAsync(Guid userId, ICollection<MessageModel> messages)
+        public async Task AddMessagesAsync(Guid chatId, ICollection<MessageModel> messages)
         {
-            await _chatRepository.AddMessagesAsync(userId, _mapper.Map<ICollection<Message>>(messages));
+            await _chatRepository.AddMessagesAsync(chatId, _mapper.Map<ICollection<Message>>(messages));
         }
 
         public async Task<PageModel<MessageModel>> GetMessagePageAsync(Guid userId, Guid myUserId,

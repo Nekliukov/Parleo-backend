@@ -42,7 +42,7 @@ namespace ParleoBackend.Hubs
         public async Task SendMessage(MessageViewModel message)
         {
             await Clients.Group(message.ChatId.ToString()).SendAsync("receiveMessage", message);
-            await _chatService.AddMessagesAsync(message.SenderId,
+            await _chatService.AddMessagesAsync(message.ChatId,
                 new List<MessageModel>() { _mapper.Map<MessageModel>(message) });
             //TODO: Create cache for sending message
         }
