@@ -45,7 +45,7 @@ namespace ParleoBackend.Controllers
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
         }
 
-        [HttpPut("{eventId}/addParticipants/{userIds}")]
+        [HttpPut("{eventId}/addParticipants")]
         [Authorize]
         public async Task<ActionResult> AddEventParticipants(Guid eventId, Guid[] users)
         {
@@ -124,7 +124,7 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        [HttpPut("{eventId}/removeParticipant")]
+        [HttpPut("{eventId}/removeParticipant/{userId}")]
         [Authorize]
         public async Task<ActionResult> RemoveEventParticipant(
             Guid eventId, 
