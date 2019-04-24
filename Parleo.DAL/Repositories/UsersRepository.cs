@@ -34,9 +34,10 @@ namespace Parleo.DAL.Repositories
             return true;
         }
 
-        public async Task<Page<User>> GetPageAsync(UserFilter userFilter, User user)
+        public async Task<Page<User>> GetPageAsync(UserFilter userFilter, Location location)
         {
-            double latitude = (double)user.Latitude, longtitude = (double)user.Longitude;
+            double latitude = (double)location.Latitude,
+                   longtitude = (double)location.Longitude;
             var users = await _context.User
                 .Where(u => userFilter.Gender != null ?
                     u.Gender == userFilter.Gender : true)
@@ -46,11 +47,8 @@ namespace Parleo.DAL.Repositories
                         ul => ul.LanguageCode == fl.LanguageCode &&
                             LevelInRange(fl, ul))) : true)
                 .Where(u => (userFilter.MaxDistance != null) ?
-                    UserLocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
+                    LocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
                     longtitude, latitude) <= userFilter.MaxDistance : true)
-                .Where(u => (userFilter.MinDistance != null) ?
-                    UserLocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
-                    longtitude, latitude) >= userFilter.MinDistance : true)
                 .Where(u => (userFilter.MaxAge != null) ?
                     GetAge(u.Birthdate) <= userFilter.MaxAge : true)
                 .Where(u => (userFilter.MinAge != null) ?

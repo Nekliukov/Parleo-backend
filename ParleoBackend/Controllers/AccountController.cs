@@ -60,9 +60,13 @@ namespace ParleoBackend.Controllers
             [FromQuery] UserFilterViewModel userFilter)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-            UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
+            if(id == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
             var users = await _accountService.GetUsersPageAsync(
-                _mapper.Map<UserFilterModel>(userFilter), user);
+                _mapper.Map<UserFilterModel>(userFilter), new Guid(id));
 
             if (users == null)
             {
@@ -248,21 +252,19 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{userId}/location")]
         [Authorize]
-        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] UserLocationViewModel entity)
+        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] LocationModel location)
         {
-            var validator = new UserLocationViewModelValidator();
-            ValidationResult result = validator.Validate(entity);
-
-            if (!result.IsValid)
+            if (userId == null)
             {
-                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
-            UserModel user = await _accountService.GetUserByIdAsync(userId);
-            (user.Latitude, user.Longitude) = (entity.Latitude, entity.Longitude);
+            if (location.Latitude < 0 || location.Longitude < 0)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_LOCATION));
+            }
 
-            bool isEdited = await _accountService.UpdateUserAsync(
-                userId, _mapper.Map<UpdateUserModel>(user));
+            bool isEdited = await _accountService.UpdateUserLocationAsync(userId, location);
 
             if (!isEdited)
             {

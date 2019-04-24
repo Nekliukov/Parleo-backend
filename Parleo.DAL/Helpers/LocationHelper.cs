@@ -2,14 +2,15 @@
 
 namespace Parleo.DAL.Helpers
 {
-    public static class UserLocationHelper
+    public static class LocationHelper
     {
         private const double KILOMETERS_COEFFICIENT = 1.609344;
         private const double DEGREES_MULTIPLIER = 60 * 1.1515;
+        private const double PRECISION = 0.00000001;
 
         public static double GetDistanceBetween(double lon1, double lat1, double lon2, double lat2)
         {
-            if ((lat1 == lat2) && (lon1 == lon2))
+            if (Math.Abs(lat1-lat2) <= PRECISION && Math.Abs(lon1 - lon2) <= PRECISION)
             {
                 return 0;
             }

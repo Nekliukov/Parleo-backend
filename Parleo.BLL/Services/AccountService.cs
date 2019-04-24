@@ -48,10 +48,19 @@ namespace Parleo.BLL.Services
         }
 
         public async Task<PageModel<UserModel>> GetUsersPageAsync(
-            UserFilterModel pageRequest, UserModel user)
+            UserFilterModel pageRequest, Guid userId)
         {
+            User user = await _repository.GetAsync(userId);
+            if(user == null)
+            {
+                return null;
+            }
+
+            LocationModel location = new LocationModel();
+            (location.Latitude, location.Longitude) = (user.Latitude, user.Longitude);
+
             var usersPage = await _repository.GetPageAsync(
-                _mapper.Map<UserFilter>(pageRequest), _mapper.Map<User>(user));
+                _mapper.Map<UserFilter>(pageRequest), _mapper.Map<Location>(location));
 
             if(usersPage == null)
             {
@@ -107,7 +116,21 @@ namespace Parleo.BLL.Services
 
             return await _repository.UpdateAsync(User);
         }
-        
+
+        public async Task<bool> UpdateUserLocationAsync(Guid userId, LocationModel location)
+        {
+            User user = await _repository.GetAsync(userId);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            (user.Latitude, user.Longitude) = (location.Latitude, location.Longitude);
+
+            return await _repository.UpdateAsync(user);
+        }
+
         public async Task AddAccountTokenAsync(AccountTokenModel tokenModel)
         {
             await _repository.AddAccountTokenAsync(_mapper.Map<AccountToken>(tokenModel));
@@ -126,6 +149,5 @@ namespace Parleo.BLL.Services
 
         public async Task InsertUserAccountImageAsync(string imageName, Guid userId)
             => await _repository.InsertAccountImageNameAsync(imageName, userId);
-           
     }
 }
