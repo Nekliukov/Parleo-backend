@@ -149,7 +149,7 @@ namespace Parleo.DAL.Repositories
                 userLanguage.Level >= filteringLanguage.MinLevel : true;
         }
 
-        public async Task ClearExpiredAccountTokens()
+        public async Task ClearExpiredAccountTokensAsync()
         {
             IEnumerable<AccountToken> expiredTokens = await _context.AccountToken.ToListAsync();
             _context.User.RemoveRange(

@@ -129,7 +129,7 @@ namespace Parleo.BLL.Services
 
         public async Task ClearExpiredTokensAsync()
         {
-            await _repository.ClearExpiredAccountTokens();
+            await _repository.ClearExpiredAccountTokensAsync();
         }
     }
 }
