@@ -92,7 +92,7 @@ namespace ParleoBackend.Controllers
             await _accountService.AddAccountTokenAsync(
                 new AccountTokenModel()
                 {
-                    ExpirationDate = DateTime.Now.AddHours(2),
+                    ExpirationDate = DateTime.Now.AddMinutes(10),
                     UserId = user.Id
                 }
             );

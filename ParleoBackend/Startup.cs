@@ -1,6 +1,8 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 ﻿using System.IO;
 using System.Text;
+using FluentScheduler;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -18,6 +20,7 @@ using ParleoBackend.Configuration;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
 using ParleoBackend.Hubs;
+using ParleoBackend.Services;
 using ParleoBackend.Validators;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
@@ -85,10 +88,12 @@ namespace ParleoBackend
             services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
             services.AddTransient<IValidator<UpdateUserViewModel>, UpdateUserViewModelValidator>();
             ValidatorOptions.LanguageManager.Culture = new CultureInfo("en-GB");
+            
+            services.AddTransient<ClearExpiredTokenJob>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -133,6 +138,8 @@ namespace ParleoBackend
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger XML Api Demo v1");
             });
+
+            JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
 
             loggerFactory.AddConsole();
         }

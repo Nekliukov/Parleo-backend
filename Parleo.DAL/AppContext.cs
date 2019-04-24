@@ -38,7 +38,8 @@ namespace Parleo.DAL
             modelBuilder.Entity<Credentials>()
                 .HasOne(c => c.User)
                 .WithOne(ui => ui.Credentials)
-                .HasForeignKey<Credentials>(c => c.UserId);
+                .HasForeignKey<Credentials>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<Chat>()
                 .HasMany(chat => chat.Messages)
@@ -52,7 +53,8 @@ namespace Parleo.DAL
             modelBuilder.Entity<AccountToken>()
                 .HasOne(c => c.User)
                 .WithOne(ui => ui.AccountToken)
-                .HasForeignKey<AccountToken>(c => c.UserId);
+                .HasForeignKey<AccountToken>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
             #endregion
 
             #region One-to-Many
