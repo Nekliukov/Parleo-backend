@@ -59,6 +59,8 @@ namespace Parleo.DAL.Repositories
                 .Include(u => u.Friends)
                     .ThenInclude(f => f.UserTo)
                 .Include(u => u.Credentials)
+                .Include(u => u.Hobbies)
+                    .ThenInclude(h => h.Hobby)
                 .ToListAsync();
 
             int totalAmount = users.Count();
@@ -84,6 +86,8 @@ namespace Parleo.DAL.Repositories
             return await _context.User.Include(u => u.Credentials)
                 .Include(u => u.Languages)
                 .Include(u => u.Hobbies)
+                    .ThenInclude(uh => uh.Hobby)
+                        .ThenInclude(h => h.Category)
                 .Include(u => u.Friends)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.AttendingEvents)

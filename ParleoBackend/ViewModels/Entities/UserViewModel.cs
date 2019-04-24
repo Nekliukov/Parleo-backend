@@ -28,5 +28,7 @@ namespace ParleoBackend.ViewModels.Entities
         public ICollection<MiniatureViewModel> Friends { get; set; }
 
         public ICollection<MiniatureViewModel> AttendingEvents { get; set; }
+
+        public ICollection<HobbyViewModel> Hobbies { get; set; }
     }
 }
