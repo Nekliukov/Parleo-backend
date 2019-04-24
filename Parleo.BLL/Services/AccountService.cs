@@ -10,6 +10,7 @@ using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
 using Parleo.DAL.Models.Filters;
 using Parleo.BLL.Extensions;
+using Parleo.DAL.Helpers;
 
 namespace Parleo.BLL.Services
 {
@@ -139,6 +140,16 @@ namespace Parleo.BLL.Services
         public async Task<AccountTokenModel> DeleteAccountTokenAsync(Guid userId)
         {
             return _mapper.Map<AccountTokenModel>(await _repository.DeleteAccountTokenByUserIdAsync(userId));
+        }
+
+        public async Task<int> GetDistanceFromCurrentUserAsync(Guid mainUserId, Guid targetUserId)
+        {
+            User mainUser = await _repository.GetAsync(mainUserId);
+            User targetUser = await _repository.GetAsync(targetUserId);
+            double resultDistance = LocationHelper.GetDistanceBetween((double)mainUser.Longitude, (double)mainUser.Latitude,
+                (double)targetUser.Longitude, (double)targetUser.Latitude);
+
+            return (int)Math.Round(resultDistance);
         }
 
         public async Task<bool> DisableUserAsync(Guid id)

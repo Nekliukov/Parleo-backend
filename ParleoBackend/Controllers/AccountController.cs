@@ -65,12 +65,19 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
+            var currentUser = await _accountService.GetUserByIdAsync(new Guid(id));
             var users = await _accountService.GetUsersPageAsync(
                 _mapper.Map<UserFilterModel>(userFilter), new Guid(id));
 
             if (users == null)
             {
                 return NotFound();
+            }
+
+            foreach(var listUser in users.Entities)
+            {
+                listUser.DistanceFromCurrentUser = await _accountService
+                    .GetDistanceFromCurrentUserAsync(currentUser.Id, listUser.Id);
             }
 
             return Ok(_mapper.Map<PageViewModel<UserViewModel>>(users));
@@ -172,6 +179,10 @@ namespace ParleoBackend.Controllers
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
+
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            user.DistanceFromCurrentUser = await _accountService
+                .GetDistanceFromCurrentUserAsync(new Guid(id), user.Id);
 
             return Ok(_mapper.Map<UserViewModel>(user));
         }
