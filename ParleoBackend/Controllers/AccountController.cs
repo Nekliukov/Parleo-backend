@@ -59,12 +59,25 @@ namespace ParleoBackend.Controllers
         public async Task<IActionResult> GetUsersPageAsync(
             [FromQuery] UserFilterViewModel userFilter)
         {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if(id == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            var currentUser = await _accountService.GetUserByIdAsync(new Guid(id));
             var users = await _accountService.GetUsersPageAsync(
-                _mapper.Map<UserFilterModel>(userFilter));
+                _mapper.Map<UserFilterModel>(userFilter), new Guid(id));
 
             if (users == null)
             {
                 return NotFound();
+            }
+
+            foreach(var listUser in users.Entities)
+            {
+                listUser.DistanceFromCurrentUser = await _accountService
+                    .GetDistanceFromCurrentUserAsync(currentUser.Id, listUser.Id);
             }
 
             return Ok(_mapper.Map<PageViewModel<UserViewModel>>(users));
@@ -167,6 +180,10 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            user.DistanceFromCurrentUser = await _accountService
+                .GetDistanceFromCurrentUserAsync(new Guid(id), user.Id);
+
             return Ok(_mapper.Map<UserViewModel>(user));
         }
 
@@ -246,18 +263,19 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{userId}/location")]
         [Authorize]
-        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] UserLocationViewModel entity)
+        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] LocationViewModel location)
         {
-            var validator = new UserLocationViewModelValidator();
-            ValidationResult result = validator.Validate(entity);
-
-            if (!result.IsValid)
+            if (userId == null)
             {
-                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
-            bool isEdited = await _accountService.UpdateUserAsync(
-                userId, _mapper.Map<UpdateUserModel>(entity));
+            if (location.Latitude < 0 || location.Longitude < 0)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_LOCATION));
+            }
+
+            bool isEdited = await _accountService.UpdateUserLocationAsync(userId, _mapper.Map<LocationModel>(location));
 
             if (!isEdited)
             {

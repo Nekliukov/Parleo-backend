@@ -18,7 +18,7 @@ namespace Parleo.DAL.Models.Entities
 
         public string Image { get; set; }
 
-        [Column(TypeName = "decimal(10, 2)")]
+        [Column(TypeName = "decimal(11, 8)")]
         public decimal Latitude { get; set; }
 
         [Column(TypeName = "decimal(11, 8)")]

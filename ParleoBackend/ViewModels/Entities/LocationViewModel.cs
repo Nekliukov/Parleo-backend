@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ParleoBackend.ViewModels.Entities
 {
-    public class UserLocationViewModel
+    public class LocationViewModel
     {
         public decimal Latitude { get; set; }
 
