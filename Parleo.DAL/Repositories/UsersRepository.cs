@@ -37,11 +37,16 @@ namespace Parleo.DAL.Repositories
             UserFilter userFilter)
         {
             var users = await _context.User
+                .Include(u => u.Languages)
+                .Include(u => u.CreatedEvents)
+                .Include(u => u.Friends)
+                    .ThenInclude(f => f.UserTo)
+                .Include(u => u.Credentials)
                 .Where(u => userFilter.Gender != null ?
                     u.Gender == userFilter.Gender : true)
                 .Where(u => (userFilter.Languages != null &&
                         userFilter.Languages.Count() != 0) ?
-                    userFilter.Languages.Any(fl => u.Languages.Any(
+                    userFilter.Languages.All(fl => u.Languages.Any(
                         ul => ul.LanguageCode == fl.LanguageCode && 
                             LevelInRange(fl, ul))) : true)
                 // TODO, need to discus with front
@@ -51,12 +56,6 @@ namespace Parleo.DAL.Repositories
                     GetAge(u.Birthdate) <= userFilter.MaxAge : true)
                 .Where(u => (userFilter.MinAge != null) ?
                     GetAge(u.Birthdate) >= userFilter.MinAge : true)
-                .Include(u => u.Languages)
-                    .ThenInclude(ul => ul.Language)
-                .Include(u => u.CreatedEvents)
-                .Include(u => u.Friends)
-                    .ThenInclude(f => f.UserTo)
-                .Include(u => u.Credentials)
                 .ToListAsync();
 
             int totalAmount = users.Count();

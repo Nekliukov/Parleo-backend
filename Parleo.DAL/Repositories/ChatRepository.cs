@@ -58,11 +58,12 @@ namespace Parleo.DAL.Repositories
                     .Select(cu => cu.UserId)
                     .Contains(userId))
                 .OrderBy(c => c.Messages.Select(m => m.CreatedOn).FirstOrDefault())
-                .Skip((page.Page - 1) * page.PageSize ?? PAGE_SIZE)
-                .Take(page.PageSize ?? PAGE_SIZE)
                 .ToListAsync();
 
-            var chats = chatPage.Select(c => new Chat()
+            var chats = chatPage
+                .Skip((page.Page - 1) * (page.PageSize ?? PAGE_SIZE))
+                .Take(page.PageSize ?? PAGE_SIZE)
+                .Select(c => new Chat()
             {
                 Creator = c.ChatInfo.Creator,
                 Id = c.ChatInfo.Id,
@@ -77,7 +78,8 @@ namespace Parleo.DAL.Repositories
             {
                 Entities = chats,
                 PageNumber = page.Page,
-                PageSize = page.PageSize ?? PAGE_SIZE
+                PageSize = page.PageSize ?? PAGE_SIZE,
+                TotalAmount = chatPage.Count
             };
         }
 
@@ -143,9 +145,12 @@ namespace Parleo.DAL.Repositories
             {
                 Entities = chat.Messages.OrderBy(m => m.CreatedOn)
                 .SkipWhile(m => m.CreatedOn > page.TimeStamp)
-                .Skip((page.Page - 1) * page.PageSize ?? PAGE_SIZE)
+                .Skip((page.Page - 1) * (page.PageSize ?? PAGE_SIZE))
                 .Take(page.PageSize ?? PAGE_SIZE)
-                .ToList()
+                .ToList(),
+                PageNumber = page.Page,
+                PageSize = page.PageSize ?? PAGE_SIZE,
+                TotalAmount = chat.Messages.Count
             };
 
             ViewChat(chatId, myUserId);

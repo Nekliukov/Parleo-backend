@@ -96,7 +96,14 @@ namespace Parleo.BLL.Extensions
 
                 mc.CreateMap<Chat, ChatModel>()
                     .ForMember(cm => cm.LastMessage,
-                        opt => opt.MapFrom(c => c.Messages.FirstOrDefault()));
+                        opt => opt.MapFrom(c => c.Messages.FirstOrDefault()))
+                    .ForMember(cm => cm.Members, opt => opt.MapFrom(c => c.Members
+                        .Select(m => new MiniatureModel()
+                        {
+                            Id = m.User.Id,
+                            Image = m.User.AccountImage,
+                            Name = m.User.Name
+                        })));
                 mc.CreateMap<ChatModel, Chat>();
 
                 // filters
