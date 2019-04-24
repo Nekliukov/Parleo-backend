@@ -187,12 +187,24 @@ namespace Parleo.DAL.Repositories
 
         private void ViewChat(Guid chatId, Guid userId)
         {
-            _context.Chat
+            var time = _context.Chat
                 .Include(c => c.Members)
                 .First(c => c.Id == chatId)
                 .Members
                 .First(m => m.UserId == userId)
-                .TimeStamp = new DateTimeOffset();
+                .TimeStamp;
+
+            _context.Chat
+                .Include(c => c.Messages)
+                .First(c => c.Id == chatId)
+                .Messages
+                .Where(m => m.CreatedOn > time)
+                .Select(m => m.ViewedOn = new DateTimeOffset())
+                .ToList();
+
+            time = new DateTimeOffset();
+
+            _context.SaveChanges();
         }
     }
 }
