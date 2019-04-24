@@ -35,7 +35,8 @@ namespace ParleoBackend.Controllers
         public EventController(
             IEventService service,
             IMapperFactory mapperFactory,
-            IImageSettings eventImageSettings
+            IImageSettings eventImageSettings,
+            IAccountService accountService
         )
         {
             _service = service;
