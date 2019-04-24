@@ -263,7 +263,7 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{userId}/location")]
         [Authorize]
-        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] LocationModel location)
+        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] LocationViewModel location)
         {
             if (userId == null)
             {
@@ -275,7 +275,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_LOCATION));
             }
 
-            bool isEdited = await _accountService.UpdateUserLocationAsync(userId, location);
+            bool isEdited = await _accountService.UpdateUserLocationAsync(userId, _mapper.Map<LocationModel>(location));
 
             if (!isEdited)
             {

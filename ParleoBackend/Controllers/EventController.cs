@@ -164,7 +164,7 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{eventId}/location")]
         [Authorize]
-        public async Task<IActionResult> UpdateEventLocation(Guid eventId, [FromBody] LocationModel location)
+        public async Task<IActionResult> UpdateEventLocation(Guid eventId, [FromBody] LocationViewModel location)
         {
             if (location.Latitude < 0 || location.Longitude < 0)
             {
@@ -175,7 +175,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
             }
 
-            bool isEdited = await _service.UpdateEventLocationAsync(eventId, location);
+            bool isEdited = await _service.UpdateEventLocationAsync(eventId, _mapper.Map<LocationModel>(location));
 
             if (!isEdited)
             {
