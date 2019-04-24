@@ -24,6 +24,8 @@ namespace Parleo.DAL.Interfaces
 
         Task<bool> RemoveEventParticipant(Guid eventId, Guid userId);
 
+        Task InsertImageNameAsync(string imageName, Guid eventId);
+
         // Need to discuss
         // Task<bool> InviteParticipant(Guid eventId, Guid userId);
     }

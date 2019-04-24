@@ -91,6 +91,9 @@ namespace Parleo.BLL.Services
             return await _repository.UpdateEventAsync(updatingEvent);
         }
 
+        public async Task InsertEventImageAsync(string imageName, Guid eventId)
+            => await _repository.InsertImageNameAsync(imageName, eventId);
+
         public async Task<bool> UpdateEventLocationAsync(Guid eventId,
             LocationModel location)
         {

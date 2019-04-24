@@ -31,7 +31,7 @@ namespace ParleoBackend.Controllers
         private readonly IAccountService _accountService;
         private readonly IEmailService _emailService;
         private readonly IJwtService _jwtService;
-        private readonly IAccountImageSettings _accountImageSettings;
+        private readonly IImageSettings _accountImageSettings;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
@@ -41,7 +41,7 @@ namespace ParleoBackend.Controllers
             IJwtService jwtService,
             IEmailService emailService,
             ILogger<AccountController> logger,
-            IAccountImageSettings accountImageSettings
+            IImageSettings accountImageSettings
         )
         {
             _accountService = accountService;
@@ -242,7 +242,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest();
             }
 
-            string accountImagePath = _accountImageSettings.DestPath;
+            string accountImagePath = _accountImageSettings.AccountDestPath;
             Guid userId = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
             UserModel user = await _accountService.GetUserByIdAsync(userId);
 

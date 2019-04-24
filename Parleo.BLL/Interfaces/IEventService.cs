@@ -26,6 +26,8 @@ namespace Parleo.BLL.Interfaces
 
         Task<bool> UpdateEventLocationAsync(Guid eventId, LocationModel location);
 
+        Task InsertEventImageAsync(string imageName, Guid eventId);
+
         // Need to discuss
         // Task<bool> InviteParticipant(Guid eventId, Guid userId);
     }
