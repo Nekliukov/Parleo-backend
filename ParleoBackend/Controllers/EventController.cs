@@ -124,7 +124,7 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        [HttpPut("{eventId}/removeParticipant/{userId}")]
+        [HttpPut("{eventId}/removeParticipant")]
         [Authorize]
         public async Task<ActionResult> RemoveEventParticipant(
             Guid eventId, 
