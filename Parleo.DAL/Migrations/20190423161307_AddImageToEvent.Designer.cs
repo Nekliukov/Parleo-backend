@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parleo.DAL;
 
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20190423161307_AddImageToEvent")]
+    partial class AddImageToEvent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,7 +99,7 @@ namespace Parleo.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<Guid?>("ChatId");
+                    b.Property<Guid>("ChatId");
 
                     b.Property<Guid>("CreatorId");
 
@@ -126,8 +128,7 @@ namespace Parleo.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId")
-                        .IsUnique()
-                        .HasFilter("[ChatId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("CreatorId");
 
@@ -320,7 +321,8 @@ namespace Parleo.DAL.Migrations
                 {
                     b.HasOne("Parleo.DAL.Models.Entities.Chat", "Chat")
                         .WithOne()
-                        .HasForeignKey("Parleo.DAL.Models.Entities.Event", "ChatId");
+                        .HasForeignKey("Parleo.DAL.Models.Entities.Event", "ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Parleo.DAL.Models.Entities.User", "Creator")
                         .WithMany("CreatedEvents")

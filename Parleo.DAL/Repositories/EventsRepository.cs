@@ -162,5 +162,16 @@ namespace Parleo.DAL.Repositories
 
             return result != 0;
         }
+
+        public async Task InsertImageNameAsync(string imageName, Guid eventId)
+        {
+            Event updatedEvent = new Event()
+            {
+                Id = eventId,
+                Image = imageName
+            };
+            _context.Entry(updatedEvent).Property(x => x.Image).IsModified = true;
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Exceptions;
 using Parleo.BLL.Extensions;
@@ -8,11 +9,14 @@ using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
+using ParleoBackend.Contracts;
+using ParleoBackend.Extensions;
 using ParleoBackend.Validators;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Filters;
 using ParleoBackend.ViewModels.Pages;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,11 +27,17 @@ namespace ParleoBackend.Controllers
     public class EventController : ControllerBase
     {
         private readonly IEventService _service;
+        private readonly IImageSettings _eventImageSettings;
         private readonly IMapper _mapper;
 
-        public EventController(IEventService service, IMapperFactory mapperFactory)
+        public EventController(
+            IEventService service,
+            IMapperFactory mapperFactory,
+            IImageSettings eventImageSettings
+        )
         {
             _service = service;
+            _eventImageSettings = eventImageSettings;
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
         }
 
@@ -115,6 +125,33 @@ namespace ParleoBackend.Controllers
             Guid userId)
         {
             bool result = await _service.RemoveEventParticipant(eventId, userId);
+
+            return Ok();
+        }
+
+        [HttpPut("{eventId}/image")]
+        [Authorize]
+        public async Task<IActionResult> AddUserAccountImage(Guid eventId, IFormFile image)
+        {
+            if (image == null)
+            {
+                return BadRequest();
+            }
+
+            string eventImagePath = _eventImageSettings.EventDestPath;
+            EventModel eventModel = await _service.GetEventAsync(eventId);
+
+            if (eventModel.Image != null)
+            {
+                System.IO.File.Delete(Path.Combine(eventImagePath, eventModel.Image));
+            }
+
+            string eventImageUniqueName = await image.SaveAsync(eventImagePath);
+
+            await _service.InsertEventImageAsync(
+                eventImageUniqueName,
+                eventId
+            );
 
             return Ok();
         }
