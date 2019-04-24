@@ -101,6 +101,8 @@ namespace ParleoBackend
             }
 
             IImageSettings imageSettings = new ImageSettings(Configuration);
+            System.IO.Directory.CreateDirectory(imageSettings.EventDestPath);
+            System.IO.Directory.CreateDirectory(imageSettings.AccountDestPath);
             app.UseStaticFiles(new StaticFileOptions
                 {
                     FileProvider = new PhysicalFileProvider(
