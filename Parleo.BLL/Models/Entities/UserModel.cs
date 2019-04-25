@@ -21,6 +21,8 @@ namespace Parleo.BLL.Models.Entities
 
         public decimal Longitude { get; set; }
 
+        public int DistanceFromCurrentUser { get; set; }
+
         public string Email { get; set; }
 
         public ICollection<MiniatureModel> CreatedEvents { get; set; }
@@ -30,5 +32,7 @@ namespace Parleo.BLL.Models.Entities
         public ICollection<MiniatureModel> Friends { get; set; }
 
         public ICollection<MiniatureModel> AttendingEvents { get; set; }
+
+        public ICollection<HobbyModel> Hobbies { get; set; }
     }
 }

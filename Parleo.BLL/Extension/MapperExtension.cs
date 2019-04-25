@@ -9,6 +9,7 @@ using DataAccessUser = Parleo.DAL.Models.Entities.User;
 using DataAccessLanguage = Parleo.DAL.Models.Entities.Language;
 using DataAccessEvent = Parleo.DAL.Models.Entities.Event;
 using DataAccessUserLanguage = Parleo.DAL.Models.Entities.UserLanguage;
+using DataAccessUserHobby = Parleo.DAL.Models.Entities.UserHobby;
 using Parleo.DAL.Models.Entities;
 using System.Linq;
 
@@ -39,9 +40,7 @@ namespace Parleo.BLL.Extensions
                             u.CreatedEvents.Select(e => new MiniatureModel
                             {
                                 Id = e.Id,
-                                // TODO for Ксюшенька
-                                // Image = e.EventImage,
-                                Image = "FakeImage",
+                                Image = e.Image,
                                 Name = e.Name
                             })))
                     .ForMember(um => um.Friends,
@@ -57,13 +56,17 @@ namespace Parleo.BLL.Extensions
                         u.AttendingEvents.Select(e => new MiniatureModel
                             {
                                 Id = e.EventId,
-                                // TODO for Ксюшенька
-                                // Image = e.Event.EventImage,
-                                Image = "FakeImage",
+                                Image = e.Event.Image,
                                 Name = e.Event.Name
                             })));
 
-                mc.CreateMap<UpdateUserModel, DataAccessUser>();
+                mc.CreateMap<UpdateUserModel, DataAccessUser>()
+                    .ForMember(u => u.Hobbies,
+                        opt => opt.MapFrom(um =>
+                            um.Hobbies.Select(h => new UserHobby()
+                            {
+                                HobbyName = h,
+                            })));
 
                 mc.CreateMap<DataAccessLanguage, LanguageModel>();
                 mc.CreateMap<LanguageModel, DataAccessLanguage>();
@@ -98,6 +101,12 @@ namespace Parleo.BLL.Extensions
                     .ForMember(cm => cm.LastMessage,
                         opt => opt.MapFrom(c => c.Messages.FirstOrDefault()));
                 mc.CreateMap<ChatModel, Chat>();
+
+                mc.CreateMap<DataAccessUserHobby, HobbyModel>()
+                    .ForMember(hm => hm.Category, opt => opt.MapFrom(uh => uh.Hobby.Category.Name))
+                    .ForMember(hm => hm.Name, opt => opt.MapFrom(uh => uh.HobbyName));
+                mc.CreateMap<HobbyModel, DataAccessUserHobby>()
+                    .ForMember(uh => uh.HobbyName, opt => opt.MapFrom(hm => hm.Name));
 
                 // filters
                 mc.CreateMap<ChatFilterModel, ChatFilter>();

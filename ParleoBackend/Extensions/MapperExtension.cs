@@ -5,7 +5,6 @@ using Parleo.BLL.Models.Pages;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Filters;
 using ParleoBackend.ViewModels.Pages;
-using System.Globalization;
 
 namespace ParleoBackend.Extensions
 {
@@ -45,9 +44,6 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<MiniatureModel, MiniatureViewModel>();
                 mc.CreateMap<MiniatureViewModel, MiniatureModel>();
 
-                mc.CreateMap<UpdateUserModel, UserLocationViewModel>();
-                mc.CreateMap<UserLocationViewModel, UpdateUserModel>();
-
                 mc.CreateMap<UpdateUserViewModel, UpdateUserModel>();
                 mc.CreateMap<UpdateUserModel, UpdateUserViewModel>();
 
@@ -56,6 +52,9 @@ namespace ParleoBackend.Extensions
 
                 mc.CreateMap<ChatModel, ChatViewModel>();
                 mc.CreateMap<ChatViewModel, ChatModel>();
+
+                mc.CreateMap<HobbyModel, HobbyViewModel>();
+                mc.CreateMap<HobbyViewModel, HobbyModel>();
 
                 // filters
                 mc.CreateMap<ChatFilterViewModel, ChatFilterModel>();

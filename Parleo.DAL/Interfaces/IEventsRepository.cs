@@ -9,7 +9,7 @@ namespace Parleo.DAL.Interfaces
     public interface IEventsRepository
     {
         Task<Page<Event>> GetEventsPageAsync(
-            EventFilter eventFilter);
+            EventFilter eventFilter, Location location);
         
         Task<Event> GetEventAsync(Guid id);
 

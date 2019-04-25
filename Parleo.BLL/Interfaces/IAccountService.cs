@@ -10,7 +10,7 @@ namespace Parleo.BLL.Interfaces
     {
         Task<UserModel> AuthenticateAsync(UserLoginModel authorizationModel);
 
-        Task<PageModel<UserModel>> GetUsersPageAsync(UserFilterModel pageRequest);
+        Task<PageModel<UserModel>> GetUsersPageAsync(UserFilterModel pageRequest, Guid userId);
 
         Task<UserModel> GetUserByIdAsync(Guid id);
 
@@ -29,5 +29,9 @@ namespace Parleo.BLL.Interfaces
         Task<AccountTokenModel> DeleteAccountTokenAsync(Guid userId);
 
         Task ClearExpiredTokensAsync();
+      
+        Task<bool> UpdateUserLocationAsync(Guid userId, LocationModel location);
+
+        Task<int> GetDistanceFromCurrentUserAsync(Guid mainUserId, Guid targetUserId);
     }
 }
