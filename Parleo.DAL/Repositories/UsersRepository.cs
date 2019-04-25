@@ -178,5 +178,11 @@ namespace Parleo.DAL.Repositories
             );
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> CheckUserHasTokenAsync(string email)
+        {
+            return (await _context.AccountToken.ToListAsync())
+                .Any(token => token.User.Credentials.Email == email);
+        }
     }
 }

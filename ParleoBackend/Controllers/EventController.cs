@@ -12,6 +12,7 @@ using Parleo.BLL.Models.Pages;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
 using ParleoBackend.Validators.Event;
+using ParleoBackend.Validators.Common;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Filters;
 using ParleoBackend.ViewModels.Pages;
@@ -166,11 +167,14 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateEventLocation(Guid eventId, [FromBody] LocationViewModel location)
         {
-            if (location.Latitude < 0 || location.Longitude < 0)
+            var validator = new LocationViewModelValidator();
+            ValidationResult result = validator.Validate(location);
+            if (!result.IsValid)
             {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_LOCATION));
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
-            if(eventId == null)
+
+            if (eventId == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
             }

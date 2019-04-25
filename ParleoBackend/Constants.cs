@@ -17,6 +17,7 @@
           
             public const string EXPIRED_TOKEN = "Token expired";
             public const string NOT_VALID_TOKEN = "Token is not valid";
+            public const string TOKEN_ALREADY_SENT = "Token has already been sent";
         }
     }
 }
