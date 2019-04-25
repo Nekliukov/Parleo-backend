@@ -27,5 +27,7 @@ namespace Parleo.DAL.Interfaces
         Task<AccountToken> DeleteAccountTokenByUserIdAsync(Guid userId);
 
         Task ClearExpiredAccountTokensAsync();
+
+        Task<bool> CheckUserHasTokenAsync(string email);
     }
 }
