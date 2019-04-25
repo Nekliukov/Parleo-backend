@@ -31,7 +31,7 @@ namespace ParleoBackend.Controllers
         private readonly IAccountService _accountService;
         private readonly IEmailService _emailService;
         private readonly IJwtService _jwtService;
-        private readonly IAccountImageSettings _accountImageSettings;
+        private readonly IImageSettings _accountImageSettings;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
@@ -41,7 +41,7 @@ namespace ParleoBackend.Controllers
             IJwtService jwtService,
             IEmailService emailService,
             ILogger<AccountController> logger,
-            IAccountImageSettings accountImageSettings
+            IImageSettings accountImageSettings
         )
         {
             _accountService = accountService;
@@ -59,12 +59,25 @@ namespace ParleoBackend.Controllers
         public async Task<IActionResult> GetUsersPageAsync(
             [FromQuery] UserFilterViewModel userFilter)
         {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if(id == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            var currentUser = await _accountService.GetUserByIdAsync(new Guid(id));
             var users = await _accountService.GetUsersPageAsync(
-                _mapper.Map<UserFilterModel>(userFilter));
+                _mapper.Map<UserFilterModel>(userFilter), new Guid(id));
 
             if (users == null)
             {
                 return NotFound();
+            }
+
+            foreach(var listUser in users.Entities)
+            {
+                listUser.DistanceFromCurrentUser = await _accountService
+                    .GetDistanceFromCurrentUserAsync(currentUser.Id, listUser.Id);
             }
 
             return Ok(_mapper.Map<PageViewModel<UserViewModel>>(users));
@@ -92,7 +105,7 @@ namespace ParleoBackend.Controllers
             await _accountService.AddAccountTokenAsync(
                 new AccountTokenModel()
                 {
-                    ExpirationDate = DateTime.Now.AddHours(2),
+                    ExpirationDate = DateTime.Now.AddMinutes(10),
                     UserId = user.Id
                 }
             );
@@ -167,6 +180,10 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            user.DistanceFromCurrentUser = await _accountService
+                .GetDistanceFromCurrentUserAsync(new Guid(id), user.Id);
+
             return Ok(_mapper.Map<UserViewModel>(user));
         }
 
@@ -191,24 +208,28 @@ namespace ParleoBackend.Controllers
 
 
         [HttpGet("activate")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetActivatedUserAccount(string token)
         {
             string userIdString = _jwtService.GetUserIdFromToken(token);
             if (string.IsNullOrEmpty(userIdString))
             {
-                return BadRequest();
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.NOT_VALID_TOKEN));
             }
 
             Guid userId = new Guid(userIdString);
 
             AccountTokenModel accountToken = await _accountService.DeleteAccountTokenAsync(userId);
-
             if (accountToken == null)
             {
-                return BadRequest();
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EXPIRED_TOKEN));
             }
 
             UserModel user = await _accountService.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EXPIRED_TOKEN));
+            }
 
             return Ok(new {
                 id = user.Id,
@@ -225,7 +246,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest();
             }
 
-            string accountImagePath = _accountImageSettings.DestPath;
+            string accountImagePath = _accountImageSettings.AccountDestPath;
             Guid userId = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
             UserModel user = await _accountService.GetUserByIdAsync(userId);
 
@@ -246,18 +267,19 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{userId}/location")]
         [Authorize]
-        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] UserLocationViewModel entity)
+        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] LocationViewModel location)
         {
-            var validator = new UserLocationViewModelValidator();
-            ValidationResult result = validator.Validate(entity);
-
-            if (!result.IsValid)
+            if (userId == null)
             {
-                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
-            bool isEdited = await _accountService.UpdateUserAsync(
-                userId, _mapper.Map<UpdateUserModel>(entity));
+            if (location.Latitude < 0 || location.Longitude < 0)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_LOCATION));
+            }
+
+            bool isEdited = await _accountService.UpdateUserLocationAsync(userId, _mapper.Map<LocationModel>(location));
 
             if (!isEdited)
             {

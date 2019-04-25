@@ -13,5 +13,7 @@ namespace ParleoBackend.ViewModels.Entities
         public bool Gender { get; set; }
 
         public UserLanguageViewModel[] Languages { get; set; }
+
+        public string[] Hobbies { get; set; }
     }
 }

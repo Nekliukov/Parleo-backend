@@ -6,6 +6,8 @@ using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
 using Parleo.DAL.Models.Filters;
 using Parleo.DAL.Models.Pages;
+using System.Collections.Generic;
+using Parleo.DAL.Helpers;
 
 namespace Parleo.DAL.Repositories
 {
@@ -33,30 +35,33 @@ namespace Parleo.DAL.Repositories
             return true;
         }
 
-        public async Task<Page<User>> GetPageAsync(
-            UserFilter userFilter)
+        public async Task<Page<User>> GetPageAsync(UserFilter userFilter, Location location)
         {
+            double latitude = (double)location.Latitude,
+                   longtitude = (double)location.Longitude;
             var users = await _context.User
                 .Where(u => userFilter.Gender != null ?
                     u.Gender == userFilter.Gender : true)
                 .Where(u => (userFilter.Languages != null &&
-                        userFilter.Languages.Count() != 0) ?
+                             userFilter.Languages.Count() != 0) ?
                     userFilter.Languages.Any(fl => u.Languages.Any(
-                        ul => ul.LanguageCode == fl.LanguageCode && 
+                        ul => ul.LanguageCode == fl.LanguageCode &&
                             LevelInRange(fl, ul))) : true)
-                // TODO, need to discus with front
-                //.Where(u => (userFilter.MaxDistance != null) ? true : true)
-                //.Where(u => (userFilter.MinDistance != null) ? true : true))
+                .Where(u => (userFilter.MaxDistance != null) ?
+                    LocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
+                    longtitude, latitude) <= userFilter.MaxDistance : true)
                 .Where(u => (userFilter.MaxAge != null) ?
                     GetAge(u.Birthdate) <= userFilter.MaxAge : true)
                 .Where(u => (userFilter.MinAge != null) ?
                     GetAge(u.Birthdate) >= userFilter.MinAge : true)
                 .Include(u => u.Languages)
-                    .ThenInclude(ul => ul.Language)
+                .ThenInclude(ul => ul.Language)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.Friends)
-                    .ThenInclude(f => f.UserTo)
+                .ThenInclude(f => f.UserTo)
                 .Include(u => u.Credentials)
+                .Include(u => u.Hobbies)
+                    .ThenInclude(h => h.Hobby)
                 .ToListAsync();
 
             int totalAmount = users.Count();
@@ -82,6 +87,8 @@ namespace Parleo.DAL.Repositories
             return await _context.User.Include(u => u.Credentials)
                 .Include(u => u.Languages)
                 .Include(u => u.Hobbies)
+                    .ThenInclude(uh => uh.Hobby)
+                        .ThenInclude(h => h.Category)
                 .Include(u => u.Friends)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.AttendingEvents)
@@ -146,6 +153,16 @@ namespace Parleo.DAL.Repositories
 
             return lessOrEqualThanMax && filteringLanguage.MinLevel == null ?
                 userLanguage.Level >= filteringLanguage.MinLevel : true;
+        }
+
+        public async Task ClearExpiredAccountTokensAsync()
+        {
+            IEnumerable<AccountToken> expiredTokens = await _context.AccountToken.ToListAsync();
+            _context.User.RemoveRange(
+                _context.User.Where(user => 
+                    expiredTokens.Any(token => token.UserId == user.Id && token.ExpirationDate < DateTime.Now))
+            );
+            await _context.SaveChangesAsync();
         }
     }
 }

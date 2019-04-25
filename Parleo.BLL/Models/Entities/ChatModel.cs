@@ -10,6 +10,8 @@ namespace Parleo.BLL.Models.Entities
 
         public string Name { get; set; }
 
+        public ICollection<MiniatureModel> Members { get; set; }
+
         public Guid CreatorId { get; set; }
 
         public MessageModel LastMessage { get; set; }

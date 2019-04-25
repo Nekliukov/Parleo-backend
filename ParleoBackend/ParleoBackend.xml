@@ -4,11 +4,5 @@
         <name>ParleoBackend</name>
     </assembly>
     <members>
-        <member name="M:ParleoBackend.Controllers.ValuesController.Get">
-            <summary>
-            Some cool comments to get method
-            </summary>
-            <returns></returns>
-        </member>
     </members>
 </doc>

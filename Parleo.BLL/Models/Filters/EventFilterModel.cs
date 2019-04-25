@@ -9,8 +9,6 @@ namespace Parleo.BLL.Models.Filters
 
         public int? MaxNumberOfParticipants { get; set; }
 
-        public int? MinDistance { get; set; }
-
         public int? MaxDistance { get; set; }
 
         public string[] Languages { get; set; }

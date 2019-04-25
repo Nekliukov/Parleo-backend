@@ -12,10 +12,8 @@ namespace Parleo.BLL.Models.Entities
 
         public bool Gender { get; set; }
 
-        public decimal Latitude { get; set; }
-
-        public decimal Longitude { get; set; }
-
         public UserLanguageModel[] Languages { get; set; }
+
+        public string[] Hobbies { get; set; }
     }
 }

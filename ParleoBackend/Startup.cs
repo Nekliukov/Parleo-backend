@@ -1,6 +1,8 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 ﻿using System.IO;
 using System.Text;
+using FluentScheduler;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -18,6 +20,7 @@ using ParleoBackend.Configuration;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
 using ParleoBackend.Hubs;
+using ParleoBackend.Services;
 using ParleoBackend.Validators;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
@@ -85,6 +88,8 @@ namespace ParleoBackend
             services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
             services.AddTransient<IValidator<UpdateUserViewModel>, UpdateUserViewModelValidator>();
             ValidatorOptions.LanguageManager.Culture = new CultureInfo("en-GB");
+            
+            services.AddTransient<ClearExpiredTokenJob>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,14 +105,23 @@ namespace ParleoBackend
                 app.UseHsts();
             }
 
-            IAccountImageSettings imageSettings = new AccountImageSettings(Configuration);
-            
+            IImageSettings imageSettings = new ImageSettings(Configuration);
+            System.IO.Directory.CreateDirectory(imageSettings.EventDestPath);
+            System.IO.Directory.CreateDirectory(imageSettings.AccountDestPath);
             app.UseStaticFiles(new StaticFileOptions
                 {
                     FileProvider = new PhysicalFileProvider(
-                        Path.GetFullPath(imageSettings.DestPath)
+                        Path.GetFullPath(imageSettings.AccountDestPath)
                     ),
-                    RequestPath = imageSettings.SourceUrl
+                    RequestPath = imageSettings.AccountSourceUrl
+                }
+            );
+            app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.GetFullPath(imageSettings.EventDestPath)
+                    ),
+                    RequestPath = imageSettings.EventSourceUrl
                 }
             );
             app.UseAuthentication();
@@ -124,6 +138,8 @@ namespace ParleoBackend
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger XML Api Demo v1");
             });
+
+            JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
 
             loggerFactory.AddConsole();
         }

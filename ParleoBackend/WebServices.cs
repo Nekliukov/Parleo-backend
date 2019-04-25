@@ -18,8 +18,9 @@ namespace ParleoBackend
             services.AddSingleton<IJwtService, JwtService>();
             services.AddScoped<IEmailClientSettings, EmailClientSettings>();
             services.AddScoped<IAccountConfirmationMessageSettings, AccountConfirmationMessageSettings>();
-            services.AddScoped<IAccountImageSettings, AccountImageSettings>();
+            services.AddScoped<IImageSettings, ImageSettings>();
             services.AddScoped<IChatHub, ChatHub>();
+            services.AddSingleton<BackgroundWorkerRegistry>();
         }
 
         public static IMapper GetMapper()
