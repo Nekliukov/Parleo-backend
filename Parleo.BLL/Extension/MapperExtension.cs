@@ -88,7 +88,8 @@ namespace Parleo.BLL.Extensions
                                 Name = p.User.Name
                             })));
 
-                mc.CreateMap<CreateOrUpdateEventModel, DataAccessEvent>();
+                mc.CreateMap<UpdateEventModel, DataAccessEvent>();
+                mc.CreateMap<CreateEventModel, DataAccessEvent>();
 
                 mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
                     .ForMember(ul => ul.Code, opt => opt.MapFrom(ulvm => ulvm.LanguageCode));

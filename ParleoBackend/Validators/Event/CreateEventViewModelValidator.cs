@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using ParleoBackend.ViewModels.Entities;
 
-namespace ParleoBackend.Validators
+namespace ParleoBackend.Validators.Event
 {
-    public class CrateOrUpdateEventViewModelValidator: AbstractValidator<CreateOrUpdateEventViewModel>
+    public class CreateEventViewModelValidator: AbstractValidator<CreateEventViewModel>
     {
-        public CrateOrUpdateEventViewModelValidator()
+        public CreateEventViewModelValidator()
         {
             RuleFor(ev => ev.Description).NotEmpty().MaximumLength(200);
             RuleFor(ev => ev.LanguageCode).NotNull().NotEmpty();

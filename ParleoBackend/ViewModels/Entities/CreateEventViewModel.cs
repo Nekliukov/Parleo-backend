@@ -2,7 +2,7 @@
 
 namespace ParleoBackend.ViewModels.Entities
 {
-    public class CreateOrUpdateEventViewModel
+    public class CreateEventViewModel
     {
         public string Name { get; set; }
 

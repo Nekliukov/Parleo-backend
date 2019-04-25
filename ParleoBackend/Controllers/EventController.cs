@@ -11,7 +11,7 @@ using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
-using ParleoBackend.Validators;
+using ParleoBackend.Validators.Event;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Filters;
 using ParleoBackend.ViewModels.Pages;
@@ -90,9 +90,9 @@ namespace ParleoBackend.Controllers
         [HttpPost("create")]
         [Authorize]
         public async Task<ActionResult> CreateEventAsync(
-            [FromBody] CreateOrUpdateEventViewModel entity)
+            [FromBody] CreateEventViewModel entity)
         {
-            var validator = new CrateOrUpdateEventViewModelValidator();
+            var validator = new CreateEventViewModelValidator();
             ValidationResult result = validator.Validate(entity);
             if (!result.IsValid)
             {
@@ -100,7 +100,7 @@ namespace ParleoBackend.Controllers
             }
 
             var createdEvent = await _service.CreateEventAsync(
-                _mapper.Map<CreateOrUpdateEventModel>(entity));
+                _mapper.Map<CreateEventModel>(entity));
 
             return Ok(_mapper.Map<EventViewModel>(createdEvent));
         }
@@ -109,9 +109,9 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<ActionResult> UpdateEventAsync(
             Guid eventId,
-            [FromBody] CreateOrUpdateEventViewModel entity)
+            [FromBody] UpdateEventViewModel entity)
         {
-            var validator = new CrateOrUpdateEventViewModelValidator();
+            var validator = new UpdateEventViewModelValidator();
             ValidationResult result = validator.Validate(entity);
             if (!result.IsValid)
             {
@@ -119,7 +119,7 @@ namespace ParleoBackend.Controllers
             }
 
             var updateResult = await _service.UpdateEventAsync(eventId,
-                _mapper.Map<CreateOrUpdateEventModel>(entity));
+                _mapper.Map<UpdateEventModel>(entity));
 
             return Ok();
         }

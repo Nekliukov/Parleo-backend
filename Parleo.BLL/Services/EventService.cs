@@ -31,7 +31,7 @@ namespace Parleo.BLL.Services
         }
 
         public async Task<EventModel> CreateEventAsync(
-            CreateOrUpdateEventModel entity)
+            CreateEventModel entity)
         {
             Event createdEvent = await _repository.CreateEventAsync(
                 _mapper.Map<Event>(entity));
@@ -82,7 +82,7 @@ namespace Parleo.BLL.Services
         }
 
         public async Task<bool> UpdateEventAsync(Guid eventId, 
-            CreateOrUpdateEventModel entity)
+            UpdateEventModel entity)
         {
             var updatingEvent = await _repository.GetEventAsync(eventId);
 
