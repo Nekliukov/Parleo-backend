@@ -42,7 +42,7 @@ namespace Parleo.DAL.Repositories
                 .Where(u => userFilter.Gender != null ?
                     u.Gender == userFilter.Gender : true)
                 .Where(u => (userFilter.Languages != null &&
-                        userFilter.Languages.Count() != 0) ?
+                             userFilter.Languages.Count() != 0) ?
                     userFilter.Languages.Any(fl => u.Languages.Any(
                         ul => ul.LanguageCode == fl.LanguageCode &&
                             LevelInRange(fl, ul))) : true)
@@ -54,10 +54,10 @@ namespace Parleo.DAL.Repositories
                 .Where(u => (userFilter.MinAge != null) ?
                     GetAge(u.Birthdate) >= userFilter.MinAge : true)
                 .Include(u => u.Languages)
-                    .ThenInclude(ul => ul.Language)
+                .ThenInclude(ul => ul.Language)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.Friends)
-                    .ThenInclude(f => f.UserTo)
+                .ThenInclude(f => f.UserTo)
                 .Include(u => u.Credentials)
                 .Include(u => u.Hobbies)
                     .ThenInclude(h => h.Hobby)
