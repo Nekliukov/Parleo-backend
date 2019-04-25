@@ -25,5 +25,7 @@ namespace Parleo.DAL.Interfaces
         Task InsertAccountImageNameAsync(string imageName, Guid userId);
 
         Task<AccountToken> DeleteAccountTokenByUserIdAsync(Guid userId);
+
+        Task ClearExpiredAccountTokensAsync();
     }
 }

@@ -105,7 +105,7 @@ namespace ParleoBackend.Controllers
             await _accountService.AddAccountTokenAsync(
                 new AccountTokenModel()
                 {
-                    ExpirationDate = DateTime.Now.AddHours(2),
+                    ExpirationDate = DateTime.Now.AddMinutes(10),
                     UserId = user.Id
                 }
             );
@@ -208,24 +208,28 @@ namespace ParleoBackend.Controllers
 
 
         [HttpGet("activate")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetActivatedUserAccount(string token)
         {
             string userIdString = _jwtService.GetUserIdFromToken(token);
             if (string.IsNullOrEmpty(userIdString))
             {
-                return BadRequest();
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.NOT_VALID_TOKEN));
             }
 
             Guid userId = new Guid(userIdString);
 
             AccountTokenModel accountToken = await _accountService.DeleteAccountTokenAsync(userId);
-
             if (accountToken == null)
             {
-                return BadRequest();
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EXPIRED_TOKEN));
             }
 
             UserModel user = await _accountService.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EXPIRED_TOKEN));
+            }
 
             return Ok(new {
                 id = user.Id,

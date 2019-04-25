@@ -6,6 +6,7 @@ using Parleo.DAL.Models.Entities;
 using Parleo.DAL.Interfaces;
 using Parleo.DAL.Models.Filters;
 using Parleo.DAL.Models.Pages;
+using System.Collections.Generic;
 using Parleo.DAL.Helpers;
 
 namespace Parleo.DAL.Repositories
@@ -152,6 +153,16 @@ namespace Parleo.DAL.Repositories
 
             return lessOrEqualThanMax && filteringLanguage.MinLevel == null ?
                 userLanguage.Level >= filteringLanguage.MinLevel : true;
+        }
+
+        public async Task ClearExpiredAccountTokensAsync()
+        {
+            IEnumerable<AccountToken> expiredTokens = await _context.AccountToken.ToListAsync();
+            _context.User.RemoveRange(
+                _context.User.Where(user => 
+                    expiredTokens.Any(token => token.UserId == user.Id && token.ExpirationDate < DateTime.Now))
+            );
+            await _context.SaveChangesAsync();
         }
     }
 }

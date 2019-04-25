@@ -28,6 +28,8 @@ namespace Parleo.BLL.Interfaces
 
         Task<AccountTokenModel> DeleteAccountTokenAsync(Guid userId);
 
+        Task ClearExpiredTokensAsync();
+      
         Task<bool> UpdateUserLocationAsync(Guid userId, LocationModel location);
 
         Task<int> GetDistanceFromCurrentUserAsync(Guid mainUserId, Guid targetUserId);
