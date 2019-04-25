@@ -125,6 +125,11 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
+            if (await _accountService.CheckUserHasTokenAsync(loginViewModel.Email))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ALREADY_SENT));
+            }
+
             UserLoginModel authorizationModel = _mapper.Map<UserLoginModel>(loginViewModel);
             UserModel user = await _accountService.AuthenticateAsync(authorizationModel);
             if(user == null)

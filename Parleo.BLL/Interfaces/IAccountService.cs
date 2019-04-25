@@ -33,5 +33,7 @@ namespace Parleo.BLL.Interfaces
         Task<bool> UpdateUserLocationAsync(Guid userId, LocationModel location);
 
         Task<int> GetDistanceFromCurrentUserAsync(Guid mainUserId, Guid targetUserId);
+
+        Task<bool> CheckUserHasTokenAsync(string email);
     }
 }
