@@ -10,6 +10,7 @@ using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
 using Parleo.DAL.Models.Filters;
 using Parleo.BLL.Extensions;
+using Parleo.DAL.Helpers;
 
 namespace Parleo.BLL.Services
 {
@@ -48,10 +49,19 @@ namespace Parleo.BLL.Services
         }
 
         public async Task<PageModel<UserModel>> GetUsersPageAsync(
-            UserFilterModel pageRequest)
+            UserFilterModel pageRequest, Guid userId)
         {
+            User user = await _repository.GetAsync(userId);
+            if(user == null)
+            {
+                return null;
+            }
+
+            LocationModel location = new LocationModel();
+            (location.Latitude, location.Longitude) = (user.Latitude, user.Longitude);
+
             var usersPage = await _repository.GetPageAsync(
-                _mapper.Map<UserFilter>(pageRequest));
+                _mapper.Map<UserFilter>(pageRequest), _mapper.Map<Location>(location));
 
             if(usersPage == null)
             {
@@ -107,7 +117,21 @@ namespace Parleo.BLL.Services
 
             return await _repository.UpdateAsync(User);
         }
-        
+
+        public async Task<bool> UpdateUserLocationAsync(Guid userId, LocationModel location)
+        {
+            User user = await _repository.GetAsync(userId);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            (user.Latitude, user.Longitude) = (location.Latitude, location.Longitude);
+
+            return await _repository.UpdateAsync(user);
+        }
+
         public async Task AddAccountTokenAsync(AccountTokenModel tokenModel)
         {
             await _repository.AddAccountTokenAsync(_mapper.Map<AccountToken>(tokenModel));
@@ -118,6 +142,16 @@ namespace Parleo.BLL.Services
             return _mapper.Map<AccountTokenModel>(await _repository.DeleteAccountTokenByUserIdAsync(userId));
         }
 
+        public async Task<int> GetDistanceFromCurrentUserAsync(Guid mainUserId, Guid targetUserId)
+        {
+            User mainUser = await _repository.GetAsync(mainUserId);
+            User targetUser = await _repository.GetAsync(targetUserId);
+            double resultDistance = LocationHelper.GetDistanceBetween((double)mainUser.Longitude, (double)mainUser.Latitude,
+                (double)targetUser.Longitude, (double)targetUser.Latitude);
+
+            return (int)Math.Round(resultDistance);
+        }
+
         public async Task<bool> DisableUserAsync(Guid id)
             => await _repository.DisableAsync(id);
 
@@ -126,6 +160,5 @@ namespace Parleo.BLL.Services
 
         public async Task InsertUserAccountImageAsync(string imageName, Guid userId)
             => await _repository.InsertAccountImageNameAsync(imageName, userId);
-           
     }
 }

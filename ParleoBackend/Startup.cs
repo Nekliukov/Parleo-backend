@@ -100,14 +100,23 @@ namespace ParleoBackend
                 app.UseHsts();
             }
 
-            IAccountImageSettings imageSettings = new AccountImageSettings(Configuration);
-            
+            IImageSettings imageSettings = new ImageSettings(Configuration);
+            System.IO.Directory.CreateDirectory(imageSettings.EventDestPath);
+            System.IO.Directory.CreateDirectory(imageSettings.AccountDestPath);
             app.UseStaticFiles(new StaticFileOptions
                 {
                     FileProvider = new PhysicalFileProvider(
-                        Path.GetFullPath(imageSettings.DestPath)
+                        Path.GetFullPath(imageSettings.AccountDestPath)
                     ),
-                    RequestPath = imageSettings.SourceUrl
+                    RequestPath = imageSettings.AccountSourceUrl
+                }
+            );
+            app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.GetFullPath(imageSettings.EventDestPath)
+                    ),
+                    RequestPath = imageSettings.EventSourceUrl
                 }
             );
             app.UseAuthentication();

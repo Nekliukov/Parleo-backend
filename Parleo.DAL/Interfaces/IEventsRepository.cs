@@ -9,7 +9,7 @@ namespace Parleo.DAL.Interfaces
     public interface IEventsRepository
     {
         Task<Page<Event>> GetEventsPageAsync(
-            EventFilter eventFilter);
+            EventFilter eventFilter, Location location);
         
         Task<Event> GetEventAsync(Guid id);
 
@@ -23,6 +23,8 @@ namespace Parleo.DAL.Interfaces
         Task<bool> AddEventParticipant(Guid eventId, Guid[] users);
 
         Task<bool> RemoveEventParticipant(Guid eventId, Guid userId);
+
+        Task InsertImageNameAsync(string imageName, Guid eventId);
 
         // Need to discuss
         // Task<bool> InviteParticipant(Guid eventId, Guid userId);

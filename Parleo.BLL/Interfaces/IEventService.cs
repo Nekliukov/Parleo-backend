@@ -9,7 +9,7 @@ namespace Parleo.BLL.Interfaces
     public interface IEventService
     {
         Task<PageModel<EventModel>> GetEventsPageAsync(
-            EventFilterModel eventFilter);
+            EventFilterModel eventFilter, UserModel user);
         
         Task<EventModel> GetEventAsync(Guid id);
 
@@ -23,6 +23,10 @@ namespace Parleo.BLL.Interfaces
         Task<bool> AddEventParticipant(Guid eventId, Guid[] users);
 
         Task<bool> RemoveEventParticipant(Guid eventId, Guid userId);
+
+        Task<bool> UpdateEventLocationAsync(Guid eventId, LocationModel location);
+
+        Task InsertEventImageAsync(string imageName, Guid eventId);
 
         // Need to discuss
         // Task<bool> InviteParticipant(Guid eventId, Guid userId);

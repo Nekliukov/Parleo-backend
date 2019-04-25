@@ -10,8 +10,6 @@ namespace Parleo.DAL.Models.Filters
 
         public bool? Gender { get; set; }
 
-        public int? MinDistance { get; set; }
-
         public int? MaxDistance { get; set; }
 
         public FilteringLanguage[] Languages { get; set; }

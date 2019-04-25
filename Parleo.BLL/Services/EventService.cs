@@ -47,10 +47,13 @@ namespace Parleo.BLL.Services
         }
 
         public async Task<PageModel<EventModel>> GetEventsPageAsync(
-            EventFilterModel pageRequest)
+            EventFilterModel pageRequest, UserModel user)
         {
+            var location = new LocationModel();
+            (location.Latitude, location.Longitude) = (user.Latitude, user.Longitude);
+
             var eventPageModels = await _repository.GetEventsPageAsync(
-                _mapper.Map<EventFilter>(pageRequest));
+                _mapper.Map<EventFilter>(pageRequest), _mapper.Map<Location>(location));
 
             return _mapper.Map<PageModel<EventModel>>(eventPageModels);
         }
@@ -84,6 +87,25 @@ namespace Parleo.BLL.Services
             var updatingEvent = await _repository.GetEventAsync(eventId);
 
             _mapper.Map(entity, updatingEvent);
+
+            return await _repository.UpdateEventAsync(updatingEvent);
+        }
+
+        public async Task InsertEventImageAsync(string imageName, Guid eventId)
+            => await _repository.InsertImageNameAsync(imageName, eventId);
+
+        public async Task<bool> UpdateEventLocationAsync(Guid eventId,
+            LocationModel location)
+        {
+            var updatingEvent = await _repository.GetEventAsync(eventId);
+
+            if(updatingEvent == null)
+            {
+                return false;
+            }
+
+            (updatingEvent.Latitude, updatingEvent.Longitude) =
+                (location.Latitude, location.Longitude);
 
             return await _repository.UpdateEventAsync(updatingEvent);
         }

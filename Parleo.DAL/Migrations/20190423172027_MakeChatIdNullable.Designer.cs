@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parleo.DAL;
 
 namespace Parleo.DAL.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20190423172027_MakeChatIdNullable")]
+    partial class MakeChatIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,7 +114,7 @@ namespace Parleo.DAL.Migrations
                     b.Property<string>("LanguageCode");
 
                     b.Property<decimal>("Latitude")
-                        .HasColumnType("decimal(11, 8)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<decimal>("Longitude")
                         .HasColumnType("decimal(11, 8)");
@@ -212,7 +214,7 @@ namespace Parleo.DAL.Migrations
                     b.Property<bool>("Gender");
 
                     b.Property<decimal>("Latitude")
-                        .HasColumnType("decimal(11, 8)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<decimal>("Longitude")
                         .HasColumnType("decimal(11, 8)");

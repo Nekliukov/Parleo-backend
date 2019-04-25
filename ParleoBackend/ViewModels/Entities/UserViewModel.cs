@@ -17,9 +17,7 @@ namespace ParleoBackend.ViewModels.Entities
 
         public bool Gender { get; set; }
 
-        public decimal Latitude { get; set; }
-
-        public decimal Longitude { get; set; }
+        public int DistanceFromCurrentUser { get; set; }
 
         public string Email { get; set; }
 
@@ -30,5 +28,7 @@ namespace ParleoBackend.ViewModels.Entities
         public ICollection<MiniatureViewModel> Friends { get; set; }
 
         public ICollection<MiniatureViewModel> AttendingEvents { get; set; }
+
+        public ICollection<HobbyViewModel> Hobbies { get; set; }
     }
 }
