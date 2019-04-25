@@ -22,6 +22,7 @@ using ParleoBackend.Extensions;
 using ParleoBackend.Hubs;
 using ParleoBackend.Services;
 using ParleoBackend.Validators;
+using ParleoBackend.Validators.Common;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
 
@@ -87,6 +88,7 @@ namespace ParleoBackend
             services.AddTransient<IValidator<UserRegistrationViewModel>, UserRegistrationViewModelValidator>();
             services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
             services.AddTransient<IValidator<UpdateUserViewModel>, UpdateUserViewModelValidator>();
+            services.AddTransient<IValidator<LocationViewModel>, LocationViewModelValidator>();
             ValidatorOptions.LanguageManager.Culture = new CultureInfo("en-GB");
             
             services.AddTransient<ClearExpiredTokenJob>();
