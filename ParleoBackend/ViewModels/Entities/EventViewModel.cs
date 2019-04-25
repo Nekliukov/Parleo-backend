@@ -23,7 +23,7 @@ namespace ParleoBackend.ViewModels.Entities
 
         public DateTimeOffset? EndDate { get; set; }
 
-        public UserViewModel Creator { get; set; } 
+        public MiniatureViewModel Creator { get; set; }
 
         public LanguageViewModel Language { get; set; }
 
