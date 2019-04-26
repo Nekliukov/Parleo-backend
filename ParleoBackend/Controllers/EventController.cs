@@ -138,8 +138,15 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{eventId}/image")]
         [Authorize]
-        public async Task<IActionResult> AddUserAccountImage(Guid eventId, IFormFile image)
+        public async Task<IActionResult> AddUserAccountImage(Guid eventId, IFormCollection formData)
         {
+            if (formData == null)
+            {
+                return BadRequest();
+            }
+
+            IFormFile image = formData.Files.GetFile("Image");
+
             if (image == null)
             {
                 return BadRequest();
