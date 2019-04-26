@@ -59,8 +59,8 @@ namespace Parleo.DAL.Repositories
                 .Where(u => (userFilter.Languages != null &&
                              userFilter.Languages.Count() != 0) ?
                     userFilter.Languages.Any(fl => u.Languages.Any(
-                        ul => ul.LanguageCode == fl.LanguageCode &&
-                            LevelInRange(fl, ul))) : true)
+                        ul => ul.LanguageCode == fl &&
+                            LevelInRange(ul, userFilter.MinLevel))) : true)
                 .Where(u => (userFilter.MaxDistance != null) ?
                     LocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
                     longtitude, latitude) <= userFilter.MaxDistance : true)
@@ -150,25 +150,6 @@ namespace Parleo.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-
-        private int GetAge(DateTimeOffset birth)
-        {
-            int age = new DateTime(
-                DateTime.Now.Subtract(birth.DateTime).Ticks).Year;
-
-            return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
-        }
-
-        private bool LevelInRange(
-            FilteringLanguage filteringLanguage, UserLanguage userLanguage)
-        {
-            bool lessOrEqualThanMax = filteringLanguage.MaxLevel == null ?
-                userLanguage.Level <= filteringLanguage.MaxLevel : true;
-
-            return lessOrEqualThanMax && filteringLanguage.MinLevel == null ?
-                userLanguage.Level >= filteringLanguage.MinLevel : true;
-        }
-
         public async Task ClearExpiredAccountTokensAsync()
         {
             IEnumerable<AccountToken> expiredTokens = await _context.AccountToken.ToListAsync();
@@ -183,6 +164,19 @@ namespace Parleo.DAL.Repositories
         {
             return (await _context.AccountToken.ToListAsync())
                 .Any(token => token.User.Credentials.Email == email);
+        }
+
+        private bool LevelInRange(UserLanguage userLanguage, int? minLevel)
+        {
+            return minLevel != null ? userLanguage.Level >= minLevel : true;
+        }
+
+        private int GetAge(DateTimeOffset birth)
+        {
+            int age = new DateTime(
+                DateTime.Now.Subtract(birth.DateTime).Ticks).Year;
+
+            return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
         }
     }
 }

@@ -12,6 +12,8 @@ namespace Parleo.BLL.Models.Filters
 
         public int? MaxDistance { get; set; }
 
-        public FilteringLanguageModel[] Languages { get; set; }
+        public int? MinLevel { get; set; }
+
+        public string[] Languages { get; set; }
     }
 }
