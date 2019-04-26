@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 ﻿using System.IO;
 using System.Text;
 using FluentScheduler;
@@ -21,7 +20,8 @@ using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
 using ParleoBackend.Hubs;
 using ParleoBackend.Services;
-using ParleoBackend.Validators;
+using ParleoBackend.Validators.Event;
+using ParleoBackend.Validators.Common;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
 
@@ -83,10 +83,12 @@ namespace ParleoBackend
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddTransient<IValidator<CreateOrUpdateEventViewModel>, CrateOrUpdateEventViewModelValidator>();
+            services.AddTransient<IValidator<UpdateEventViewModel>, UpdateEventViewModelValidator>();
+            services.AddTransient<IValidator<CreateEventViewModel>, CreateEventViewModelValidator>();
             services.AddTransient<IValidator<UserRegistrationViewModel>, UserRegistrationViewModelValidator>();
             services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
             services.AddTransient<IValidator<UpdateUserViewModel>, UpdateUserViewModelValidator>();
+            services.AddTransient<IValidator<LocationViewModel>, LocationViewModelValidator>();
             ValidatorOptions.LanguageManager.Culture = new CultureInfo("en-GB");
             
             services.AddTransient<ClearExpiredTokenJob>();

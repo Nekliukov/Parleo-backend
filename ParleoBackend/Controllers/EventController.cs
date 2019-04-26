@@ -11,7 +11,8 @@ using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
-using ParleoBackend.Validators;
+using ParleoBackend.Validators.Event;
+using ParleoBackend.Validators.Common;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Filters;
 using ParleoBackend.ViewModels.Pages;
@@ -90,9 +91,9 @@ namespace ParleoBackend.Controllers
         [HttpPost("create")]
         [Authorize]
         public async Task<ActionResult> CreateEventAsync(
-            [FromBody] CreateOrUpdateEventViewModel entity)
+            [FromBody] CreateEventViewModel entity)
         {
-            var validator = new CrateOrUpdateEventViewModelValidator();
+            var validator = new CreateEventViewModelValidator();
             ValidationResult result = validator.Validate(entity);
             if (!result.IsValid)
             {
@@ -100,7 +101,7 @@ namespace ParleoBackend.Controllers
             }
 
             var createdEvent = await _service.CreateEventAsync(
-                _mapper.Map<CreateOrUpdateEventModel>(entity));
+                _mapper.Map<CreateEventModel>(entity));
 
             return Ok(_mapper.Map<EventViewModel>(createdEvent));
         }
@@ -109,9 +110,9 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<ActionResult> UpdateEventAsync(
             Guid eventId,
-            [FromBody] CreateOrUpdateEventViewModel entity)
+            [FromBody] UpdateEventViewModel entity)
         {
-            var validator = new CrateOrUpdateEventViewModelValidator();
+            var validator = new UpdateEventViewModelValidator();
             ValidationResult result = validator.Validate(entity);
             if (!result.IsValid)
             {
@@ -119,7 +120,7 @@ namespace ParleoBackend.Controllers
             }
 
             var updateResult = await _service.UpdateEventAsync(eventId,
-                _mapper.Map<CreateOrUpdateEventModel>(entity));
+                _mapper.Map<UpdateEventModel>(entity));
 
             return Ok();
         }
@@ -137,8 +138,15 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{eventId}/image")]
         [Authorize]
-        public async Task<IActionResult> AddUserAccountImage(Guid eventId, IFormFile image)
+        public async Task<IActionResult> AddUserAccountImage(Guid eventId, IFormCollection formData)
         {
+            if (formData == null)
+            {
+                return BadRequest();
+            }
+
+            IFormFile image = formData.Files.GetFile("Image");
+
             if (image == null)
             {
                 return BadRequest();
@@ -166,11 +174,14 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateEventLocation(Guid eventId, [FromBody] LocationViewModel location)
         {
-            if (location.Latitude < 0 || location.Longitude < 0)
+            var validator = new LocationViewModelValidator();
+            ValidationResult result = validator.Validate(location);
+            if (!result.IsValid)
             {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_LOCATION));
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
-            if(eventId == null)
+
+            if (eventId == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
             }

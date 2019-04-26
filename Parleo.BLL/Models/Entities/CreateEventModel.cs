@@ -2,7 +2,7 @@
 
 namespace Parleo.BLL.Models.Entities
 {
-    public class CreateOrUpdateEventModel
+    public class CreateEventModel
     {
         public string Name { get; set; }
 

@@ -25,7 +25,7 @@ namespace Parleo.DAL.Repositories
         public async Task<bool> CreateAsync(User entity)
         {
             _context.User.Add(entity);
-            var result =  await _context.SaveChangesAsync();
+            var result = await _context.SaveChangesAsync();
             return result != 0;
         }
 
@@ -39,6 +39,20 @@ namespace Parleo.DAL.Repositories
         {
             double latitude = (double)location.Latitude,
                    longtitude = (double)location.Longitude;
+
+            // hack for correct first user's output int filter list
+            // without it first user will have no lang, hobbies etc...
+            await _context.User
+                .Include(u => u.Credentials)
+                .Include(u => u.Languages)
+                .Include(u => u.Hobbies)
+                    .ThenInclude(uh => uh.Hobby)
+                        .ThenInclude(h => h.Category)
+                .Include(u => u.Friends)
+                .Include(u => u.CreatedEvents)
+                .Include(u => u.AttendingEvents)
+                .FirstOrDefaultAsync();
+
             var users = await _context.User
                 .Where(u => userFilter.Gender != null ?
                     u.Gender == userFilter.Gender : true)
@@ -159,10 +173,16 @@ namespace Parleo.DAL.Repositories
         {
             IEnumerable<AccountToken> expiredTokens = await _context.AccountToken.ToListAsync();
             _context.User.RemoveRange(
-                _context.User.Where(user => 
+                _context.User.Where(user =>
                     expiredTokens.Any(token => token.UserId == user.Id && token.ExpirationDate < DateTime.Now))
             );
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> CheckUserHasTokenAsync(string email)
+        {
+            return (await _context.AccountToken.ToListAsync())
+                .Any(token => token.User.Credentials.Email == email);
         }
     }
 }

@@ -165,5 +165,10 @@ namespace Parleo.BLL.Services
         {
             await _repository.ClearExpiredAccountTokensAsync();
         }
+
+        public async Task<bool> CheckUserHasTokenAsync(string email)
+        {
+            return await _repository.CheckUserHasTokenAsync(email);
+        }
     }
 }
