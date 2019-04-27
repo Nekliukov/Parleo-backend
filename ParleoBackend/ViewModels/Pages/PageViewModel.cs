@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace ParleoBackend.ViewModels.Pages
@@ -12,5 +13,7 @@ namespace ParleoBackend.ViewModels.Pages
         public int PageSize { get; set; }
 
         public int TotalAmount { get; set; }
+
+        public DateTimeOffset? TimeStamp { get; set; }
     }
 }

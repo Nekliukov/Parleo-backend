@@ -79,7 +79,8 @@ namespace Parleo.DAL.Repositories
                 Entities = chats,
                 PageNumber = page.Page,
                 PageSize = page.PageSize ?? PAGE_SIZE,
-                TotalAmount = chatPage.Count
+                TotalAmount = chatPage.Count,
+                TimeStamp = new DateTimeOffset()
             };
         }
 
@@ -154,7 +155,8 @@ namespace Parleo.DAL.Repositories
                 .ToList(),
                 PageNumber = page.Page,
                 PageSize = page.PageSize ?? PAGE_SIZE,
-                TotalAmount = chat.Messages.Count
+                TotalAmount = chat.Messages.Count,
+                TimeStamp = new DateTimeOffset()
             };
 
             ViewChat(chatId, myUserId);
