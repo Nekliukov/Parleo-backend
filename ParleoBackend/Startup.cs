@@ -138,7 +138,7 @@ namespace ParleoBackend
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger XML Api Demo v1");
+                c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Swagger XML Api Demo v1.0");
             });
 
             JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
