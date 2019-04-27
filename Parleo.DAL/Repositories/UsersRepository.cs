@@ -162,8 +162,11 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> CheckUserHasTokenAsync(string email)
         {
-            return (await _context.AccountToken.ToListAsync())
-                .Any(token => token.User.Credentials.Email == email);
+            AccountToken token = await _context.AccountToken
+                .Include(c => c.User)
+                .Include(c => c.User.Credentials)
+                .FirstOrDefaultAsync(act => act.User.Credentials.Email == email);
+            return token != null;
         }
 
         private bool LevelInRange(UserLanguage userLanguage, int? minLevel)
