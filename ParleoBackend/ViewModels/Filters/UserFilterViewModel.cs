@@ -12,6 +12,8 @@ namespace ParleoBackend.ViewModels.Filters
 
         public int? MaxDistance { get; set; }
 
-        public FilteringLanguageViewModel[] Languages { get; set; }
+        public int? MinLevel { get; set; }
+
+        public string[] Languages { get; set; }
     }
 }
