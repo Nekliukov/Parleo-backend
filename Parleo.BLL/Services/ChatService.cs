@@ -31,14 +31,12 @@ namespace Parleo.BLL.Services
 
             if (chat == null)
             {
-                var user = await _accountService.GetUserByIdAsync(myId);
                 var anotherUser = await _accountService.GetUserByIdAsync(anotherUserId);
 
-                chat = await _chatRepository.CreateChatAsync(new List<User>()
+                chat = await _chatRepository.CreateChatAsync(new List<Guid>()
                 {
-                    _mapper.Map<User>(user),
-                    _mapper.Map<User>(anotherUser),
-
+                    myId,
+                    anotherUser.Id
                 }, anotherUser.Name);
             }
             return _mapper.Map<ChatModel>(chat);
