@@ -14,7 +14,7 @@ namespace Parleo.BLL.Models.Entities
 
         public DateTimeOffset CreatedOn { get; set; }
 
-        public DateTimeOffset ViewedOn { get; set; }
+        public DateTimeOffset? ViewedOn { get; set; }
 
         public bool IsDeleted { get; set; }
 

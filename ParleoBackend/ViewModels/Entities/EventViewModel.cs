@@ -11,6 +11,8 @@ namespace ParleoBackend.ViewModels.Entities
 
         public string Description { get; set; }
 
+        public string Image { get; set; }
+
         public int MaxParticipants { get; set; }    
         
         public decimal Latitude { get; set; }  

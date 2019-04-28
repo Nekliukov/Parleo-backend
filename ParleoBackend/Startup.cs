@@ -151,7 +151,7 @@ namespace ParleoBackend
             var mapperFactory = new MapperFactory();
 
             mapperFactory.Mappers.Add(typeof(BLServices).Name, BLServices.GetMapper());
-            mapperFactory.Mappers.Add(typeof(WebServices).Name, WebServices.GetMapper());
+            mapperFactory.Mappers.Add(typeof(WebServices).Name, WebServices.GetMapper(Configuration));
 
             services.AddSingleton<IMapperFactory>(mapperFactory);
         }

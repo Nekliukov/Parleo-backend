@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Parleo.BLL.Interfaces;
 using ParleoBackend.Configuration;
@@ -23,9 +24,9 @@ namespace ParleoBackend
             services.AddSingleton<BackgroundWorkerRegistry>();
         }
 
-        public static IMapper GetMapper()
+        public static IMapper GetMapper(IConfiguration configuration)
         {
-            return MapperExtension.GetConfiguredMapper();
+            return MapperExtension.GetConfiguredMapper(configuration);
         }
     }
 }

@@ -94,12 +94,14 @@ namespace Parleo.DAL.Repositories
 
             return new Page<Event>()
             {
-                Entities = events
-                    .Skip((eventFilter.Page - 1) * eventFilter.PageSize.Value)
+                Entities = events.OrderBy(e => e.StartTime)
+                    .SkipWhile(m => m.StartTime > eventFilter.TimeStamp)
+                    .Skip((eventFilter.PageNumber - 1) * eventFilter.PageSize.Value)
                     .Take(eventFilter.PageSize.Value).ToList(),
-                PageNumber = eventFilter.Page,
+                PageNumber = eventFilter.PageNumber,
                 PageSize = eventFilter.PageSize.Value,
-                TotalAmount = totalAmount
+                TotalAmount = totalAmount,
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 
@@ -122,11 +124,12 @@ namespace Parleo.DAL.Repositories
             return new Page<UserEvent>()
             {
                 Entities = targetEvent.Participants
-                    .Skip((pageRequest.Page - 1) * pageRequest.PageSize.Value)
+                    .Skip((pageRequest.PageNumber - 1) * pageRequest.PageSize.Value)
                     .Take(pageRequest.PageSize.Value).ToList(),
-                PageNumber = pageRequest.Page,
+                PageNumber = pageRequest.PageNumber,
                 PageSize = pageRequest.PageSize.Value,
-                TotalAmount = totalAmount
+                TotalAmount = totalAmount,
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 

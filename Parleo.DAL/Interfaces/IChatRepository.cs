@@ -16,7 +16,7 @@ namespace Parleo.DAL.Interfaces
 
         Task<Chat> GetPrivateChatAsync(Guid myUserId, Guid anotherUserId);
 
-        Task<Chat> CreateChatAsync(ICollection<User> members, string chatName, User creator = null);
+        Task<Chat> CreateChatAsync(ICollection<Guid> members, string chatName, User creator = null);
 
         Task AddMessagesAsync(Guid id, ICollection<Message> messages);
 

@@ -61,7 +61,7 @@ namespace Parleo.DAL.Repositories
                 .ToListAsync();
 
             var chats = chatPage
-                .Skip((page.Page - 1) * (page.PageSize ?? PAGE_SIZE))
+                .Skip((page.PageNumber - 1) * (page.PageSize ?? PAGE_SIZE))
                 .Take(page.PageSize ?? PAGE_SIZE)
                 .Select(c => new Chat()
             {
@@ -77,9 +77,10 @@ namespace Parleo.DAL.Repositories
             return new Page<Chat>()
             {
                 Entities = chats,
-                PageNumber = page.Page,
+                PageNumber = page.PageNumber,
                 PageSize = page.PageSize ?? PAGE_SIZE,
-                TotalAmount = chatPage.Count
+                TotalAmount = chatPage.Count,
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 
@@ -101,7 +102,7 @@ namespace Parleo.DAL.Repositories
             return chat;
         }
 
-        public async Task<Chat> CreateChatAsync(ICollection<User> members, string chatName, User creator = null)
+        public async Task<Chat> CreateChatAsync(ICollection<Guid> membersId, string chatName, User creator = null)
         {
             var chat = new Chat()
             {
@@ -110,12 +111,12 @@ namespace Parleo.DAL.Repositories
                 Messages = new List<Message>(),
                 Creator = creator
             };
-            foreach (var member in members)
+            foreach (var id in membersId)
             {
                 chat.Members.Add(new ChatUser()
                 {
                     Chat = chat,
-                    User = member
+                    UserId = id
                 });
             }
 
@@ -149,12 +150,13 @@ namespace Parleo.DAL.Repositories
             {
                 Entities = chat.Messages.OrderBy(m => m.CreatedOn)
                 .SkipWhile(m => m.CreatedOn > page.TimeStamp)
-                .Skip((page.Page - 1) * (page.PageSize ?? PAGE_SIZE))
+                .Skip((page.PageNumber - 1) * (page.PageSize ?? PAGE_SIZE))
                 .Take(page.PageSize ?? PAGE_SIZE)
                 .ToList(),
-                PageNumber = page.Page,
+                PageNumber = page.PageNumber,
                 PageSize = page.PageSize ?? PAGE_SIZE,
-                TotalAmount = chat.Messages.Count
+                TotalAmount = chat.Messages.Count,
+                TimeStamp = DateTimeOffset.UtcNow
             };
 
             ViewChat(chatId, myUserId);
@@ -199,10 +201,10 @@ namespace Parleo.DAL.Repositories
                 .First(c => c.Id == chatId)
                 .Messages
                 .Where(m => m.CreatedOn > time)
-                .Select(m => m.ViewedOn = new DateTimeOffset())
+                .Select(m => m.ViewedOn = DateTimeOffset.UtcNow)
                 .ToList();
 
-            time = new DateTimeOffset();
+            time = DateTimeOffset.UtcNow;
 
             _context.SaveChanges();
         }
