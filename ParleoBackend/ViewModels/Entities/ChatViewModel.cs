@@ -13,7 +13,7 @@ namespace ParleoBackend.ViewModels.Entities
 
         public ICollection<MiniatureViewModel> Members { get; set; }
 
-        public Guid CreatorId { get; set; }
+        public Guid? CreatorId { get; set; }
 
         public MessageViewModel LastMessage { get; set; }
 
