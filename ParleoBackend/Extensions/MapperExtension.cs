@@ -30,12 +30,18 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UserViewModel, UserModel>();
                 mc.CreateMap<UserModel, UserViewModel>()
                 .ForMember(uvm => uvm.AccountImage, opt => 
-                    opt.MapFrom(um => um.AccountImage != null ? string.Format("{0}/{1}", imageSettings.AccountSourceUrl, um.AccountImage) : null)
+                    opt.MapFrom(um => 
+                        um.AccountImage != null 
+                        ? string.Format("{0}/{1}/{2}", imageSettings.BaseUrl, imageSettings.AccountSourceUrl, um.AccountImage) 
+                        : null)
                  );
 
                 mc.CreateMap<EventModel, EventViewModel>()
                 .ForMember(uvm => uvm.Image, opt =>
-                    opt.MapFrom(um => um.Image != null ? string.Format("{0}/{1}", imageSettings.EventSourceUrl, um.Image) : null)
+                    opt.MapFrom(um => 
+                        um.Image != null 
+                        ? string.Format("{0}/{1}/{2}", imageSettings.BaseUrl, imageSettings.EventSourceUrl, um.Image) 
+                        : null)
                  );
                 mc.CreateMap<EventViewModel, EventModel>();
 

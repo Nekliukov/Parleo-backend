@@ -21,5 +21,7 @@ namespace ParleoBackend.Configuration
         public string EventSourceUrl => _configuration.GetValue<string>(nameof(EventSourceUrl));
 
         public string EventDestPath => _configuration.GetValue<string>(nameof(EventDestPath));
+
+        public string BaseUrl => _configuration.GetValue<string>(nameof(BaseUrl));
     }
 }

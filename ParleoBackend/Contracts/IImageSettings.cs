@@ -6,5 +6,6 @@
         string EventDestPath { get; }
         string AccountSourceUrl { get; }
         string AccountDestPath { get; }
+        string BaseUrl { get; }
     }
 }
