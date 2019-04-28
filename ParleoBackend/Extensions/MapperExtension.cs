@@ -1,20 +1,26 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Filters;
 using Parleo.BLL.Models.Pages;
+using ParleoBackend.Configuration;
+using ParleoBackend.Contracts;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Filters;
 using ParleoBackend.ViewModels.Pages;
+using System.IO;
 
 namespace ParleoBackend.Extensions
 {
     public static class MapperExtension
     {
-        public static IMapper GetConfiguredMapper()
+        public static IMapper GetConfiguredMapper(IConfiguration configuration)
         {
+            IImageSettings imageSettings = new ImageSettings(configuration);
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 // entities
+
                 mc.CreateMap<UserLoginModel, UserLoginViewModel>();
                 mc.CreateMap<UserLoginViewModel, UserLoginModel>();
 
@@ -22,9 +28,15 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UserRegistrationViewModel, UserRegistrationModel>();
 
                 mc.CreateMap<UserViewModel, UserModel>();
-                mc.CreateMap<UserModel, UserViewModel>();
+                mc.CreateMap<UserModel, UserViewModel>()
+                .ForMember(uvm => uvm.AccountImage, opt => 
+                    opt.MapFrom(um => um.AccountImage != null ? string.Format("{0}/{1}", imageSettings.AccountSourceUrl, um.AccountImage) : null)
+                 );
 
-                mc.CreateMap<EventModel, EventViewModel>();
+                mc.CreateMap<EventModel, EventViewModel>()
+                .ForMember(uvm => uvm.Image, opt =>
+                    opt.MapFrom(um => um.Image != null ? string.Format("{0}/{1}", imageSettings.EventSourceUrl, um.Image) : null)
+                 );
                 mc.CreateMap<EventViewModel, EventModel>();
 
                 mc.CreateMap<UpdateEventViewModel, UpdateEventModel>();
