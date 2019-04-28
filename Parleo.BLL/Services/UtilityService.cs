@@ -37,10 +37,10 @@ namespace Parleo.BLL.Services
             );
         }
 
-        public async Task<bool> LanguageExistsAsync(ICollection<LanguageModel> languages) =>
-            await _utilityRepository.IsLanguagesExistsAsync(_mapper.Map<ICollection<Language>>(languages));
+        public async Task<bool> AllLanguagesExistAsync(ICollection<LanguageModel> languages) =>
+            await _utilityRepository.AllLanguagesExistAsync(_mapper.Map<ICollection<Language>>(languages));
 
-        public async Task<bool> HobbiesExistsAsync(ICollection<HobbyModel> hobbies) =>
-            await _utilityRepository.IsHobbiesExistsAsync(_mapper.Map<ICollection<Hobby>>(hobbies));
+        public async Task<bool> AllHobbiesExistAsync(ICollection<HobbyModel> hobbies) =>
+            await _utilityRepository.AllHobbiesExistAsync(_mapper.Map<ICollection<Hobby>>(hobbies));
     }
 }

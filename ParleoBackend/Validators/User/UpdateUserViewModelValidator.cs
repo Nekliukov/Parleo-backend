@@ -23,20 +23,20 @@ namespace ParleoBackend.Validators.User
             RuleFor(user => user.Name).NotEmpty().NotNull()
                 .MaximumLength(60);
             RuleFor(user => user.Languages).NotEmpty().NotNull()
-                .Must(ExistsLanguages).WithMessage(Constants.Errors.INVALID_LANGUAGE);
+                .Must(AllLanguagesExist).WithMessage(Constants.Errors.INVALID_LANGUAGE);
             RuleFor(user => user.Languages)
                 .Must(CorrectLevel).WithMessage(Constants.Errors.INCORRECT_LANGUAGE_LEVEL);
             RuleFor(user => user.Hobbies)
-                .Must(ExistsHobbies).WithMessage(Constants.Errors.INVALID_HOBBY);
+                .Must(AllHobbiesExist).WithMessage(Constants.Errors.INVALID_HOBBY);
         }
 
-        private bool ExistsLanguages(UserLanguageViewModel[] languages) =>
-            _utilityService.LanguageExistsAsync(_mapper.Map<ICollection<LanguageModel>>(languages)).Result;
+        private bool AllLanguagesExist(UserLanguageViewModel[] languages) =>
+            _utilityService.AllLanguagesExistAsync(_mapper.Map<ICollection<LanguageModel>>(languages)).Result;
 
-        private bool ExistsHobbies(IEnumerable<string> hobbies)
+        private bool AllHobbiesExist(IEnumerable<string> hobbies)
         {
             var hobbyList = hobbies.Select(hobby => new HobbyViewModel() {Name = hobby}).ToList();
-            return _utilityService.HobbiesExistsAsync(_mapper.Map<ICollection<HobbyModel>>(hobbyList)).Result;
+            return _utilityService.AllHobbiesExistAsync(_mapper.Map<ICollection<HobbyModel>>(hobbyList)).Result;
         }
 
         private bool CorrectLevel(IEnumerable<UserLanguageViewModel> languages)
