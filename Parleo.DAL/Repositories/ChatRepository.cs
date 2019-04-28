@@ -101,7 +101,7 @@ namespace Parleo.DAL.Repositories
             return chat;
         }
 
-        public async Task<Chat> CreateChatAsync(ICollection<User> members, string chatName, User creator = null)
+        public async Task<Chat> CreateChatAsync(ICollection<Guid> membersId, string chatName, User creator = null)
         {
             var chat = new Chat()
             {
@@ -110,12 +110,12 @@ namespace Parleo.DAL.Repositories
                 Messages = new List<Message>(),
                 Creator = creator
             };
-            foreach (var member in members)
+            foreach (var id in membersId)
             {
                 chat.Members.Add(new ChatUser()
                 {
                     Chat = chat,
-                    User = member
+                    UserId = id
                 });
             }
 
