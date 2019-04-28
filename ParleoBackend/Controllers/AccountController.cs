@@ -33,6 +33,7 @@ namespace ParleoBackend.Controllers
         private readonly IEmailService _emailService;
         private readonly IJwtService _jwtService;
         private readonly IImageSettings _accountImageSettings;
+        private readonly IUtilityService _utilityService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
@@ -42,7 +43,8 @@ namespace ParleoBackend.Controllers
             IJwtService jwtService,
             IEmailService emailService,
             ILogger<AccountController> logger,
-            IImageSettings accountImageSettings
+            IImageSettings accountImageSettings,
+            IUtilityService utilityService
         )
         {
             _accountService = accountService;
@@ -51,6 +53,7 @@ namespace ParleoBackend.Controllers
             _logger = logger;
             _emailService = emailService;
             _accountImageSettings = accountImageSettings;
+            _utilityService = utilityService;
         }
 
         [HttpGet]
@@ -150,7 +153,7 @@ namespace ParleoBackend.Controllers
             Guid userId,
             [FromBody] UpdateUserViewModel entity)
         {
-            var validator = new UpdateUserViewModelValidator();
+            var validator = new UpdateUserViewModelValidator(_utilityService, _mapper);
             ValidationResult result = validator.Validate(entity);
 
             if (!result.IsValid)

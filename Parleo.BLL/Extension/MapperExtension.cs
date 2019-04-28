@@ -98,7 +98,11 @@ namespace Parleo.BLL.Extensions
 
                 mc.CreateMap<Hobby, HobbyModel>()
                     .ForMember(hm => hm.Name, opt => opt.MapFrom(h => h.Name))
-                    .ForMember(hm => hm.Category, opt => opt.MapFrom(h => h.Category.Name));
+                    .ForMember(hm => hm.Category, opt => opt.MapFrom(h => h.Category.Name))
+                    .ForAllOtherMembers(opt => opt.Ignore());
+                mc.CreateMap<HobbyModel, Hobby>()
+                    .ForMember(h => h.Name, opt => opt.MapFrom(hm => hm.Name))
+                    .ForAllOtherMembers(opt => opt.Ignore());
 
                 mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
 
