@@ -89,9 +89,9 @@ namespace Parleo.DAL.Repositories
             {
                 Entities = users.OrderBy(u => u.CreatedAt)
                     .SkipWhile(m => m.CreatedAt > userFilter.TimeStamp)
-                    .Skip((userFilter.Page - 1) * userFilter.PageSize.Value)
+                    .Skip((userFilter.PageNumber - 1) * userFilter.PageSize.Value)
                     .Take(userFilter.PageSize.Value).ToList(),
-                PageNumber = userFilter.Page,
+                PageNumber = userFilter.PageNumber,
                 PageSize = userFilter.PageSize.Value,
                 TotalAmount = totalAmount,
                 TimeStamp = DateTimeOffset.UtcNow
