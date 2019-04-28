@@ -9,5 +9,9 @@ namespace Parleo.BLL.Interfaces
         Task<IReadOnlyCollection<LanguageModel>> GetLanguagesAsync();
 
         Task<IReadOnlyCollection<HobbyModel>> GetHobbiesAsync();
+
+        Task<bool> LanguageExistsAsync(ICollection<LanguageModel> languages);
+
+        Task<bool> HobbiesExistsAsync(ICollection<HobbyModel> hobbies);
     }
 }

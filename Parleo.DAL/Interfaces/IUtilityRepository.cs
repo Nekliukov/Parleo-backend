@@ -9,5 +9,9 @@ namespace Parleo.DAL.Interfaces
         Task<IReadOnlyCollection<Language>> GetLanguagesAsync();
 
         Task<IReadOnlyCollection<Hobby>> GetHobbiesAsync();
+
+        Task<bool> IsLanguagesExistsAsync(ICollection<Language> languages);
+
+        Task<bool> IsHobbiesExistsAsync(ICollection<Hobby> hobbies);
     }
 }
