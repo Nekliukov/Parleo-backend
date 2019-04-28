@@ -94,7 +94,7 @@ namespace Parleo.DAL.Repositories
                 PageNumber = userFilter.Page,
                 PageSize = userFilter.PageSize.Value,
                 TotalAmount = totalAmount,
-                TimeStamp = new DateTimeOffset()
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 

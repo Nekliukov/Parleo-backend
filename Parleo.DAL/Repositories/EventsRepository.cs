@@ -101,7 +101,7 @@ namespace Parleo.DAL.Repositories
                 PageNumber = eventFilter.Page,
                 PageSize = eventFilter.PageSize.Value,
                 TotalAmount = totalAmount,
-                TimeStamp = new DateTimeOffset()
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 
@@ -129,7 +129,7 @@ namespace Parleo.DAL.Repositories
                 PageNumber = pageRequest.Page,
                 PageSize = pageRequest.PageSize.Value,
                 TotalAmount = totalAmount,
-                TimeStamp = new DateTimeOffset()
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 
