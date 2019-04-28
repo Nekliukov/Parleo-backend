@@ -32,7 +32,7 @@ namespace ParleoBackend.Extensions
                 .ForMember(uvm => uvm.AccountImage, opt => 
                     opt.MapFrom(um => 
                         um.AccountImage != null 
-                        ? string.Format("{0}/{1}/{2}", imageSettings.BaseUrl, imageSettings.AccountSourceUrl, um.AccountImage) 
+                        ? string.Format("{0}{1}/{2}", imageSettings.BaseUrl, imageSettings.AccountSourceUrl, um.AccountImage) 
                         : null)
                  );
 
@@ -40,7 +40,7 @@ namespace ParleoBackend.Extensions
                 .ForMember(uvm => uvm.Image, opt =>
                     opt.MapFrom(um => 
                         um.Image != null 
-                        ? string.Format("{0}/{1}/{2}", imageSettings.BaseUrl, imageSettings.EventSourceUrl, um.Image) 
+                        ? string.Format("{0}{1}/{2}", imageSettings.BaseUrl, imageSettings.EventSourceUrl, um.Image) 
                         : null)
                  );
                 mc.CreateMap<EventViewModel, EventModel>();
