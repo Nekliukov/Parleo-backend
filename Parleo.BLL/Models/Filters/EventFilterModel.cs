@@ -5,8 +5,6 @@ namespace Parleo.BLL.Models.Filters
 {
     public class EventFilterModel : PageRequestModel
     {
-        public int? MinNumberOfParticipants { get; set; }
-
         public int? MaxNumberOfParticipants { get; set; }
 
         public int? MaxDistance { get; set; }
