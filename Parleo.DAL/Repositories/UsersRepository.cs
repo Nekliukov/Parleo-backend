@@ -106,8 +106,10 @@ namespace Parleo.DAL.Repositories
                     .ThenInclude(uh => uh.Hobby)
                         .ThenInclude(h => h.Category)
                 .Include(u => u.Friends)
+                    .ThenInclude(uf => uf.UserTo)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.AttendingEvents)
+                    .ThenInclude(ue => ue.Event)
                 .FirstOrDefaultAsync(user => user.Id == id);
         }
 

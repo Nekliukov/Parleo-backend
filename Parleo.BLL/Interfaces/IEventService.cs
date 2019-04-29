@@ -28,6 +28,8 @@ namespace Parleo.BLL.Interfaces
 
         Task InsertEventImageAsync(string imageName, Guid eventId);
 
+        Task<bool> CanParticipate(Guid eventId, Guid[] participants);
+
         // Need to discuss
         // Task<bool> InviteParticipant(Guid eventId, Guid userId);
     }

@@ -50,6 +50,17 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<ActionResult> AddEventParticipants(Guid eventId, Guid[] users)
         {
+            if (eventId == null || await _service.GetEventAsync(eventId) == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
+            }
+
+            if (! await _service.CanParticipate(eventId, users))
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    Constants.Errors.EXCEEDED_PARTICIPANTS_COUNT_LIMIT));
+            }
+
             var result = await _service.AddEventParticipant(eventId, users);
 
             return Ok();
@@ -131,6 +142,11 @@ namespace ParleoBackend.Controllers
             Guid eventId, 
             Guid userId)
         {
+            if (eventId == null || await _service.GetEventAsync(eventId) == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
+            }
+
             bool result = await _service.RemoveEventParticipant(eventId, userId);
 
             return Ok();
@@ -181,7 +197,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
-            if (eventId == null)
+            if (eventId == null || await _service.GetEventAsync(eventId) == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
             }

@@ -5,8 +5,6 @@ namespace ParleoBackend.ViewModels.Filters
 {
     public class EventFilterViewModel : PageRequestViewModel
     {
-        public int? MinNumberOfParticipants { get; set; }
-
         public int? MaxNumberOfParticipants { get; set; }
 
         public int? MaxDistance { get; set; }
