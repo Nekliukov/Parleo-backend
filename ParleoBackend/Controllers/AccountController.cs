@@ -186,14 +186,9 @@ namespace ParleoBackend.Controllers
         [HttpGet("{userId}")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserByIdAsync(string userId)
+        public async Task<IActionResult> GetUserByIdAsync(Guid userId)
         {
-            if (!Guid.TryParse(userId, out Guid userGuid))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.WRONG_GUID_FORMAT));
-            }
-
-            UserModel user = await _accountService.GetUserByIdAsync(userGuid);
+            UserModel user = await _accountService.GetUserByIdAsync(userId);
             if (user == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
