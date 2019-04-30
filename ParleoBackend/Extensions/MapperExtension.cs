@@ -31,18 +31,22 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UserModel, UserViewModel>()
                 .ForMember(uvm => uvm.AccountImage, opt => 
                     opt.MapFrom(um => 
-                        um.AccountImage != null 
-                        ? string.Format("{0}{1}/{2}", imageSettings.BaseUrl, imageSettings.AccountSourceUrl, um.AccountImage) 
-                        : null)
-                 );
+                        FileExtension.GetFullFilePath(
+                            imageSettings.BaseUrl, 
+                            imageSettings.AccountSourceUrl, 
+                            um.AccountImage)
+                        )
+                );
 
                 mc.CreateMap<EventModel, EventViewModel>()
                 .ForMember(uvm => uvm.Image, opt =>
-                    opt.MapFrom(um => 
-                        um.Image != null 
-                        ? string.Format("{0}{1}/{2}", imageSettings.BaseUrl, imageSettings.EventSourceUrl, um.Image) 
-                        : null)
-                 );
+                    opt.MapFrom(um =>
+                        FileExtension.GetFullFilePath(
+                            imageSettings.BaseUrl,
+                            imageSettings.EventSourceUrl,
+                            um.Image)
+                        )
+                );
                 mc.CreateMap<EventViewModel, EventModel>();
 
                 mc.CreateMap<UpdateEventViewModel, UpdateEventModel>();
@@ -62,7 +66,15 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UserLanguageModel, UserLanguageViewModel>();
                 mc.CreateMap<UserLanguageViewModel, UserLanguageModel>();
 
-                mc.CreateMap<MiniatureModel, MiniatureViewModel>();
+                mc.CreateMap<MiniatureModel, MiniatureViewModel>()
+                .ForMember(mm => mm.Image, opt =>
+                    opt.MapFrom(mvm =>
+                        FileExtension.GetFullFilePath(
+                            imageSettings.BaseUrl,
+                            imageSettings.AccountSourceUrl,
+                            mvm.Image)
+                        )
+                );
                 mc.CreateMap<MiniatureViewModel, MiniatureModel>();
 
                 mc.CreateMap<UpdateUserViewModel, UpdateUserModel>();
