@@ -272,7 +272,6 @@ namespace ParleoBackend.Controllers
                 return BadRequest();
             }
 
-            string accountImagePath = _accountImageSettings.AccountDestPath;
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             if (!Guid.TryParse(id, out Guid userGuid))
             {
@@ -286,6 +285,7 @@ namespace ParleoBackend.Controllers
 
             UserModel user = await _accountService.GetUserByIdAsync(userGuid);
 
+            string accountImagePath = _accountImageSettings.AccountDestPath;
             if (user.AccountImage != null)
             {
                 System.IO.File.Delete(Path.Combine(accountImagePath, user.AccountImage));
