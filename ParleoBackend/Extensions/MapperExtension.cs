@@ -66,7 +66,7 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UserLanguageModel, UserLanguageViewModel>();
                 mc.CreateMap<UserLanguageViewModel, UserLanguageModel>();
 
-                mc.CreateMap<MiniatureModel, MiniatureViewModel>()
+                mc.CreateMap<MiniatureModel, UserMiniatureViewModel>()
                 .ForMember(mm => mm.Image, opt =>
                     opt.MapFrom(mvm =>
                         FileExtension.GetFullFilePath(
@@ -75,7 +75,18 @@ namespace ParleoBackend.Extensions
                             mvm.Image)
                         )
                 );
-                mc.CreateMap<MiniatureViewModel, MiniatureModel>();
+                mc.CreateMap<UserMiniatureViewModel, MiniatureModel>();
+
+                mc.CreateMap<MiniatureModel, EventMiniatureViewModel>()
+                    .ForMember(mm => mm.Image, opt =>
+                        opt.MapFrom(mvm =>
+                            FileExtension.GetFullFilePath(
+                                imageSettings.BaseUrl,
+                                imageSettings.EventSourceUrl,
+                                mvm.Image)
+                            )
+                    );
+                mc.CreateMap<EventMiniatureViewModel, MiniatureModel>();
 
                 mc.CreateMap<UpdateUserViewModel, UpdateUserModel>();
                 mc.CreateMap<UpdateUserModel, UpdateUserViewModel>();
