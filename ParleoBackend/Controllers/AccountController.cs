@@ -153,6 +153,17 @@ namespace ParleoBackend.Controllers
             Guid userId,
             [FromBody] UpdateUserViewModel entity)
         {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if (!Guid.TryParse(id, out Guid userGuid))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.WRONG_GUID_FORMAT));
+            }
+
+            if (!Guid.Equals(userId, userGuid))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ID_NOT_MATCH_URL_ID));
+            }
+
             var validator = new UpdateUserViewModelValidator(_utilityService, _mapper);
             ValidationResult result = validator.Validate(entity);
 
@@ -162,7 +173,7 @@ namespace ParleoBackend.Controllers
             }
 
             bool isEdited = await _accountService.UpdateUserAsync(
-                    userId, _mapper.Map<UpdateUserModel>(entity));
+                    userGuid, _mapper.Map<UpdateUserModel>(entity));
 
             if (!isEdited)
             {
@@ -175,15 +186,9 @@ namespace ParleoBackend.Controllers
         [HttpGet("{userId}")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserByIdAsync(string userId)
+        public async Task<IActionResult> GetUserByIdAsync(Guid userId)
         {
-            Guid userGuid;
-            if (!Guid.TryParse(userId, out userGuid))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.WRONG_GUID_FORMAT));
-            }
-
-            UserModel user = await _accountService.GetUserByIdAsync(new Guid(userId));
+            UserModel user = await _accountService.GetUserByIdAsync(userId);
             if (user == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
@@ -248,7 +253,7 @@ namespace ParleoBackend.Controllers
 
         [HttpPut("{userId}/image")]
         [Authorize]
-        public async Task<IActionResult> AddUserAccountImage(IFormCollection formData)
+        public async Task<IActionResult> AddUserAccountImage(Guid userId, IFormCollection formData)
         {
             if (formData == null)
             {
@@ -262,10 +267,20 @@ namespace ParleoBackend.Controllers
                 return BadRequest();
             }
 
-            string accountImagePath = _accountImageSettings.AccountDestPath;
-            Guid userId = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
-            UserModel user = await _accountService.GetUserByIdAsync(userId);
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if (!Guid.TryParse(id, out Guid userGuid))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
 
+            if (!Guid.Equals(userId, userGuid))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ID_NOT_MATCH_URL_ID));
+            }
+
+            UserModel user = await _accountService.GetUserByIdAsync(userGuid);
+
+            string accountImagePath = _accountImageSettings.AccountDestPath;
             if (user.AccountImage != null)
             {
                 System.IO.File.Delete(Path.Combine(accountImagePath, user.AccountImage));
@@ -275,7 +290,7 @@ namespace ParleoBackend.Controllers
 
             await _accountService.InsertUserAccountImageAsync(
                 accountImageUniqueName,
-                userId
+                userGuid
             );
 
             return Ok();
@@ -285,6 +300,17 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] LocationViewModel location)
         {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if (!Guid.TryParse(id, out Guid userGuid))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            if (!Guid.Equals(userId, userGuid))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ID_NOT_MATCH_URL_ID));
+            }
+
             var validator = new LocationViewModelValidator();
             ValidationResult result = validator.Validate(location);
             if (!result.IsValid)
@@ -292,12 +318,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
-            if (userId == null)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
-            }
-
-            bool isEdited = await _accountService.UpdateUserLocationAsync(userId, _mapper.Map<LocationModel>(location));
+            bool isEdited = await _accountService.UpdateUserLocationAsync(userGuid, _mapper.Map<LocationModel>(location));
 
             if (!isEdited)
             {
