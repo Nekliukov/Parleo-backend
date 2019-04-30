@@ -31,18 +31,22 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UserModel, UserViewModel>()
                 .ForMember(uvm => uvm.AccountImage, opt => 
                     opt.MapFrom(um => 
-                        um.AccountImage != null 
-                        ? string.Format("{0}{1}/{2}", imageSettings.BaseUrl, imageSettings.AccountSourceUrl, um.AccountImage) 
-                        : null)
-                 );
+                        FileExtension.GetFullFilePath(
+                            imageSettings.BaseUrl, 
+                            imageSettings.AccountSourceUrl, 
+                            um.AccountImage)
+                        )
+                );
 
                 mc.CreateMap<EventModel, EventViewModel>()
                 .ForMember(uvm => uvm.Image, opt =>
-                    opt.MapFrom(um => 
-                        um.Image != null 
-                        ? string.Format("{0}{1}/{2}", imageSettings.BaseUrl, imageSettings.EventSourceUrl, um.Image) 
-                        : null)
-                 );
+                    opt.MapFrom(um =>
+                        FileExtension.GetFullFilePath(
+                            imageSettings.BaseUrl,
+                            imageSettings.EventSourceUrl,
+                            um.Image)
+                        )
+                );
                 mc.CreateMap<EventViewModel, EventModel>();
 
                 mc.CreateMap<UpdateEventViewModel, UpdateEventModel>();
@@ -62,8 +66,27 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UserLanguageModel, UserLanguageViewModel>();
                 mc.CreateMap<UserLanguageViewModel, UserLanguageModel>();
 
-                mc.CreateMap<MiniatureModel, MiniatureViewModel>();
-                mc.CreateMap<MiniatureViewModel, MiniatureModel>();
+                mc.CreateMap<MiniatureModel, UserMiniatureViewModel>()
+                .ForMember(mm => mm.Image, opt =>
+                    opt.MapFrom(mvm =>
+                        FileExtension.GetFullFilePath(
+                            imageSettings.BaseUrl,
+                            imageSettings.AccountSourceUrl,
+                            mvm.Image)
+                        )
+                );
+                mc.CreateMap<UserMiniatureViewModel, MiniatureModel>();
+
+                mc.CreateMap<MiniatureModel, EventMiniatureViewModel>()
+                    .ForMember(mm => mm.Image, opt =>
+                        opt.MapFrom(mvm =>
+                            FileExtension.GetFullFilePath(
+                                imageSettings.BaseUrl,
+                                imageSettings.EventSourceUrl,
+                                mvm.Image)
+                            )
+                    );
+                mc.CreateMap<EventMiniatureViewModel, MiniatureModel>();
 
                 mc.CreateMap<UpdateUserViewModel, UpdateUserModel>();
                 mc.CreateMap<UpdateUserModel, UpdateUserViewModel>();
