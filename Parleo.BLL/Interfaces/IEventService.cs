@@ -30,6 +30,8 @@ namespace Parleo.BLL.Interfaces
 
         Task<bool> CanParticipate(Guid eventId, Guid[] participants);
 
+        Task<bool> AlreadyParticipate(Guid eventId, Guid[] participants);
+
         // Need to discuss
         // Task<bool> InviteParticipant(Guid eventId, Guid userId);
     }

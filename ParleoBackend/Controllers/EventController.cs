@@ -61,6 +61,12 @@ namespace ParleoBackend.Controllers
                     Constants.Errors.EXCEEDED_PARTICIPANTS_COUNT_LIMIT));
             }
 
+            if (! await _service.AlreadyParticipate(eventId, users))
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    Constants.Errors.USER_ALREADY_PARTICIPATE));
+            }
+
             var result = await _service.AddEventParticipant(eventId, users);
 
             return Ok();

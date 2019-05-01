@@ -124,5 +124,19 @@ namespace Parleo.BLL.Services
                 return true;
             }
         }
+
+        public async Task<bool> AlreadyParticipate(Guid eventId, Guid[] participants)
+        {
+            Event targetEvent = await _repository.GetEventAsync(eventId);
+
+            if (targetEvent.Participants.Any(p => participants.Any(id => p.UserId == id)))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }
