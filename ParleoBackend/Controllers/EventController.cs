@@ -77,6 +77,14 @@ namespace ParleoBackend.Controllers
         public async Task<IActionResult> GetEventsPageAsync(
             [FromQuery] EventFilterViewModel eventFilter)
         {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(eventFilter);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
             var result = await _service.GetEventsPageAsync(
@@ -99,6 +107,14 @@ namespace ParleoBackend.Controllers
             Guid eventId,
             [FromQuery] PageRequestViewModel pageRequest)
         {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(pageRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
             var participants = await _service.GetParticipantsPageAsync(
                 eventId, _mapper.Map<PageRequestModel>(pageRequest));
 
