@@ -17,12 +17,13 @@ namespace ParleoBackend.Services
             _jwtSettings = jwtSettings;
         }
 
-        public Claim[] GetClaims(UserModel user)
+        public virtual Claim[] GetClaims(UserModel user)
         {
             var claims = new Claim[]
             {
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString()),
+                new Claim("IsAuthorization", "true")
             };
 
             return claims;
