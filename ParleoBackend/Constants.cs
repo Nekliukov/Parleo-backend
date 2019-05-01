@@ -14,8 +14,10 @@
             public const string WRONG_GUID_FORMAT = "Wrong GUID format";
             public const string TOKEN_ID_NOT_MATCH_URL_ID = "Id from url do not match Id from token";
             public const string INVALID_LOCATION = "Invalid location format";
+
             public const string EVENT_NOT_FOUND = "Event with such id is not found";
             public const string EXCEEDED_PARTICIPANTS_COUNT_LIMIT = "Exceeded the limit of participants";
+            public const string NO_UPDATE_RIGHTS = "You are not an event creator";
           
             public const string EXPIRED_TOKEN = "Token expired";
             public const string NOT_VALID_TOKEN = "Token is not valid";

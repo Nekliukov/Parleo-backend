@@ -130,6 +130,19 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
+            var targetEvent = await _service.GetEventAsync(eventId);
+
+            if (targetEvent == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
+            }
+
+            if (targetEvent.Creator.Id != new Guid(
+                User.FindFirst(JwtRegisteredClaimNames.Jti).Value))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.NO_UPDATE_RIGHTS));
+            }
+
             var updateResult = await _service.UpdateEventAsync(eventId,
                 _mapper.Map<UpdateEventModel>(entity));
 
