@@ -145,23 +145,17 @@ namespace ParleoBackend.Controllers
             return Ok(new {token = tokenString});
         }
 
-        [HttpPut("{userId}")]
+        [HttpPut("current")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> EditAsync(
-            Guid userId,
             [FromBody] UpdateUserViewModel entity)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             if (!Guid.TryParse(id, out Guid userGuid))
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.WRONG_GUID_FORMAT));
-            }
-
-            if (!Guid.Equals(userId, userGuid))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ID_NOT_MATCH_URL_ID));
             }
 
             var validator = new UpdateUserViewModelValidator(_utilityService, _mapper);
@@ -251,9 +245,9 @@ namespace ParleoBackend.Controllers
             });
         }
 
-        [HttpPut("{userId}/image")]
+        [HttpPut("current/image")]
         [Authorize]
-        public async Task<IActionResult> AddUserAccountImage(Guid userId, IFormCollection formData)
+        public async Task<IActionResult> AddUserAccountImage(IFormCollection formData)
         {
             if (formData == null)
             {
@@ -271,11 +265,6 @@ namespace ParleoBackend.Controllers
             if (!Guid.TryParse(id, out Guid userGuid))
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
-            }
-
-            if (!Guid.Equals(userId, userGuid))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ID_NOT_MATCH_URL_ID));
             }
 
             UserModel user = await _accountService.GetUserByIdAsync(userGuid);
@@ -296,19 +285,14 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        [HttpPut("{userId}/location")]
+        [HttpPut("current/location")]
         [Authorize]
-        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] LocationViewModel location)
+        public async Task<IActionResult> UpdateUserLocation([FromBody] LocationViewModel location)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             if (!Guid.TryParse(id, out Guid userGuid))
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
-            }
-
-            if (!Guid.Equals(userId, userGuid))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ID_NOT_MATCH_URL_ID));
             }
 
             var validator = new LocationViewModelValidator();
