@@ -24,6 +24,7 @@ using ParleoBackend.Validators.Event;
 using ParleoBackend.Validators.Common;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
+using ParleoBackend.ViewModels.Pages;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -100,6 +101,7 @@ namespace ParleoBackend
             services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
             services.AddTransient<IValidator<UpdateUserViewModel>, UpdateUserViewModelValidator>();
             services.AddTransient<IValidator<LocationViewModel>, LocationViewModelValidator>();
+            services.AddTransient<IValidator<PageRequestViewModel>, PageRequestViewModelValidator>(); 
             ValidatorOptions.LanguageManager.Culture = new CultureInfo("en-GB");
             
             services.AddTransient<ClearExpiredTokenJob>();
