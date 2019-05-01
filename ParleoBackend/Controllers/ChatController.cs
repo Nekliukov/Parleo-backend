@@ -47,8 +47,9 @@ namespace ParleoBackend.Controllers
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             var chat = await _chatService.GetChatByIdAsync(chatId, new Guid(id));
-
-            return Ok(_mapper.Map<ChatViewModel>(chat));
+            return chat.CreatorId == null 
+                ? Ok(_mapper.Map<PersonalChatViewModel>(chat)) 
+                : Ok(_mapper.Map<EventChatViewModel>(chat));
         }
         
         [Authorize]

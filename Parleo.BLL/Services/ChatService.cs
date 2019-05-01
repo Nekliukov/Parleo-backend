@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -17,12 +19,18 @@ namespace Parleo.BLL.Services
     {
         private readonly IAccountService _accountService;
         private readonly IChatRepository _chatRepository;
+        private readonly IChatHelper _chatHelper;
         private readonly IMapper _mapper;
 
-        public ChatService(IAccountService accountService, IChatRepository chatRepository, IMapperFactory mapperFactory)
+        public ChatService(
+            IAccountService accountService, 
+            IChatRepository chatRepository, 
+            IMapperFactory mapperFactory, 
+            IChatHelper chatHelper)
         {
             _accountService = accountService;
             _chatRepository = chatRepository;
+            _chatHelper = chatHelper;
             _mapper = mapperFactory.GetMapper(typeof(BLServices).Name); ;
         }
         public async Task<ChatModel> GetChatWithUserAsync(Guid myId, Guid anotherUserId)
@@ -37,9 +45,12 @@ namespace Parleo.BLL.Services
                 {
                     myId,
                     anotherUser.Id
-                }, anotherUser.Name);
+                });
             }
-            return _mapper.Map<ChatModel>(chat);
+
+            var chatModel = _mapper.Map<ChatModel>(chat);
+            _chatHelper.GetChatDefinition(chatModel, myId);
+            return chatModel;
         }
 
         public async Task<ChatModel> GetChatByIdAsync(Guid chatId, Guid myUserId)
@@ -49,14 +60,19 @@ namespace Parleo.BLL.Services
             {
                 throw new AppException(ErrorType.InvalidId);
             }
-            return _mapper.Map<ChatModel>(chat);
+
+            var chatModel = _mapper.Map<ChatModel>(chat);
+            _chatHelper.GetChatDefinition(chatModel, myUserId);
+            return chatModel;
         }
 
         public async Task<PageModel<ChatModel>> GetChatPageAsync(Guid userId, PageRequestModel pageRequest)
         {
             var page = await _chatRepository.GetChatPageByUserId(userId, _mapper.Map<PageRequest>(pageRequest));
 
-            return _mapper.Map<PageModel<ChatModel>>(page);
+            var chatModel = _mapper.Map<PageModel<ChatModel>>(page);
+            _chatHelper.GetChatDefinition(chatModel.Entities, userId);
+            return chatModel;
         }
 
         public async Task AddMessagesAsync(Guid chatId, ICollection<MessageModel> messages)
