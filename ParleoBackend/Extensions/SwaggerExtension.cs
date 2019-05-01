@@ -13,6 +13,7 @@ namespace ParleoBackend.Extensions
     {
         public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
         {
+            services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1.0", new Info { Title = "Main API v1.1", Version = "v1.0" });
 
