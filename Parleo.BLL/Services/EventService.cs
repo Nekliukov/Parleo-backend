@@ -114,29 +114,15 @@ namespace Parleo.BLL.Services
         {
             Event targetEvent = await _repository.GetEventAsync(eventId);
 
-            if (targetEvent.Participants.Count() + participants.Count() > 
-                    targetEvent.MaxParticipants)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return ! (targetEvent.Participants.Count() + participants.Count() >
+                    targetEvent.MaxParticipants);
         }
 
         public async Task<bool> AlreadyParticipate(Guid eventId, Guid[] participants)
         {
             Event targetEvent = await _repository.GetEventAsync(eventId);
 
-            if (targetEvent.Participants.Any(p => participants.Any(id => p.UserId == id)))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return !targetEvent.Participants.Any(p => participants.Any(id => p.UserId == id));
         }
     }
 }
