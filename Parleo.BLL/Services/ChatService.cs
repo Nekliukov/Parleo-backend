@@ -48,6 +48,8 @@ namespace Parleo.BLL.Services
                 });
             }
 
+            //Delete this, when ef core fix stupid bug
+            chat = await _chatRepository.GetPrivateChatAsync(myId, anotherUserId);
             var chatModel = _mapper.Map<ChatModel>(chat);
             _chatHelper.GetChatDefinition(chatModel, myId);
             return chatModel;

@@ -14,6 +14,8 @@ namespace Parleo.BLL.Models.Entities
 
         public ICollection<MiniatureModel> Members { get; set; }
 
+        public MiniatureModel Event { get; set; }
+
         public Guid? CreatorId { get; set; }
 
         public MessageModel LastMessage { get; set; }

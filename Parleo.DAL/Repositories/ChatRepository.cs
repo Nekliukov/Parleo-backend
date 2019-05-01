@@ -118,9 +118,9 @@ namespace Parleo.DAL.Repositories
                     Chat = chat,
                     UserId = id
                 });
+                _context.Chat.Add(chat);
             }
 
-            _context.Chat.Add(chat);
             await _context.SaveChangesAsync();
             return chat;
         }

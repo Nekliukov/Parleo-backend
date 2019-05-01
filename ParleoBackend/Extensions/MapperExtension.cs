@@ -94,26 +94,20 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<MessageModel, MessageViewModel>();
                 mc.CreateMap<MessageViewModel, MessageModel>();
 
-                mc.CreateMap<ChatModel, EventChatViewModel>()
+                mc.CreateMap<ChatModel, ChatViewModel>()
                     .ForMember(ecvm => ecvm.Image, opt =>
-                        opt.MapFrom(cm =>
+                        opt.MapFrom(cm => cm.Event != null ?
                             FileExtension.GetFullFilePath(
-                                imageSettings.BaseUrl,
-                                imageSettings.EventSourceUrl,
-                                cm.Image)
-                        )
-                    );
-                mc.CreateMap<EventChatViewModel, ChatModel>();
+                                    imageSettings.BaseUrl,
+                                    imageSettings.EventSourceUrl,
+                                    cm.Event.Image)
+                            : FileExtension.GetFullFilePath(
+                            imageSettings.BaseUrl,
+                            imageSettings.EventSourceUrl,
+                            cm.Image)));
 
-                mc.CreateMap<ChatModel, PersonalChatViewModel>()
-                    .ForMember(pcvm => pcvm.Image, opt =>
-                        opt.MapFrom(cm =>
-                            FileExtension.GetFullFilePath(
-                                imageSettings.BaseUrl,
-                                imageSettings.AccountSourceUrl,
-                                cm.Image)
-                        ));
-                mc.CreateMap<PersonalChatViewModel, ChatModel>();
+                mc.CreateMap<ChatViewModel, ChatModel>();
+
 
                 mc.CreateMap<HobbyModel, HobbyViewModel>();
                 mc.CreateMap<HobbyViewModel, HobbyModel>();

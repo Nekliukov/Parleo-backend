@@ -24,7 +24,7 @@ namespace ParleoBackend.Extensions
         }
 
         public static string GetFullFilePath(string baseUrl, string folder, string fileName) => 
-            fileName != null
+            !string.IsNullOrEmpty(fileName)
             ? string.Format("{0}{1}/{2}", baseUrl, folder, fileName)
             : null;
     }

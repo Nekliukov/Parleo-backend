@@ -12,35 +12,33 @@ namespace Parleo.BLL.Helpers
 
         public void GetChatDefinition(ChatModel chat, Guid myId)
         {
-            FindChatName(chat, myId);
-            FindChatImage(chat, myId);
+            FetchChatName(chat, myId);
+            FetchChatImage(chat, myId);
         }
 
         public void GetChatDefinition(IEnumerable<ChatModel> chats, Guid myId)
         {
             foreach (var chat in chats)
             {
-                FindChatName(chat, myId);
-                FindChatImage(chat, myId);
+                FetchChatName(chat, myId);
+                FetchChatImage(chat, myId);
             }
             
         }
 
-        private static void FindChatImage(ChatModel chat, Guid myId)
+        private static void FetchChatImage(ChatModel chat, Guid myId)
         {
             if (string.IsNullOrEmpty(chat.Image))
             {
-                if (chat.CreatorId == null)
-                    chat.Image = chat.Members.FirstOrDefault(m => m.Id != myId)?.Image;
+                chat.Image = chat.CreatorId == null
+                    ? chat.Members.FirstOrDefault(m => m.Id != myId)?.Image
+                    : null;
             }
         }
-        private static void FindChatName(ChatModel chat, Guid myId)
+        private static void FetchChatName(ChatModel chat, Guid myId)
         {
             if (string.IsNullOrEmpty(chat.Name))
-            {
-                if (chat.CreatorId == null)
-                    chat.Name = chat.Members.FirstOrDefault(m => m.Id != myId)?.Name;
-            }
+                chat.Name = string.Join(", ",chat.Members.Where(m => m.Id != myId).Select(m => m.Name));
         }
     }
 }

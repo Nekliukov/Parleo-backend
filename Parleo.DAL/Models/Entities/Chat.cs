@@ -18,5 +18,6 @@ namespace Parleo.DAL.Models.Entities
 
         public ICollection<Message> Messages { get; set; }
 
+        public Event Event { get; set; }
     }
 }

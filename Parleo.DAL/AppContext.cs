@@ -48,7 +48,7 @@ namespace Parleo.DAL
 
             modelBuilder.Entity<Event>()
                 .HasOne(ev => ev.Chat)
-                .WithOne();  //Or withMany()
+                .WithOne(c => c.Event);  //Or withMany()
 
             modelBuilder.Entity<AccountToken>()
                 .HasOne(c => c.User)
