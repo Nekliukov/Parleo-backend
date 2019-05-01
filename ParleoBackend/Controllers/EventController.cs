@@ -117,8 +117,12 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
-            var createdEvent = await _service.CreateEventAsync(
-                _mapper.Map<CreateEventModel>(entity));
+            CreateEventModel createEventModel = new CreateEventModel();
+            _mapper.Map(entity, createEventModel);
+            createEventModel.CreatorId = new Guid(
+                User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+
+            var createdEvent = await _service.CreateEventAsync(createEventModel);
 
             return Ok(_mapper.Map<EventViewModel>(createdEvent));
         }

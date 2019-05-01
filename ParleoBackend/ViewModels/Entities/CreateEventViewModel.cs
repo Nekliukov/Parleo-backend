@@ -20,8 +20,6 @@ namespace ParleoBackend.ViewModels.Entities
 
         public DateTimeOffset? EndDate { get; set; }
 
-        public Guid CreatorId { get; set; }
-
         public string LanguageCode { get; set; }        
     }
 }
