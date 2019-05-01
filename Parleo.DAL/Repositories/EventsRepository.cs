@@ -44,9 +44,10 @@ namespace Parleo.DAL.Repositories
         public async Task<Event> CreateEventAsync(Event entity)
         {
             var createdEvent = _context.Event.Add(entity);
+
             await _context.SaveChangesAsync();
 
-            return createdEvent.Entity;
+            return await GetEventAsync(createdEvent.Entity.Id);
         }
 
         public async Task<Event> GetEventAsync(Guid id)
