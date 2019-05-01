@@ -12,7 +12,6 @@
             public const string USER_CREATION_FAILED = "Unable to create user, something went wrong";
             public const string USER_NOT_FOUND = "User is not found";
             public const string WRONG_GUID_FORMAT = "Wrong GUID format";
-            public const string TOKEN_ID_NOT_MATCH_URL_ID = "Id from url do not match Id from token";
             public const string INVALID_LOCATION = "Invalid location format";
 
             public const string EVENT_NOT_FOUND = "Event with such id is not found";

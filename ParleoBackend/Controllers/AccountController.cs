@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Parleo.BLL.Extensions;
 using ParleoBackend.Validators.Common;
+using ParleoBackend.Services;
 
 namespace ParleoBackend.Controllers
 {
@@ -33,6 +34,7 @@ namespace ParleoBackend.Controllers
         private readonly IEmailService _emailService;
         private readonly IJwtService _jwtService;
         private readonly IImageSettings _accountImageSettings;
+        private readonly IJwtSettings _jwtSettings;
         private readonly IUtilityService _utilityService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
@@ -44,7 +46,8 @@ namespace ParleoBackend.Controllers
             IEmailService emailService,
             ILogger<AccountController> logger,
             IImageSettings accountImageSettings,
-            IUtilityService utilityService
+            IUtilityService utilityService,
+            IJwtSettings jwtSettings
         )
         {
             _accountService = accountService;
@@ -54,10 +57,10 @@ namespace ParleoBackend.Controllers
             _emailService = emailService;
             _accountImageSettings = accountImageSettings;
             _utilityService = utilityService;
+            _jwtSettings = jwtSettings;
         }
 
         [HttpGet]
-        [Authorize]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUsersPageAsync(
@@ -96,6 +99,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RegisterAsync(UserRegistrationViewModel registrationViewModel)
         {
@@ -113,7 +117,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_CREATION_FAILED));
             }
 
-            string tokenString = _jwtService.GetJWTToken(user);
+            string tokenString = _jwtService.GetJWTToken(user, new EmailClaimsService(_jwtSettings));
             await _accountService.AddAccountTokenAsync(
                 new AccountTokenModel()
                 {
@@ -127,6 +131,7 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> LoginAsync(UserLoginViewModel loginViewModel)
         {
@@ -148,28 +153,21 @@ namespace ParleoBackend.Controllers
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_PASSWORD));
             }
-            string tokenString = _jwtService.GetJWTToken(user);
+            string tokenString = _jwtService.GetJWTToken(user, new ClaimsService(_jwtSettings));
 
             return Ok(new {token = tokenString});
         }
 
-        [HttpPut("{userId}")]
-        [Authorize]
+        [HttpPut("current")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> EditAsync(
-            Guid userId,
             [FromBody] UpdateUserViewModel entity)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             if (!Guid.TryParse(id, out Guid userGuid))
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.WRONG_GUID_FORMAT));
-            }
-
-            if (!Guid.Equals(userId, userGuid))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ID_NOT_MATCH_URL_ID));
             }
 
             var validator = new UpdateUserViewModelValidator(_utilityService, _mapper);
@@ -192,7 +190,6 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpGet("{userId}")]
-        [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserByIdAsync(Guid userId)
         {
@@ -210,7 +207,6 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpGet("me")]
-        [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserByTokenAsync()
         {
@@ -230,6 +226,7 @@ namespace ParleoBackend.Controllers
 
 
         [HttpGet("activate")]
+        [AllowAnonymous]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetActivatedUserAccount(string token)
         {
@@ -255,13 +252,12 @@ namespace ParleoBackend.Controllers
 
             return Ok(new {
                 id = user.Id,
-                token = _jwtService.GetJWTToken(user)
+                token = _jwtService.GetJWTToken(user, new ClaimsService(_jwtSettings))
             });
         }
 
-        [HttpPut("{userId}/image")]
-        [Authorize]
-        public async Task<IActionResult> AddUserAccountImage(Guid userId, IFormCollection formData)
+        [HttpPut("current/image")]
+        public async Task<IActionResult> AddUserAccountImage(IFormCollection formData)
         {
             if (formData == null)
             {
@@ -279,11 +275,6 @@ namespace ParleoBackend.Controllers
             if (!Guid.TryParse(id, out Guid userGuid))
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
-            }
-
-            if (!Guid.Equals(userId, userGuid))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ID_NOT_MATCH_URL_ID));
             }
 
             UserModel user = await _accountService.GetUserByIdAsync(userGuid);
@@ -304,19 +295,13 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        [HttpPut("{userId}/location")]
-        [Authorize]
-        public async Task<IActionResult> UpdateUserLocation(Guid userId, [FromBody] LocationViewModel location)
+        [HttpPut("current/location")]
+        public async Task<IActionResult> UpdateUserLocation([FromBody] LocationViewModel location)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             if (!Guid.TryParse(id, out Guid userGuid))
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
-            }
-
-            if (!Guid.Equals(userId, userGuid))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ID_NOT_MATCH_URL_ID));
             }
 
             var validator = new LocationViewModelValidator();
