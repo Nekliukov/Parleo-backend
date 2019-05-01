@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ParleoBackend.ViewModels.Entities
 {
@@ -11,7 +9,7 @@ namespace ParleoBackend.ViewModels.Entities
 
         public string Name { get; set; }
 
-        public ICollection<MiniatureViewModel> Members { get; set; }
+        public ICollection<UserMiniatureViewModel> Members { get; set; }
 
         public Guid? CreatorId { get; set; }
 

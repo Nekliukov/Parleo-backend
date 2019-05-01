@@ -21,13 +21,13 @@ namespace ParleoBackend.ViewModels.Entities
 
         public string Email { get; set; }
 
-        public ICollection<MiniatureViewModel> CreatedEvents { get; set; }
+        public ICollection<EventMiniatureViewModel> CreatedEvents { get; set; }
 
         public ICollection<UserLanguageViewModel> Languages { get; set; }
 
-        public ICollection<MiniatureViewModel> Friends { get; set; }
+        public ICollection<UserMiniatureViewModel> Friends { get; set; }
 
-        public ICollection<MiniatureViewModel> AttendingEvents { get; set; }
+        public ICollection<EventMiniatureViewModel> AttendingEvents { get; set; }
 
         public ICollection<HobbyViewModel> Hobbies { get; set; }
     }

@@ -24,6 +24,9 @@ using ParleoBackend.Validators.Event;
 using ParleoBackend.Validators.Common;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace ParleoBackend
 {
@@ -79,8 +82,16 @@ namespace ParleoBackend
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
             WebServices.AddServices(services);
 
+            var policy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireClaim("IsAuthorization", "true")
+                .Build();
+
             services
-                .AddMvc()
+                .AddMvc(options =>
+                {
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             services.AddTransient<IValidator<UpdateEventViewModel>, UpdateEventViewModelValidator>();
