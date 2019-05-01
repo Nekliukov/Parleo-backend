@@ -122,7 +122,7 @@ namespace Parleo.BLL.Services
         {
             Event targetEvent = await _repository.GetEventAsync(eventId);
 
-            return !targetEvent.Participants.Any(p => participants.Any(id => p.UserId == id));
+            return !targetEvent.Participants.Any(p => participants.Contains(p.UserId));
         }
     }
 }
