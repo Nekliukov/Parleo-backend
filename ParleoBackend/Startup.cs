@@ -27,6 +27,7 @@ using ParleoBackend.ViewModels.Pages;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace ParleoBackend
 {
@@ -107,7 +108,7 @@ namespace ParleoBackend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -153,6 +154,7 @@ namespace ParleoBackend
                 c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Swagger XML Api Demo v1.0");
             });
 
+            loggerFactory.AddConsole();
             JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
         }
 
