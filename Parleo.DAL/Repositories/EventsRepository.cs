@@ -216,7 +216,8 @@ namespace Parleo.DAL.Repositories
                 .Include(e => e.Participants).ThenInclude(ue => ue.User)
                 .Include(e => e.Language)
                 .Include(e => e.Creator)
-                .Where(e => e.Participants.Any(ue => ue.UserId == userId))
+                .Where(e => e.Participants.Any(
+                    ue => ue.UserId == userId && e.CreatorId != userId))
                 .ToArrayAsync();
 
             int totalAmount = AttendingEvents.Count();
