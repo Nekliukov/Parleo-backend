@@ -23,6 +23,7 @@ using System.IO;
 using Parleo.BLL.Extensions;
 using ParleoBackend.Validators.Common;
 using ParleoBackend.Services;
+using ImageMagick;
 
 namespace ParleoBackend.Controllers
 {
@@ -257,19 +258,19 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPut("current/image")]
-        public async Task<IActionResult> AddUserAccountImage(IFormCollection formData)
+        public async Task<IActionResult> AddUserAccountImage(IFormFile image)
         {
-            if (formData == null)
-            {
-                return BadRequest();
-            }
+            //if (formData == null)
+            //{
+            //    return BadRequest();
+            //}
 
-            IFormFile image = formData.Files.GetFile("Image");
+            //IFormFile image = formData.Files.GetFile("Image");
 
-            if (image == null)
-            {
-                return BadRequest();
-            }
+            //if (image == null)
+            //{
+            //    return BadRequest();
+            //}
 
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             if (!Guid.TryParse(id, out Guid userGuid))
@@ -286,6 +287,11 @@ namespace ParleoBackend.Controllers
             }
 
             string accountImageUniqueName = await image.SaveAsync(accountImagePath);
+
+            FileInfo file = new FileInfo(Path.Combine(accountImagePath, accountImageUniqueName));
+            ImageOptimizer optimizer = new ImageOptimizer();
+            optimizer.LosslessCompress(file);
+            file.Refresh();
 
             await _accountService.InsertUserAccountImageAsync(
                 accountImageUniqueName,
