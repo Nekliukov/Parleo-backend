@@ -35,7 +35,7 @@ namespace Parleo.BLL.Interfaces
         Task<PageModel<EventModel>> GetCreatedEvents(
             Guid userId, PageRequestModel pageRequest);
 
-        Task<PageModel<EventModel>> GetAttendingEvents(
+        Task<PageModel<EventModel>> GetAttendedEvents(
             Guid userId, PageRequestModel pageRequest);
 
         // Need to discuss

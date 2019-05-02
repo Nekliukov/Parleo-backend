@@ -114,9 +114,9 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<PageViewModel<EventViewModel>>(createdEvents));
         }
 
-        [HttpGet("attendingEvents")]
+        [HttpGet("attendedEvents")]
         [Authorize]
-        public async Task<IActionResult> GetAttendingEvents(
+        public async Task<IActionResult> GetAttendedEvents(
             [FromQuery] PageRequestViewModel pageRequest)
         {
             var validator = new PageRequestViewModelValidator();
@@ -129,7 +129,7 @@ namespace ParleoBackend.Controllers
 
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
 
-            var attendingEvents = await _service.GetAttendingEvents(new Guid(id),
+            var attendingEvents = await _service.GetAttendedEvents(new Guid(id),
                 _mapper.Map<PageRequestModel>(pageRequest));
 
             return Ok(_mapper.Map<PageViewModel<EventViewModel>>(attendingEvents));

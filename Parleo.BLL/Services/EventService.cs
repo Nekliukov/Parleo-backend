@@ -134,9 +134,9 @@ namespace Parleo.BLL.Services
             return _mapper.Map<PageModel<EventModel>>(createdEventPageModel);
         }
 
-        public async Task<PageModel<EventModel>> GetAttendingEvents(Guid userId, PageRequestModel pageRequest)
+        public async Task<PageModel<EventModel>> GetAttendedEvents(Guid userId, PageRequestModel pageRequest)
         {
-            var attendingEventPageModel = await _repository.GetAttendingEvents(
+            var attendingEventPageModel = await _repository.GetAttendedEvents(
                 userId, _mapper.Map<PageRequest>(pageRequest));
 
             return _mapper.Map<PageModel<EventModel>>(attendingEventPageModel);

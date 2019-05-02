@@ -209,7 +209,7 @@ namespace Parleo.DAL.Repositories
             };
         }
 
-        public async Task<Page<Event>> GetAttendingEvents(
+        public async Task<Page<Event>> GetAttendedEvents(
             Guid userId, PageRequest pageRequest)
         {
             var AttendingEvents = await _context.Event.Include(e => e.Creator)

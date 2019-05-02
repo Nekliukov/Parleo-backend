@@ -29,7 +29,7 @@ namespace Parleo.DAL.Interfaces
         Task<Page<Event>> GetCreatedEvents(
             Guid userId, PageRequest pageRequest);
 
-        Task<Page<Event>> GetAttendingEvents(
+        Task<Page<Event>> GetAttendedEvents(
             Guid userId, PageRequest pageRequest);
 
         // Need to discuss
