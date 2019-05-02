@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL;
 using Parleo.BLL.Extensions;
@@ -28,6 +27,7 @@ using ParleoBackend.ViewModels.Pages;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace ParleoBackend
 {
@@ -142,21 +142,20 @@ namespace ParleoBackend
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
+            app.ConfigureExceptionHandler();
             app.UseAzureSignalR(route =>
             {
                 route.MapHub<ChatHub>("/chathub");
             });
             app.UseMvc();
             app.UseSwagger();
-
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Swagger XML Api Demo v1.0");
             });
 
-            JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
-
             loggerFactory.AddConsole();
+            JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
         }
 
         private void ConfigureMapperFactory(IServiceCollection services)
