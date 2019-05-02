@@ -26,6 +26,12 @@ namespace Parleo.DAL.Interfaces
 
         Task InsertImageNameAsync(string imageName, Guid eventId);
 
+        Task<Page<Event>> GetCreatedEvents(
+            Guid userId, PageRequest pageRequest);
+
+        Task<Page<Event>> GetAttendingEvents(
+            Guid userId, PageRequest pageRequest);
+
         // Need to discuss
         // Task<bool> InviteParticipant(Guid eventId, Guid userId);
     }
