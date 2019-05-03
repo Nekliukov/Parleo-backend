@@ -11,6 +11,7 @@ using Parleo.DAL.Models.Filters;
 using Parleo.DAL.Models.Pages;
 using System.Linq;
 using Parleo.BLL.Extensions;
+using System.Collections.Generic;
 
 namespace Parleo.BLL.Services
 {
@@ -123,6 +124,22 @@ namespace Parleo.BLL.Services
             Event targetEvent = await _repository.GetEventAsync(eventId);
 
             return !targetEvent.Participants.Any(p => participants.Contains(p.UserId));
+        }
+
+        public async Task<PageModel<EventModel>> GetCreatedEvents(Guid userId, PageRequestModel pageRequest)
+        {
+            var createdEventPageModel = await _repository.GetCreatedEvents(
+                userId, _mapper.Map<PageRequest>(pageRequest));
+
+            return _mapper.Map<PageModel<EventModel>>(createdEventPageModel);
+        }
+
+        public async Task<PageModel<EventModel>> GetAttendingEvents(Guid userId, PageRequestModel pageRequest)
+        {
+            var attendingEventPageModel = await _repository.GetAttendingEvents(
+                userId, _mapper.Map<PageRequest>(pageRequest));
+
+            return _mapper.Map<PageModel<EventModel>>(attendingEventPageModel);
         }
     }
 }

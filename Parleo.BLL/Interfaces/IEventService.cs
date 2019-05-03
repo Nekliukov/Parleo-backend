@@ -32,6 +32,12 @@ namespace Parleo.BLL.Interfaces
 
         Task<bool> AlreadyParticipate(Guid eventId, Guid[] participants);
 
+        Task<PageModel<EventModel>> GetCreatedEvents(
+            Guid userId, PageRequestModel pageRequest);
+
+        Task<PageModel<EventModel>> GetAttendingEvents(
+            Guid userId, PageRequestModel pageRequest);
+
         // Need to discuss
         // Task<bool> InviteParticipant(Guid eventId, Guid userId);
     }
