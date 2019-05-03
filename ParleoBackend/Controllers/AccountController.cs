@@ -287,6 +287,8 @@ namespace ParleoBackend.Controllers
 
             string accountImageUniqueName = await image.SaveAsync(accountImagePath);
 
+            FileExtension.OptimizeImage(Path.Combine(accountImagePath, accountImageUniqueName));
+
             await _accountService.InsertUserAccountImageAsync(
                 accountImageUniqueName,
                 userGuid
