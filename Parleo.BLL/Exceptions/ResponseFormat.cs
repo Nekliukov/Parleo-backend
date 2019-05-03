@@ -1,4 +1,6 @@
-﻿namespace Parleo.BLL.Exceptions
+﻿using Newtonsoft.Json;
+
+namespace Parleo.BLL.Exceptions
 {
     public class ErrorResponseFormat
     {
@@ -7,6 +9,11 @@
         public ErrorResponseFormat(string errorMessage)
         {
             Error = errorMessage;
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

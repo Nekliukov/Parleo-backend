@@ -93,6 +93,48 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<PageViewModel<EventViewModel>>(result));
         }
 
+        [HttpGet("createdEvents")]
+        [Authorize]
+        public async Task<IActionResult> GetCreatedEvents(
+            [FromQuery] PageRequestViewModel pageRequest)
+        {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(pageRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+
+            var createdEvents = await _service.GetCreatedEvents(new Guid(id), 
+                _mapper.Map<PageRequestModel>(pageRequest));
+
+            return Ok(_mapper.Map<PageViewModel<EventViewModel>>(createdEvents));
+        }
+
+        [HttpGet("attendingEvents")]
+        [Authorize]
+        public async Task<IActionResult> GetAttendingEvents(
+            [FromQuery] PageRequestViewModel pageRequest)
+        {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(pageRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+
+            var attendingEvents = await _service.GetAttendingEvents(new Guid(id),
+                _mapper.Map<PageRequestModel>(pageRequest));
+
+            return Ok(_mapper.Map<PageViewModel<EventViewModel>>(attendingEvents));
+        }
+
         [HttpGet("{eventId}")]
         [Authorize]
         public async Task<ActionResult> GetEventAsync(Guid eventId)
@@ -216,6 +258,8 @@ namespace ParleoBackend.Controllers
             }
 
             string eventImageUniqueName = await image.SaveAsync(eventImagePath);
+
+            FileExtension.OptimizeImage(Path.Combine(eventImagePath, eventImageUniqueName));
 
             await _service.InsertEventImageAsync(
                 eventImageUniqueName,

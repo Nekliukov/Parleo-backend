@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Exceptions;
@@ -12,6 +13,7 @@ using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Pages;
 using ParleoBackend.Contracts;
 using ParleoBackend.Hubs;
+using ParleoBackend.Validators.Common;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Pages;
 
@@ -35,6 +37,13 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<IActionResult> GetChatPage([FromQuery] PageRequestViewModel pageRequest)
         {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(pageRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             var chatsModel = await _chatService.GetChatPageAsync(new Guid(id), _mapper.Map<PageRequestModel>(pageRequest));
 
@@ -55,6 +64,14 @@ namespace ParleoBackend.Controllers
         [HttpGet("{chatId}/messages")]
         public async Task<IActionResult> GetMessagePage(Guid chatId, [FromQuery] PageRequestViewModel pageRequest)
         {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(pageRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
 
             var messages = await _chatService.GetMessagePageAsync(chatId, new Guid(id), _mapper.Map<PageRequestModel>(pageRequest));

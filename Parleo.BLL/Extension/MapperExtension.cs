@@ -36,14 +36,6 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<DataAccessUser, UserModel>()
                     .ForMember(ui => ui.Email,
                         opt => opt.MapFrom(uivm => uivm.Credentials.Email))
-                    .ForMember(um => um.CreatedEvents,
-                        opt => opt.MapFrom(u =>
-                            u.CreatedEvents.Select(e => new MiniatureModel
-                            {
-                                Id = e.Id,
-                                Image = e.Image,
-                                Name = e.Name
-                            })))
                     .ForMember(um => um.Friends,
                         opt => opt.MapFrom(u =>
                             u.Friends.Select(f => new MiniatureModel
@@ -51,14 +43,6 @@ namespace Parleo.BLL.Extensions
                                 Id = f.UserToId,
                                 Image = f.UserTo.AccountImage,
                                 Name = f.UserTo.Name
-                            })))
-                     .ForMember(um => um.AttendingEvents, 
-                        opt => opt.MapFrom(u => 
-                        u.AttendingEvents.Select(e => new MiniatureModel
-                            {
-                                Id = e.EventId,
-                                Image = e.Event.Image,
-                                Name = e.Event.Name
                             })));
 
                 mc.CreateMap<UpdateUserModel, DataAccessUser>()
@@ -120,14 +104,22 @@ namespace Parleo.BLL.Extensions
 
                 mc.CreateMap<Chat, ChatModel>()
                     .ForMember(cm => cm.LastMessage,
-                        opt => opt.MapFrom(c => c.Messages.FirstOrDefault()))
+                        opt => opt.MapFrom(c => c.Messages != null ? c.Messages.FirstOrDefault() : null))
                     .ForMember(cm => cm.Members, opt => opt.MapFrom(c => c.Members
                         .Select(m => new MiniatureModel()
                         {
                             Id = m.User.Id,
                             Image = m.User.AccountImage,
                             Name = m.User.Name
-                        })));
+                        })))
+                    .ForMember(cm => cm.Event, 
+                    opt => opt.MapFrom(c => c.Event != null 
+                    ? new MiniatureModel()
+                    {
+                        Id = c.Event.Id,
+                        Image = c.Event.Image,
+                        Name = c.Event.Name
+                    } : null));
                 mc.CreateMap<ChatModel, Chat>();
 
                 mc.CreateMap<DataAccessUserHobby, HobbyModel>()
