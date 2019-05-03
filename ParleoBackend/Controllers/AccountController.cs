@@ -303,5 +303,36 @@ namespace ParleoBackend.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("addFriend/{userToId}")]
+        [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SendFriendshipRequest(Guid userToId)
+        {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if(id == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            Guid userFromId = new Guid(id);
+            bool isSent = false;
+
+            if(userFromId != null)
+            {
+                isSent = await _accountService.AddFriendAsync(userFromId, userToId);
+            }
+            else
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+            
+            if (!isSent)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.FRIEND_REQUSET_FAILED));
+            }
+
+            return NoContent();
+        }
     }
 }

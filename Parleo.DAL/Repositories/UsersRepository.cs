@@ -48,7 +48,6 @@ namespace Parleo.DAL.Repositories
                 .Include(u => u.Hobbies)
                     .ThenInclude(uh => uh.Hobby)
                         .ThenInclude(h => h.Category)
-                .Include(u => u.Friends)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.AttendingEvents)
                 .FirstOrDefaultAsync();
@@ -71,13 +70,12 @@ namespace Parleo.DAL.Repositories
                 .Include(u => u.Languages)
                 .ThenInclude(ul => ul.Language)
                 .Include(u => u.CreatedEvents)
-                .Include(u => u.Friends)
-                .ThenInclude(f => f.UserTo)
                 .Include(u => u.Credentials)
                 .Include(u => u.Hobbies)
                     .ThenInclude(h => h.Hobby)
                 .ToListAsync();
 
+            IncludeUserFriends(users);
             int totalAmount = users.Count();
 
             if (userFilter.PageSize == null)
@@ -98,15 +96,18 @@ namespace Parleo.DAL.Repositories
 
         public async Task<User> GetAsync(Guid id)
         {
-            return await _context.User.Include(u => u.Credentials)
+            var result = await _context.User.Include(u => u.Credentials)
                 .Include(u => u.Languages)
                 .Include(u => u.Hobbies)
                     .ThenInclude(uh => uh.Hobby)
                         .ThenInclude(h => h.Category)
-                .Include(u => u.Friends)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.AttendingEvents)
                 .FirstOrDefaultAsync(user => user.Id == id);
+
+            IncludeUserFriends(new List<User>() { result });
+
+            return result;
         }
 
 
@@ -166,6 +167,51 @@ namespace Parleo.DAL.Repositories
                 .Any(token => token.User.Credentials.Email == email);
         }
 
+        public async Task<bool> AddFriendAsync(Guid userFromId, Guid userToId)
+        {
+            UserFriends userFriends = await CreateUserFriendsEntityAsync(userFromId, userToId);
+            if (_context.UserFriends.Any(uf => // if friend is already added
+                Equals(userFromId, uf.UserFromId) && Equals(userToId, uf.UserToId)))
+            {
+                return true; // nothing changes
+            }
+
+            try
+            {
+                _context.UserFriends.Add(userFriends);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #region Private methods
+
+        private async Task<UserFriends> CreateUserFriendsEntityAsync(Guid userFromId, Guid userToId)
+        {
+            return new UserFriends()
+            {
+                UserFromId = userFromId,
+                UserFrom = await _context.User.FirstOrDefaultAsync(user => user.Id == userFromId),
+                UserToId = userToId,
+                UserTo = await _context.User.FirstOrDefaultAsync(user => user.Id == userToId),
+            };
+        }
+
+        private void IncludeUserFriends(List<User> users)
+        {
+            foreach (var user in users)
+            {
+                user.Friends = _context.UserFriends.Where(uf => uf.UserFromId == user.Id)
+                    .Include(friends => friends.UserTo)
+                    .ToList();
+            }
+        }
+
         private bool LevelInRange(UserLanguage userLanguage, int? minLevel)
         {
             return minLevel != null ? userLanguage.Level >= minLevel : true;
@@ -178,5 +224,7 @@ namespace Parleo.DAL.Repositories
 
             return DateTime.Now.DayOfYear < birth.DayOfYear ? age - 1 : age;
         }
+
+        #endregion
     }
 }

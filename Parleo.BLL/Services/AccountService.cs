@@ -11,6 +11,7 @@ using Parleo.BLL.Models.Pages;
 using Parleo.DAL.Models.Filters;
 using Parleo.BLL.Extensions;
 using Parleo.DAL.Helpers;
+using System.Collections.Generic;
 
 namespace Parleo.BLL.Services
 {
@@ -169,6 +170,16 @@ namespace Parleo.BLL.Services
         public async Task<bool> CheckUserHasTokenAsync(string email)
         {
             return await _repository.CheckUserHasTokenAsync(email);
+        }
+
+        public async Task<bool> AddFriendAsync(Guid userFromId, Guid userToId)
+        {
+            if (Equals(userFromId, userToId))
+            {
+                return false;
+            }
+
+            return await _repository.AddFriendAsync(userFromId, userToId);
         }
     }
 }
