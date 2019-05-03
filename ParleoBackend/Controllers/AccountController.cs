@@ -72,6 +72,14 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(userFilter);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
             var currentUser = await _accountService.GetUserByIdAsync(new Guid(id));
             var users = await _accountService.GetUsersPageAsync(
                 _mapper.Map<UserFilterModel>(userFilter), new Guid(id));
@@ -278,6 +286,8 @@ namespace ParleoBackend.Controllers
             }
 
             string accountImageUniqueName = await image.SaveAsync(accountImagePath);
+
+            FileExtension.OptimizeImage(Path.Combine(accountImagePath, accountImageUniqueName));
 
             await _accountService.InsertUserAccountImageAsync(
                 accountImageUniqueName,

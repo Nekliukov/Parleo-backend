@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL;
 using Parleo.BLL.Extensions;
@@ -24,9 +23,14 @@ using ParleoBackend.Validators.Event;
 using ParleoBackend.Validators.Common;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
+using ParleoBackend.ViewModels.Pages;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.Linq;
+using System.IO.Compression;
 
 namespace ParleoBackend
 {
@@ -94,15 +98,16 @@ namespace ParleoBackend
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddTransient<IValidator<UpdateEventViewModel>, UpdateEventViewModelValidator>();
-            services.AddTransient<IValidator<CreateEventViewModel>, CreateEventViewModelValidator>();
-            services.AddTransient<IValidator<UserRegistrationViewModel>, UserRegistrationViewModelValidator>();
-            services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
-            services.AddTransient<IValidator<UpdateUserViewModel>, UpdateUserViewModelValidator>();
-            services.AddTransient<IValidator<LocationViewModel>, LocationViewModelValidator>();
-            ValidatorOptions.LanguageManager.Culture = new CultureInfo("en-GB");
-            
-            services.AddTransient<ClearExpiredTokenJob>();
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<GzipCompressionProvider>();
+                options.MimeTypes = new[] {"image/jpg", "image/jpeg", "image/png","image/svg+xml"};
+                options.EnableForHttps = true;
+            });
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.Optimal;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -117,6 +122,8 @@ namespace ParleoBackend
             {
                 app.UseHsts();
             }
+
+            app.UseResponseCompression();
 
             IImageSettings imageSettings = new ImageSettings(Configuration);
             System.IO.Directory.CreateDirectory(imageSettings.EventDestPath);
@@ -140,21 +147,20 @@ namespace ParleoBackend
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
+            app.ConfigureExceptionHandler();
             app.UseAzureSignalR(route =>
             {
                 route.MapHub<ChatHub>("/chathub");
             });
             app.UseMvc();
             app.UseSwagger();
-
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Swagger XML Api Demo v1.0");
             });
 
-            JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
-
             loggerFactory.AddConsole();
+            JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
         }
 
         private void ConfigureMapperFactory(IServiceCollection services)
