@@ -217,6 +217,9 @@ namespace ParleoBackend.Controllers
 
             string eventImageUniqueName = await image.SaveAsync(eventImagePath);
 
+            FileInfo file = new FileInfo(Path.Combine(eventImagePath, eventImageUniqueName));
+            file.OptimizeImage();
+
             await _service.InsertEventImageAsync(
                 eventImageUniqueName,
                 eventId

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ImageMagick;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,6 +22,19 @@ namespace ParleoBackend.Extensions
             }
 
             return imageUniqueName;
+        }
+
+        public static void OptimizeImage(this FileInfo fileInfo)
+        {
+            ImageOptimizer optimizer = new ImageOptimizer();
+            optimizer.Compress(fileInfo);
+            fileInfo.Refresh();
+            using (MagickImage mImage = new MagickImage(fileInfo))
+            {
+                mImage.Resize(new MagickGeometry(1920, 1080));
+                mImage.Write(fileInfo);
+            }
+            fileInfo.Refresh();
         }
 
         public static string GetFullFilePath(string baseUrl, string folder, string fileName) => 
