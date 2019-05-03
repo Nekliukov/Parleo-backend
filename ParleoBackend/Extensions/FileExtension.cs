@@ -24,8 +24,15 @@ namespace ParleoBackend.Extensions
             return imageUniqueName;
         }
 
-        public static void OptimizeImage(this FileInfo fileInfo)
+        public static void OptimizeImage(string path)
         {
+            FileInfo fileInfo = new FileInfo(path);
+
+            if (!fileInfo.Exists)
+            {
+                return;
+            }
+
             ImageOptimizer optimizer = new ImageOptimizer();
             optimizer.Compress(fileInfo);
             fileInfo.Refresh();

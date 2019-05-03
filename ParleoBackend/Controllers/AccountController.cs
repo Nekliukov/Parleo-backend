@@ -276,7 +276,7 @@ namespace ParleoBackend.Controllers
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
-            
+
             UserModel user = await _accountService.GetUserByIdAsync(userGuid);
 
             string accountImagePath = _accountImageSettings.AccountDestPath;
@@ -287,8 +287,7 @@ namespace ParleoBackend.Controllers
 
             string accountImageUniqueName = await image.SaveAsync(accountImagePath);
 
-            FileInfo file = new FileInfo(Path.Combine(accountImagePath, accountImageUniqueName));
-            file.OptimizeImage();
+            FileExtension.OptimizeImage(Path.Combine(accountImagePath, accountImageUniqueName));
 
             await _accountService.InsertUserAccountImageAsync(
                 accountImageUniqueName,
