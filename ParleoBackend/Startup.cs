@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Parleo.BLL;
 using Parleo.BLL.Extensions;
@@ -24,6 +23,11 @@ using ParleoBackend.Validators.Event;
 using ParleoBackend.Validators.Common;
 using ParleoBackend.Validators.User;
 using ParleoBackend.ViewModels.Entities;
+using ParleoBackend.ViewModels.Pages;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace ParleoBackend
 {
@@ -79,8 +83,16 @@ namespace ParleoBackend
             DalServices.AddServices(services, Configuration.GetConnectionString("DefaultConnection"));
             WebServices.AddServices(services);
 
+            var policy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireClaim("IsAuthorization", "true")
+                .Build();
+
             services
-                .AddMvc()
+                .AddMvc(options =>
+                {
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             services.AddTransient<IValidator<UpdateEventViewModel>, UpdateEventViewModelValidator>();
@@ -89,6 +101,7 @@ namespace ParleoBackend
             services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
             services.AddTransient<IValidator<UpdateUserViewModel>, UpdateUserViewModelValidator>();
             services.AddTransient<IValidator<LocationViewModel>, LocationViewModelValidator>();
+            services.AddTransient<IValidator<PageRequestViewModel>, PageRequestViewModelValidator>(); 
             ValidatorOptions.LanguageManager.Culture = new CultureInfo("en-GB");
             
             services.AddTransient<ClearExpiredTokenJob>();
@@ -129,21 +142,20 @@ namespace ParleoBackend
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
+            app.ConfigureExceptionHandler();
             app.UseAzureSignalR(route =>
             {
                 route.MapHub<ChatHub>("/chathub");
             });
             app.UseMvc();
             app.UseSwagger();
-
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger XML Api Demo v1");
+                c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Swagger XML Api Demo v1.0");
             });
 
-            JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
-
             loggerFactory.AddConsole();
+            JobManager.Initialize(new BackgroundWorkerRegistry(app.ApplicationServices));
         }
 
         private void ConfigureMapperFactory(IServiceCollection services)
@@ -151,7 +163,7 @@ namespace ParleoBackend
             var mapperFactory = new MapperFactory();
 
             mapperFactory.Mappers.Add(typeof(BLServices).Name, BLServices.GetMapper());
-            mapperFactory.Mappers.Add(typeof(WebServices).Name, WebServices.GetMapper());
+            mapperFactory.Mappers.Add(typeof(WebServices).Name, WebServices.GetMapper(Configuration));
 
             services.AddSingleton<IMapperFactory>(mapperFactory);
         }

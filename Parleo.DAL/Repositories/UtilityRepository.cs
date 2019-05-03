@@ -26,5 +26,15 @@ namespace Parleo.DAL.Repositories
         {
             return await _context.Hobby.Include(hobby => hobby.Category).ToListAsync();
         }
+
+        public async Task<bool> AllLanguagesExistAsync(ICollection<Language> languages)
+        {
+            return await _context.Language.CountAsync(l => languages.Any(lan => lan.Code == l.Code)) == languages.Count;
+        }
+
+        public async Task<bool> AllHobbiesExistAsync(ICollection<Hobby> hobbies)
+        {
+            return await _context.Hobby.CountAsync(hobby => hobbies.Any(h=> h.Name == hobby.Name)) == hobbies.Count;
+        }
     }
 }

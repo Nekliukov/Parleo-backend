@@ -22,10 +22,10 @@ namespace ParleoBackend.Services
             _claimsService = claimsService;
         }
 
-        public string GetJWTToken(UserModel user)
+        public string GetJWTToken(UserModel user, IClaimsService claimsService)
         {
             var token = new JwtSecurityToken(
-                claims: _claimsService.GetClaims(user),
+                claims: claimsService.GetClaims(user),
                 expires: DateTime.Now.AddMonths(1),
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.JWTKey)),

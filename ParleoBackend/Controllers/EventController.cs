@@ -50,6 +50,23 @@ namespace ParleoBackend.Controllers
         [Authorize]
         public async Task<ActionResult> AddEventParticipants(Guid eventId, Guid[] users)
         {
+            if (eventId == null || await _service.GetEventAsync(eventId) == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
+            }
+
+            if (! await _service.CanParticipate(eventId, users))
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    Constants.Errors.EXCEEDED_PARTICIPANTS_COUNT_LIMIT));
+            }
+
+            if (! await _service.AlreadyParticipate(eventId, users))
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    Constants.Errors.USER_ALREADY_PARTICIPATE));
+            }
+
             var result = await _service.AddEventParticipant(eventId, users);
 
             return Ok();
@@ -60,6 +77,14 @@ namespace ParleoBackend.Controllers
         public async Task<IActionResult> GetEventsPageAsync(
             [FromQuery] EventFilterViewModel eventFilter)
         {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(eventFilter);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
             var result = await _service.GetEventsPageAsync(
@@ -82,6 +107,14 @@ namespace ParleoBackend.Controllers
             Guid eventId,
             [FromQuery] PageRequestViewModel pageRequest)
         {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(pageRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
             var participants = await _service.GetParticipantsPageAsync(
                 eventId, _mapper.Map<PageRequestModel>(pageRequest));
 
@@ -100,8 +133,12 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
-            var createdEvent = await _service.CreateEventAsync(
-                _mapper.Map<CreateEventModel>(entity));
+            CreateEventModel createEventModel = new CreateEventModel();
+            _mapper.Map(entity, createEventModel);
+            createEventModel.CreatorId = new Guid(
+                User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+
+            var createdEvent = await _service.CreateEventAsync(createEventModel);
 
             return Ok(_mapper.Map<EventViewModel>(createdEvent));
         }
@@ -119,6 +156,19 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
+            var targetEvent = await _service.GetEventAsync(eventId);
+
+            if (targetEvent == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
+            }
+
+            if (targetEvent.Creator.Id != new Guid(
+                User.FindFirst(JwtRegisteredClaimNames.Jti).Value))
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.NO_UPDATE_RIGHTS));
+            }
+
             var updateResult = await _service.UpdateEventAsync(eventId,
                 _mapper.Map<UpdateEventModel>(entity));
 
@@ -131,6 +181,11 @@ namespace ParleoBackend.Controllers
             Guid eventId, 
             Guid userId)
         {
+            if (eventId == null || await _service.GetEventAsync(eventId) == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
+            }
+
             bool result = await _service.RemoveEventParticipant(eventId, userId);
 
             return Ok();
@@ -181,7 +236,7 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
-            if (eventId == null)
+            if (eventId == null || await _service.GetEventAsync(eventId) == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
             }

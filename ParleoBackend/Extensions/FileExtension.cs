@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ParleoBackend.Extensions
 {
-    public static class FormFileExtension
+    public static class FileExtension
     {
         public static async Task<string> SaveAsync(this IFormFile image, string directoryPath)
         {
@@ -22,5 +22,10 @@ namespace ParleoBackend.Extensions
 
             return imageUniqueName;
         }
+
+        public static string GetFullFilePath(string baseUrl, string folder, string fileName) => 
+            fileName != null
+            ? string.Format("{0}{1}/{2}", baseUrl, folder, fileName)
+            : null;
     }
 }

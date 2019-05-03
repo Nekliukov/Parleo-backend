@@ -27,7 +27,7 @@ namespace Parleo.BLL.Services
 
         public async Task<bool> AddEventParticipant(Guid eventId, Guid[] users)
         {
-            return await _repository.AddEventParticipant(eventId, users);       
+            return await _repository.AddEventParticipant(eventId, users);
         }
 
         public async Task<EventModel> CreateEventAsync(
@@ -81,7 +81,7 @@ namespace Parleo.BLL.Services
             return await _repository.RemoveEventParticipant(eventId, userId);
         }
 
-        public async Task<bool> UpdateEventAsync(Guid eventId, 
+        public async Task<bool> UpdateEventAsync(Guid eventId,
             UpdateEventModel entity)
         {
             var updatingEvent = await _repository.GetEventAsync(eventId);
@@ -99,7 +99,7 @@ namespace Parleo.BLL.Services
         {
             var updatingEvent = await _repository.GetEventAsync(eventId);
 
-            if(updatingEvent == null)
+            if (updatingEvent == null)
             {
                 return false;
             }
@@ -108,6 +108,21 @@ namespace Parleo.BLL.Services
                 (location.Latitude, location.Longitude);
 
             return await _repository.UpdateEventAsync(updatingEvent);
+        }
+
+        public async Task<bool> CanParticipate(Guid eventId, Guid[] participants)
+        {
+            Event targetEvent = await _repository.GetEventAsync(eventId);
+
+            return ! (targetEvent.Participants.Count() + participants.Count() >
+                    targetEvent.MaxParticipants);
+        }
+
+        public async Task<bool> AlreadyParticipate(Guid eventId, Guid[] participants)
+        {
+            Event targetEvent = await _repository.GetEventAsync(eventId);
+
+            return !targetEvent.Participants.Any(p => participants.Contains(p.UserId));
         }
     }
 }

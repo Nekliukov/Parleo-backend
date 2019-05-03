@@ -44,9 +44,10 @@ namespace Parleo.DAL.Repositories
         public async Task<Event> CreateEventAsync(Event entity)
         {
             var createdEvent = _context.Event.Add(entity);
+
             await _context.SaveChangesAsync();
 
-            return createdEvent.Entity;
+            return await GetEventAsync(createdEvent.Entity.Id);
         }
 
         public async Task<Event> GetEventAsync(Guid id)
@@ -73,8 +74,6 @@ namespace Parleo.DAL.Repositories
                     longtitude, latitude) <= eventFilter.MaxDistance : true)
                 .Where(e => (eventFilter.MaxNumberOfParticipants != null) ?
                     e.MaxParticipants <= eventFilter.MaxNumberOfParticipants : true)
-                .Where(e => (eventFilter.MinNumberOfParticipants != null) ?
-                    e.MaxParticipants >= eventFilter.MinNumberOfParticipants : true)
                 .Where(e => (eventFilter.MaxStartDate != null) ?
                     e.StartTime <= eventFilter.MaxStartDate : true)
                 .Where(e => (eventFilter.MinStartDate != null) ?
@@ -94,12 +93,14 @@ namespace Parleo.DAL.Repositories
 
             return new Page<Event>()
             {
-                Entities = events
-                    .Skip((eventFilter.Page - 1) * eventFilter.PageSize.Value)
+                Entities = events.OrderBy(e => e.StartTime)
+                    .SkipWhile(m => m.StartTime > eventFilter.TimeStamp)
+                    .Skip((eventFilter.PageNumber - 1) * eventFilter.PageSize.Value)
                     .Take(eventFilter.PageSize.Value).ToList(),
-                PageNumber = eventFilter.Page,
+                PageNumber = eventFilter.PageNumber,
                 PageSize = eventFilter.PageSize.Value,
-                TotalAmount = totalAmount
+                TotalAmount = totalAmount,
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 
@@ -122,11 +123,12 @@ namespace Parleo.DAL.Repositories
             return new Page<UserEvent>()
             {
                 Entities = targetEvent.Participants
-                    .Skip((pageRequest.Page - 1) * pageRequest.PageSize.Value)
+                    .Skip((pageRequest.PageNumber - 1) * pageRequest.PageSize.Value)
                     .Take(pageRequest.PageSize.Value).ToList(),
-                PageNumber = pageRequest.Page,
+                PageNumber = pageRequest.PageNumber,
                 PageSize = pageRequest.PageSize.Value,
-                TotalAmount = totalAmount
+                TotalAmount = totalAmount,
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 

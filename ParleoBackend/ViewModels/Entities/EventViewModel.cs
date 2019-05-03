@@ -11,6 +11,8 @@ namespace ParleoBackend.ViewModels.Entities
 
         public string Description { get; set; }
 
+        public string Image { get; set; }
+
         public int MaxParticipants { get; set; }    
         
         public decimal Latitude { get; set; }  
@@ -23,10 +25,10 @@ namespace ParleoBackend.ViewModels.Entities
 
         public DateTimeOffset? EndDate { get; set; }
 
-        public MiniatureViewModel Creator { get; set; }
+        public UserMiniatureViewModel Creator { get; set; }
 
         public LanguageViewModel Language { get; set; }
 
-        public ICollection<MiniatureViewModel> Participants { get; set; }
+        public ICollection<UserMiniatureViewModel> Participants { get; set; }
     }
 }

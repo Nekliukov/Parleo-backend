@@ -2,7 +2,7 @@
 
 namespace ParleoBackend.ViewModels.Entities
 {
-    public class MiniatureViewModel
+    public class UserMiniatureViewModel
     {
         public Guid Id { get; set; }
 

@@ -38,7 +38,7 @@ namespace Parleo.DAL.Repositories
         public async Task<Page<User>> GetPageAsync(UserFilter userFilter, Location location)
         {
             double latitude = (double)location.Latitude,
-                   longtitude = (double)location.Longitude;
+                   longitude = (double)location.Longitude;
 
             // hack for correct first user's output int filter list
             // without it first user will have no lang, hobbies etc...
@@ -62,7 +62,7 @@ namespace Parleo.DAL.Repositories
                             LevelInRange(ul, userFilter.MinLevel))) : true)
                 .Where(u => (userFilter.MaxDistance != null) ?
                     LocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
-                    longtitude, latitude) <= userFilter.MaxDistance : true)
+                    longitude, latitude) <= userFilter.MaxDistance : true)
                 .Where(u => (userFilter.MaxAge != null) ?
                     GetAge(u.Birthdate) <= userFilter.MaxAge : true)
                 .Where(u => (userFilter.MinAge != null) ?
@@ -85,12 +85,14 @@ namespace Parleo.DAL.Repositories
 
             return new Page<User>()
             {
-                Entities = users
-                    .Skip((userFilter.Page - 1) * userFilter.PageSize.Value)
+                Entities = users.OrderBy(u => u.CreatedAt)
+                    .SkipWhile(m => m.CreatedAt > userFilter.TimeStamp)
+                    .Skip((userFilter.PageNumber - 1) * userFilter.PageSize.Value)
                     .Take(userFilter.PageSize.Value).ToList(),
-                PageNumber = userFilter.Page,
+                PageNumber = userFilter.PageNumber,
                 PageSize = userFilter.PageSize.Value,
-                TotalAmount = totalAmount
+                TotalAmount = totalAmount,
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 
@@ -103,6 +105,7 @@ namespace Parleo.DAL.Repositories
                         .ThenInclude(h => h.Category)
                 .Include(u => u.CreatedEvents)
                 .Include(u => u.AttendingEvents)
+                    .ThenInclude(ue => ue.Event)
                 .FirstOrDefaultAsync(user => user.Id == id);
 
             IncludeUserFriends(new List<User>() { result });
@@ -163,8 +166,11 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> CheckUserHasTokenAsync(string email)
         {
-            return (await _context.AccountToken.ToListAsync())
-                .Any(token => token.User.Credentials.Email == email);
+            AccountToken token = await _context.AccountToken
+                .Include(c => c.User)
+                .Include(c => c.User.Credentials)
+                .FirstOrDefaultAsync(act => act.User.Credentials.Email == email);
+            return token != null;
         }
 
         public async Task<bool> AddFriendAsync(Guid userFromId, Guid userToId)

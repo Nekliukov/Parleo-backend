@@ -12,6 +12,7 @@ using DataAccessUserLanguage = Parleo.DAL.Models.Entities.UserLanguage;
 using DataAccessUserHobby = Parleo.DAL.Models.Entities.UserHobby;
 using Parleo.DAL.Models.Entities;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Parleo.BLL.Extensions
 {
@@ -89,7 +90,15 @@ namespace Parleo.BLL.Extensions
                             })));
 
                 mc.CreateMap<UpdateEventModel, DataAccessEvent>();
-                mc.CreateMap<CreateEventModel, DataAccessEvent>();
+                mc.CreateMap<CreateEventModel, DataAccessEvent>()
+                    .ForMember(e => e.Participants,
+                        opt => opt.MapFrom(ce => new List<UserEvent>()
+                        {
+                            new UserEvent()
+                            {
+                                UserId = ce.CreatorId
+                            }
+                        }));
 
                 mc.CreateMap<DataAccessUserLanguage, UserLanguageModel>()
                     .ForMember(ul => ul.Code, opt => opt.MapFrom(ulvm => ulvm.LanguageCode));
@@ -98,7 +107,11 @@ namespace Parleo.BLL.Extensions
 
                 mc.CreateMap<Hobby, HobbyModel>()
                     .ForMember(hm => hm.Name, opt => opt.MapFrom(h => h.Name))
-                    .ForMember(hm => hm.Category, opt => opt.MapFrom(h => h.Category.Name));
+                    .ForMember(hm => hm.Category, opt => opt.MapFrom(h => h.Category.Name))
+                    .ForAllOtherMembers(opt => opt.Ignore());
+                mc.CreateMap<HobbyModel, Hobby>()
+                    .ForMember(h => h.Name, opt => opt.MapFrom(hm => hm.Name))
+                    .ForAllOtherMembers(opt => opt.Ignore());
 
                 mc.CreateMap<UserLanguageModel, DataAccessLanguage>();
 
