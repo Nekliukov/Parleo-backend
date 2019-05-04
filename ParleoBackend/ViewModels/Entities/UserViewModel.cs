@@ -25,8 +25,6 @@ namespace ParleoBackend.ViewModels.Entities
 
         public ICollection<UserLanguageViewModel> Languages { get; set; }
 
-        public ICollection<UserMiniatureViewModel> Friends { get; set; }
-
         public ICollection<EventMiniatureViewModel> AttendingEvents { get; set; }
 
         public ICollection<HobbyViewModel> Hobbies { get; set; }

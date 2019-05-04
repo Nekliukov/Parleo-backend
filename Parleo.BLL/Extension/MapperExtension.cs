@@ -44,14 +44,6 @@ namespace Parleo.BLL.Extensions
                                 Image = e.Image,
                                 Name = e.Name
                             })))
-                    .ForMember(um => um.Friends,
-                        opt => opt.MapFrom(u =>
-                            u.Friends.Select(f => new MiniatureModel
-                            {
-                                Id = f.UserToId,
-                                Image = f.UserTo.AccountImage,
-                                Name = f.UserTo.Name
-                            })))
                      .ForMember(um => um.AttendingEvents, 
                         opt => opt.MapFrom(u => 
                         u.AttendingEvents.Select(e => new MiniatureModel

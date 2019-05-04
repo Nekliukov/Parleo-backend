@@ -180,6 +180,11 @@ namespace Parleo.BLL.Services
                 return false;
             }
 
+            if(await _repository.GetAsync(userFromId) == null)
+            {
+                return false;
+            }
+
             return await _repository.AddFriendAsync(userFromId, userToId);
         }
 

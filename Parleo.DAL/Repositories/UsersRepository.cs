@@ -48,8 +48,6 @@ namespace Parleo.DAL.Repositories
                 .Include(u => u.Hobbies)
                     .ThenInclude(uh => uh.Hobby)
                         .ThenInclude(h => h.Category)
-                .Include(u => u.CreatedEvents)
-                .Include(u => u.AttendingEvents)
                 .FirstOrDefaultAsync();
 
             var users = await _context.User
@@ -69,13 +67,11 @@ namespace Parleo.DAL.Repositories
                     GetAge(u.Birthdate) >= userFilter.MinAge : true)
                 .Include(u => u.Languages)
                 .ThenInclude(ul => ul.Language)
-                .Include(u => u.CreatedEvents)
                 .Include(u => u.Credentials)
                 .Include(u => u.Hobbies)
                     .ThenInclude(h => h.Hobby)
                 .ToListAsync();
 
-            IncludeUserFriends(users);
             int totalAmount = users.Count();
 
             if (userFilter.PageSize == null)
@@ -108,11 +104,8 @@ namespace Parleo.DAL.Repositories
                     .ThenInclude(ue => ue.Event)
                 .FirstOrDefaultAsync(user => user.Id == id);
 
-            IncludeUserFriends(new List<User>() { result });
-
             return result;
         }
-
 
         public async Task<bool> UpdateAsync(User entity)
         {
@@ -202,10 +195,21 @@ namespace Parleo.DAL.Repositories
                 .Include(u => u.Credentials)
                 .ToListAsync();
 
+            if(pageRequest.PageSize == null)
+            {
+                pageRequest.PageSize = _defaultPageSize;
+            }
+
             return new Page<User>()
             {
                 Entities = friends.OrderBy(u => u.CreatedAt)
-                    
+                .SkipWhile(m => m.CreatedAt > pageRequest.TimeStamp)
+                    .Skip((pageRequest.PageNumber - 1) * pageRequest.PageSize.Value)
+                    .Take(pageRequest.PageSize.Value).ToList(),
+                PageNumber = pageRequest.PageNumber,
+                PageSize = pageRequest.PageSize.Value,
+                TotalAmount = friends.Count,
+                TimeStamp = DateTimeOffset.UtcNow
             };
         }
 
@@ -220,16 +224,6 @@ namespace Parleo.DAL.Repositories
                 UserToId = userToId,
                 UserTo = await _context.User.FirstOrDefaultAsync(user => user.Id == userToId),
             };
-        }
-
-        private void IncludeUserFriends(List<User> users)
-        {
-            foreach (var user in users)
-            {
-                user.Friends = _context.UserFriends.Where(uf => uf.UserFromId == user.Id)
-                    .Include(friends => friends.UserTo)
-                    .ToList();
-            }
         }
 
         private bool LevelInRange(UserLanguage userLanguage, int? minLevel)

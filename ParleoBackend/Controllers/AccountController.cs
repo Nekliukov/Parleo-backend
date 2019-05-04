@@ -360,7 +360,14 @@ namespace ParleoBackend.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetUserFriends(Guid userId, [FromQuery] PageRequestViewModel pageRequest)
         {
-            if(userId == null)
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult result = validator.Validate(pageRequest);
+            if (!result.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
+            }
+
+            if (userId == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
