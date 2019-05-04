@@ -195,6 +195,20 @@ namespace Parleo.DAL.Repositories
             return true;
         }
 
+        public async Task<Page<User>> GetUserFriendsAsync(PageRequest pageRequest, Guid userId)
+        {
+            var friends = await _context.UserFriends.Where(u => u.UserFromId == userId)
+                .Select(friend => friend.UserTo)
+                .Include(u => u.Credentials)
+                .ToListAsync();
+
+            return new Page<User>()
+            {
+                Entities = friends.OrderBy(u => u.CreatedAt)
+                    
+            };
+        }
+
         #region Private methods
 
         private async Task<UserFriends> CreateUserFriendsEntityAsync(Guid userFromId, Guid userToId)

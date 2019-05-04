@@ -38,5 +38,7 @@ namespace Parleo.BLL.Interfaces
         Task<bool> CheckUserHasTokenAsync(string email);
 
         Task<bool> AddFriendAsync(Guid userSenderId, Guid newFriendId);
+
+        Task<PageModel<UserModel>> GetUserFriendsAsync(PageRequestModel pageRequest, Guid userId);
     }
 }

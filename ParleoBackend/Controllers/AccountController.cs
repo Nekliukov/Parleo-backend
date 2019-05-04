@@ -23,6 +23,7 @@ using System.IO;
 using Parleo.BLL.Extensions;
 using ParleoBackend.Validators.Common;
 using ParleoBackend.Services;
+using Parleo.BLL.Models.Pages;
 
 namespace ParleoBackend.Controllers
 {
@@ -324,6 +325,7 @@ namespace ParleoBackend.Controllers
         [HttpPut("addFriend/{userToId}")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> SendFriendshipRequest(Guid userToId)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
@@ -350,6 +352,21 @@ namespace ParleoBackend.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet("{userId}/friends")]
+        [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetUserFriends(Guid userId, [FromQuery] PageRequestViewModel pageRequest)
+        {
+            if(userId == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            var friends = await _accountService.GetUserFriendsAsync(_mapper.Map<PageRequestModel>(pageRequest), userId);
+            return Ok(_mapper.Map<PageViewModel<UserViewModel>>(friends));
         }
     }
 }
