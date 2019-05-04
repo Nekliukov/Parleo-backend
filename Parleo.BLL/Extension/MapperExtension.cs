@@ -35,23 +35,7 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<UserModel, DataAccessUser>();
                 mc.CreateMap<DataAccessUser, UserModel>()
                     .ForMember(ui => ui.Email,
-                        opt => opt.MapFrom(uivm => uivm.Credentials.Email))
-                    .ForMember(um => um.CreatedEvents,
-                        opt => opt.MapFrom(u =>
-                            u.CreatedEvents.Select(e => new MiniatureModel
-                            {
-                                Id = e.Id,
-                                Image = e.Image,
-                                Name = e.Name
-                            })))
-                     .ForMember(um => um.AttendingEvents, 
-                        opt => opt.MapFrom(u => 
-                        u.AttendingEvents.Select(e => new MiniatureModel
-                            {
-                                Id = e.EventId,
-                                Image = e.Event.Image,
-                                Name = e.Event.Name
-                            })));
+                        opt => opt.MapFrom(uivm => uivm.Credentials.Email));
 
                 mc.CreateMap<UpdateUserModel, DataAccessUser>()
                     .ForMember(u => u.Hobbies,

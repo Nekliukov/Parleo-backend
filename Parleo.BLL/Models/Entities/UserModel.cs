@@ -27,8 +27,6 @@ namespace Parleo.BLL.Models.Entities
 
         public ICollection<UserLanguageModel> Languages { get; set; }
 
-        public ICollection<MiniatureModel> AttendingEvents { get; set; }
-
         public ICollection<HobbyModel> Hobbies { get; set; }
     }
 }
