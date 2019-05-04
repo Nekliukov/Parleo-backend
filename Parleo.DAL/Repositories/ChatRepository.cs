@@ -102,27 +102,11 @@ namespace Parleo.DAL.Repositories
             return chat;
         }
 
-        public async Task<Chat> CreateChatAsync(ICollection<Guid> membersId, string chatName = null, User creator = null)
+        public async Task<Chat> CreateChatAsync(Chat entity)
         {
-            var chat = new Chat()
-            {
-                Members = new List<ChatUser>(),
-                Name = chatName,
-                Messages = new List<Message>(),
-                Creator = creator
-            };
-            foreach (var id in membersId)
-            {
-                chat.Members.Add(new ChatUser()
-                {
-                    Chat = chat,
-                    UserId = id
-                });
-                _context.Chat.Add(chat);
-            }
-
+            _context.Chat.Add(entity);
             await _context.SaveChangesAsync();
-            return chat;
+            return entity;
         }
 
         public async Task AddMessagesAsync(Guid id, ICollection<Message> messages)

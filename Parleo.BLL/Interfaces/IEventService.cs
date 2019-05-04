@@ -38,6 +38,8 @@ namespace Parleo.BLL.Interfaces
         Task<PageModel<EventModel>> GetAttendingEvents(
             Guid userId, PageRequestModel pageRequest);
 
+        Task<bool> CanUserCreateChat(Guid EventId, Guid userId);
+
         // Need to discuss
         // Task<bool> InviteParticipant(Guid eventId, Guid userId);
     }

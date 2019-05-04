@@ -41,15 +41,11 @@ namespace Parleo.DAL
                 .HasForeignKey<Credentials>(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade); 
 
-            modelBuilder.Entity<Chat>()
-                .HasMany(chat => chat.Messages)
-                .WithOne(message => message.Chat)
-                .HasForeignKey(message => message.ChatId);
-
             modelBuilder.Entity<Event>()
                 .HasOne(ev => ev.Chat)
-                .WithOne(c => c.Event);  //Or withMany()
-
+                .WithOne(c => c.Event)
+                .HasForeignKey<Chat>(c => c.EventId);
+               
             modelBuilder.Entity<AccountToken>()
                 .HasOne(c => c.User)
                 .WithOne(ui => ui.AccountToken)
@@ -67,7 +63,17 @@ namespace Parleo.DAL
             modelBuilder.Entity<Category>()
                 .HasMany(c => c.Hobbies)
                 .WithOne(h => h.Category);
+            modelBuilder.Entity<Chat>()
+                .HasMany(chat => chat.Messages)
+                .WithOne(message => message.Chat)
+                .HasForeignKey(message => message.ChatId);
+            modelBuilder.Entity<Chat>()
+                .HasOne(chat => chat.Creator)
+                .WithMany(user => user.CreatedChats)
+                .HasForeignKey(chat => chat.CreatorId);
             #endregion
+
+
 
             #region User-Language m2m
             modelBuilder.Entity<UserLanguage>().HasKey(k => new { k.UserId, k.LanguageCode });

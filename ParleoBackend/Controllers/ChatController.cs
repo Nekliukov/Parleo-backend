@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Exceptions;
 using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
+using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Pages;
 using ParleoBackend.Contracts;
 using ParleoBackend.Hubs;
@@ -25,14 +26,34 @@ namespace ParleoBackend.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IChatService _chatService;
+        private readonly IEventService _eventService;
 
-        public ChatController(IMapperFactory mapperFactory, IChatService chatService)
+        public ChatController(IMapperFactory mapperFactory, IChatService chatService, IEventService eventService)
         {
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name); ;
             _chatService = chatService;
+            _eventService = eventService;
         }
 
-        
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateChat([FromBody] CreateGroupChatViewModel groupChat)
+        {
+            var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+
+            if(groupChat.EventId.HasValue)
+            {
+                if(! await _eventService.CanUserCreateChat(groupChat.EventId.Value, id))
+                {
+                    return Forbid("not allowed");
+                }
+                return Ok(await _chatService.CreateEventChatAsync(_mapper.Map<ChatModel>(groupChat)));
+            }
+
+            return Ok(await _chatService.CreateGroupChatAsync(id, _mapper.Map<ChatModel>(groupChat)));
+        }
+
+
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetChatPage([FromQuery] PageRequestViewModel pageRequest)
