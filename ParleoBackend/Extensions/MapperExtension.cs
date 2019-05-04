@@ -103,7 +103,7 @@ namespace ParleoBackend.Extensions
                                     cm.Event.Image)
                             : FileExtension.GetFullFilePath(
                             imageSettings.BaseUrl,
-                            imageSettings.EventSourceUrl,
+                            imageSettings.AccountSourceUrl,
                             cm.Image)));
 
                 mc.CreateMap<ChatViewModel, ChatModel>();
