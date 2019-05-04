@@ -21,8 +21,6 @@ namespace ParleoBackend.ViewModels.Entities
 
         public string Email { get; set; }
 
-        public ICollection<EventMiniatureViewModel> CreatedEvents { get; set; }
-
         public ICollection<UserLanguageViewModel> Languages { get; set; }
 
         public ICollection<EventMiniatureViewModel> AttendingEvents { get; set; }

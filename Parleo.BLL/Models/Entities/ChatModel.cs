@@ -10,7 +10,11 @@ namespace Parleo.BLL.Models.Entities
 
         public string Name { get; set; }
 
+        public string Image { get; set; }
+
         public ICollection<MiniatureModel> Members { get; set; }
+
+        public MiniatureModel Event { get; set; }
 
         public Guid? CreatorId { get; set; }
 

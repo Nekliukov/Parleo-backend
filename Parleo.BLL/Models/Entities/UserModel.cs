@@ -25,8 +25,6 @@ namespace Parleo.BLL.Models.Entities
 
         public string Email { get; set; }
 
-        public ICollection<MiniatureModel> CreatedEvents { get; set; }
-
         public ICollection<UserLanguageModel> Languages { get; set; }
 
         public ICollection<MiniatureModel> AttendingEvents { get; set; }

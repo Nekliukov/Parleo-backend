@@ -178,5 +178,66 @@ namespace Parleo.DAL.Repositories
             _context.Entry(updatedEvent).Property(x => x.Image).IsModified = true;
             await _context.SaveChangesAsync();
         }
+
+        public async Task<Page<Event>> GetCreatedEvents(
+            Guid userId, PageRequest pageRequest)
+        {
+            var createdEvents = await _context.Event.Include(e => e.Creator)
+                .Include(e => e.Participants).ThenInclude(ue => ue.User)
+                .Include(e => e.Language)
+                .Include(e => e.Creator)
+                .Where(e => e.CreatorId == userId)
+                .ToArrayAsync();
+
+            int totalAmount = createdEvents.Count();
+
+            if (pageRequest.PageSize == null)
+            {
+                pageRequest.PageSize = _defaultPageSize;
+            }
+
+            return new Page<Event>()
+            {
+                Entities = createdEvents.OrderBy(e => e.StartTime)
+                    .SkipWhile(m => m.StartTime > pageRequest.TimeStamp)
+                    .Skip((pageRequest.PageNumber - 1) * pageRequest.PageSize.Value)
+                    .Take(pageRequest.PageSize.Value).ToList(),
+                PageNumber = pageRequest.PageNumber,
+                PageSize = pageRequest.PageSize.Value,
+                TotalAmount = totalAmount,
+                TimeStamp = DateTimeOffset.UtcNow
+            };
+        }
+
+        public async Task<Page<Event>> GetAttendingEvents(
+            Guid userId, PageRequest pageRequest)
+        {
+            var AttendingEvents = await _context.Event.Include(e => e.Creator)
+                .Include(e => e.Participants).ThenInclude(ue => ue.User)
+                .Include(e => e.Language)
+                .Include(e => e.Creator)
+                .Where(e => e.Participants.Any(
+                    ue => ue.UserId == userId && e.CreatorId != userId))
+                .ToArrayAsync();
+
+            int totalAmount = AttendingEvents.Count();
+
+            if (pageRequest.PageSize == null)
+            {
+                pageRequest.PageSize = _defaultPageSize;
+            }
+
+            return new Page<Event>()
+            {
+                Entities = AttendingEvents.OrderBy(e => e.StartTime)
+                    .SkipWhile(m => m.StartTime > pageRequest.TimeStamp)
+                    .Skip((pageRequest.PageNumber - 1) * pageRequest.PageSize.Value)
+                    .Take(pageRequest.PageSize.Value).ToList(),
+                PageNumber = pageRequest.PageNumber,
+                PageSize = pageRequest.PageSize.Value,
+                TotalAmount = totalAmount,
+                TimeStamp = DateTimeOffset.UtcNow
+            };
+        }
     }
 }

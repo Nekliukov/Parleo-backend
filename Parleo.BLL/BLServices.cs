@@ -17,6 +17,7 @@ namespace Parleo.BLL
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUtilityService, UtilityService>();
             services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IChatHelper, ChatHelper>();
         }
 
         public static IMapper GetMapper()

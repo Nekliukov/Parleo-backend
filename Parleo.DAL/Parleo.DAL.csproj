@@ -30,6 +30,7 @@
     <Compile Remove="Migrations\20190310160227_CreateInitialModels.cs" />
     <Compile Remove="Migrations\20190310160227_CreateInitialModels.Designer.cs" />
     <Compile Remove="Migrations\20190416132317_ChangeLanguagePrimaryKey.cs" />
+    <Compile Remove="Migrations\20190501185810_AddEventToChat.cs" />
   </ItemGroup>
 
   <ItemGroup>

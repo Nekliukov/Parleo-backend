@@ -10,11 +10,14 @@ namespace Parleo.DAL.Models.Entities
 
         public string Name { get; set; }
 
+        public string Image { get; set; }
+
         public User Creator { get; set; }
 
         public ICollection<ChatUser> Members { get; set; }
 
         public ICollection<Message> Messages { get; set; }
 
+        public Event Event { get; set; }
     }
 }
