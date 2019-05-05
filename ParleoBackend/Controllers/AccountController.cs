@@ -356,11 +356,11 @@ namespace ParleoBackend.Controllers
             return NoContent();
         }
 
-        [HttpGet("{userId}/friends")]
+        [HttpGet("current/friends")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> GetUserFriends(Guid userId, [FromQuery] PageRequestViewModel pageRequest)
+        public async Task<IActionResult> GetUserFriends([FromQuery] PageRequestViewModel pageRequest)
         {
             var validator = new PageRequestViewModelValidator();
             ValidationResult result = validator.Validate(pageRequest);
@@ -369,12 +369,15 @@ namespace ParleoBackend.Controllers
                 return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
             }
 
-            if (userId == null)
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if (id == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
-            var friends = await _accountService.GetUserFriendsAsync(_mapper.Map<PageRequestModel>(pageRequest), userId);
+            var friends = await _accountService.GetUserFriendsAsync(
+                _mapper.Map<PageRequestModel>(pageRequest), new Guid(id));
+
             return Ok(_mapper.Map<PageViewModel<UserViewModel>>(friends));
         }
     }
