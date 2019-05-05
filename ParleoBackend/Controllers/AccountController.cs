@@ -23,6 +23,7 @@ using System.IO;
 using Parleo.BLL.Extensions;
 using ParleoBackend.Validators.Common;
 using ParleoBackend.Services;
+using Parleo.BLL.Models.Pages;
 
 namespace ParleoBackend.Controllers
 {
@@ -321,6 +322,60 @@ namespace ParleoBackend.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpPut("addFriend/{userToId}")]
+        [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> SendFriendshipRequest(Guid userToId)
+        {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if(id == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            Guid userFromId = new Guid(id);
+            bool isSent = false;
+
+            if(userFromId != null)
+            {
+                isSent = await _accountService.AddFriendAsync(userFromId, userToId);
+            }
+            else
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+            
+            if (!isSent)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.FRIEND_REQUSET_FAILED));
+            }
+
+            return NoContent();
+        }
+
+        [HttpGet("{userId}/friends")]
+        [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetUserFriends(Guid userId, [FromQuery] PageRequestViewModel pageRequest)
+        {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult result = validator.Validate(pageRequest);
+            if (!result.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
+            }
+
+            if (userId == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            var friends = await _accountService.GetUserFriendsAsync(_mapper.Map<PageRequestModel>(pageRequest), userId);
+            return Ok(_mapper.Map<PageViewModel<UserViewModel>>(friends));
         }
     }
 }

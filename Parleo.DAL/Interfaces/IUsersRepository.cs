@@ -29,5 +29,9 @@ namespace Parleo.DAL.Interfaces
         Task ClearExpiredAccountTokensAsync();
 
         Task<bool> CheckUserHasTokenAsync(string email);
+
+        Task<bool> AddFriendAsync(Guid userFromId, Guid userToId);
+
+        Task<Page<User>> GetUserFriendsAsync(PageRequest pageRequest, Guid userId);
     }
 }
