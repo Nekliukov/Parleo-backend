@@ -21,12 +21,12 @@ namespace ParleoBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ChatController : ControllerBase
+    public class ChatsController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IChatService _chatService;
 
-        public ChatController(IMapperFactory mapperFactory, IChatService chatService)
+        public ChatsController(IMapperFactory mapperFactory, IChatService chatService)
         {
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name); ;
             _chatService = chatService;

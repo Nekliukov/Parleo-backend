@@ -26,14 +26,14 @@ namespace ParleoBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EventController : ControllerBase
+    public class EventsController : ControllerBase
     {
         private readonly IEventService _service;
         private readonly IImageSettings _eventImageSettings;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
 
-        public EventController(
+        public EventsController(
             IEventService service,
             IMapperFactory mapperFactory,
             IImageSettings eventImageSettings,
@@ -46,7 +46,7 @@ namespace ParleoBackend.Controllers
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
         }
 
-        [HttpPut("{eventId}/addParticipants")]
+        [HttpPut("{eventId}/participants")]
         [Authorize]
         public async Task<ActionResult> AddEventParticipants(Guid eventId, Guid[] users)
         {
@@ -163,7 +163,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<PageViewModel<UserViewModel>>(participants));
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         [Authorize]
         public async Task<ActionResult> CreateEventAsync(
             [FromBody] CreateEventViewModel entity)
@@ -217,7 +217,7 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        [HttpPut("{eventId}/removeParticipant/{userId}")]
+        [HttpDelete("{eventId}/participants/{userId}")]
         [Authorize]
         public async Task<ActionResult> RemoveEventParticipant(
             Guid eventId, 

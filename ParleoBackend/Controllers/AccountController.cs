@@ -29,7 +29,7 @@ namespace ParleoBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountsController : ControllerBase
     {
         private readonly IAccountService _accountService;
         private readonly IEmailService _emailService;
@@ -40,12 +40,12 @@ namespace ParleoBackend.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public AccountController(
+        public AccountsController(
             IAccountService accountService,
             IMapperFactory mapperFactory,
             IJwtService jwtService,
             IEmailService emailService,
-            ILogger<AccountController> logger,
+            ILogger<AccountsController> logger,
             IImageSettings accountImageSettings,
             IUtilityService utilityService,
             IJwtSettings jwtSettings
