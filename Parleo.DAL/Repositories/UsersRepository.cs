@@ -190,7 +190,7 @@ namespace Parleo.DAL.Repositories
 
         public async Task<Page<User>> GetUserFriendsAsync(PageRequest pageRequest, Guid userId)
         {
-            var friends = await _context.UserFriends.Where(u => u.UserFromId == userId)
+            var friends = await _context.UserFriends.Where(u => u.UserFromId == userId && u.Status == 1)
                 .Select(friend => friend.UserTo)
                 .Include(u => u.Credentials)
                 .ToListAsync();
@@ -213,6 +213,26 @@ namespace Parleo.DAL.Repositories
             };
         }
 
+
+        public async Task<bool> RemoveFriendAsync(Guid userFromId, Guid userToId)
+        {
+            UserFriends friend;
+            try
+            {
+                friend = await _context.UserFriends
+                    .Where(u => u.UserFromId == userFromId && u.UserToId == userToId)
+                    .FirstOrDefaultAsync();
+                friend.Status = 0;
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return false;
+            }
+                
+            return true;
+        }
+
         #region Private methods
 
         private async Task<UserFriends> CreateUserFriendsEntityAsync(Guid userFromId, Guid userToId)
@@ -223,6 +243,7 @@ namespace Parleo.DAL.Repositories
                 UserFrom = await _context.User.FirstOrDefaultAsync(user => user.Id == userFromId),
                 UserToId = userToId,
                 UserTo = await _context.User.FirstOrDefaultAsync(user => user.Id == userToId),
+                Status = 1 // 1 - is in friends, 0 - deleted
             };
         }
 

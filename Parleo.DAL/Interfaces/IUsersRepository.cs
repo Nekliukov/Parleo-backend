@@ -32,6 +32,8 @@ namespace Parleo.DAL.Interfaces
 
         Task<bool> AddFriendAsync(Guid userFromId, Guid userToId);
 
+        Task<bool> RemoveFriendAsync(Guid userFromId, Guid userToId);
+
         Task<Page<User>> GetUserFriendsAsync(PageRequest pageRequest, Guid userId);
     }
 }

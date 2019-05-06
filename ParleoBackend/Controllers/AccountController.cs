@@ -356,6 +356,38 @@ namespace ParleoBackend.Controllers
             return NoContent();
         }
 
+        [HttpPut("removeFriend/{userId}")]
+        [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> RemoveFriend(Guid userId)
+        {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if (id == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            Guid userFromId = new Guid(id);
+            bool isSent = false;
+
+            if (userFromId != null)
+            {
+                isSent = await _accountService.RemoveFriendAsync(userFromId, userId);
+            }
+            else
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            if (!isSent)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.FRIEND_DELETE_FAILED));
+            }
+
+            return NoContent();
+        }
+
         [HttpGet("current/friends")]
         [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
