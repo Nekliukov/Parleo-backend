@@ -369,18 +369,18 @@ namespace ParleoBackend.Controllers
             }
 
             Guid userFromId = new Guid(id);
-            bool isSent = false;
+            bool isRemoved = false;
 
             if (userFromId != null)
             {
-                isSent = await _accountService.RemoveFriendAsync(userFromId, userId);
+                isRemoved = await _accountService.RemoveFriendAsync(userFromId, userId);
             }
             else
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
-            if (!isSent)
+            if (!isRemoved)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.FRIEND_DELETE_FAILED));
             }
