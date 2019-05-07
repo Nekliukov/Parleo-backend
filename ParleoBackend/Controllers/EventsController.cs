@@ -26,14 +26,14 @@ namespace ParleoBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EventController : ControllerBase
+    public class EventsController : ControllerBase
     {
         private readonly IEventService _service;
         private readonly IImageSettings _eventImageSettings;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
 
-        public EventController(
+        public EventsController(
             IEventService service,
             IMapperFactory mapperFactory,
             IImageSettings eventImageSettings,
@@ -46,31 +46,6 @@ namespace ParleoBackend.Controllers
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
         }
 
-        [HttpPut("{eventId}/addParticipants")]
-        [Authorize]
-        public async Task<ActionResult> AddEventParticipants(Guid eventId, Guid[] users)
-        {
-            if (eventId == null || await _service.GetEventAsync(eventId) == null)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
-            }
-
-            if (! await _service.CanParticipate(eventId, users))
-            {
-                return BadRequest(new ErrorResponseFormat(
-                    Constants.Errors.EXCEEDED_PARTICIPANTS_COUNT_LIMIT));
-            }
-
-            if (! await _service.AlreadyParticipate(eventId, users))
-            {
-                return BadRequest(new ErrorResponseFormat(
-                    Constants.Errors.USER_ALREADY_PARTICIPATE));
-            }
-
-            var result = await _service.AddEventParticipant(eventId, users);
-
-            return Ok();
-        }
 
         [HttpGet]
         [Authorize]
@@ -93,77 +68,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<PageViewModel<EventViewModel>>(result));
         }
 
-        [HttpGet("createdEvents")]
-        [Authorize]
-        public async Task<IActionResult> GetCreatedEvents(
-            [FromQuery] PageRequestViewModel pageRequest)
-        {
-            var validator = new PageRequestViewModelValidator();
-            ValidationResult validationResult = validator.Validate(pageRequest);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(new ErrorResponseFormat(
-                    validationResult.Errors.First().ErrorMessage));
-            }
-
-            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-
-            var createdEvents = await _service.GetCreatedEvents(new Guid(id), 
-                _mapper.Map<PageRequestModel>(pageRequest));
-
-            return Ok(_mapper.Map<PageViewModel<EventViewModel>>(createdEvents));
-        }
-
-        [HttpGet("attendingEvents")]
-        [Authorize]
-        public async Task<IActionResult> GetAttendingEvents(
-            [FromQuery] PageRequestViewModel pageRequest)
-        {
-            var validator = new PageRequestViewModelValidator();
-            ValidationResult validationResult = validator.Validate(pageRequest);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(new ErrorResponseFormat(
-                    validationResult.Errors.First().ErrorMessage));
-            }
-
-            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-
-            var attendingEvents = await _service.GetAttendingEvents(new Guid(id),
-                _mapper.Map<PageRequestModel>(pageRequest));
-
-            return Ok(_mapper.Map<PageViewModel<EventViewModel>>(attendingEvents));
-        }
-
-        [HttpGet("{eventId}")]
-        [Authorize]
-        public async Task<ActionResult> GetEventAsync(Guid eventId)
-        {
-            var foundEvent = await _service.GetEventAsync(eventId);
-            return Ok(_mapper.Map<EventViewModel>(foundEvent));
-        }
-
-        [HttpGet("{eventId}/participants")]
-        [Authorize]
-        public async Task<ActionResult> GetParticipantsPageAsync(
-            Guid eventId,
-            [FromQuery] PageRequestViewModel pageRequest)
-        {
-            var validator = new PageRequestViewModelValidator();
-            ValidationResult validationResult = validator.Validate(pageRequest);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(new ErrorResponseFormat(
-                    validationResult.Errors.First().ErrorMessage));
-            }
-
-            var participants = await _service.GetParticipantsPageAsync(
-                eventId, _mapper.Map<PageRequestModel>(pageRequest));
-
-            return Ok(_mapper.Map<PageViewModel<UserViewModel>>(participants));
-        }
-
-        [HttpPost("create")]
+        [HttpPost]
         [Authorize]
         public async Task<ActionResult> CreateEventAsync(
             [FromBody] CreateEventViewModel entity)
@@ -217,20 +122,12 @@ namespace ParleoBackend.Controllers
             return Ok();
         }
 
-        [HttpPut("{eventId}/removeParticipant/{userId}")]
+        [HttpGet("{eventId}")]
         [Authorize]
-        public async Task<ActionResult> RemoveEventParticipant(
-            Guid eventId, 
-            Guid userId)
+        public async Task<ActionResult> GetEventAsync(Guid eventId)
         {
-            if (eventId == null || await _service.GetEventAsync(eventId) == null)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
-            }
-
-            bool result = await _service.RemoveEventParticipant(eventId, userId);
-
-            return Ok();
+            var foundEvent = await _service.GetEventAsync(eventId);
+            return Ok(_mapper.Map<EventViewModel>(foundEvent));
         }
 
         [HttpPut("{eventId}/image")]
@@ -293,6 +190,68 @@ namespace ParleoBackend.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet("{eventId}/participants")]
+        [Authorize]
+        public async Task<ActionResult> GetParticipantsPageAsync(
+            Guid eventId,
+            [FromQuery] PageRequestViewModel pageRequest)
+        {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(pageRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
+            var participants = await _service.GetParticipantsPageAsync(
+                eventId, _mapper.Map<PageRequestModel>(pageRequest));
+
+            return Ok(_mapper.Map<PageViewModel<UserViewModel>>(participants));
+        }
+
+        [HttpPut("{eventId}/participants")]
+        [Authorize]
+        public async Task<ActionResult> AddEventParticipants(Guid eventId, Guid[] users)
+        {
+            if (eventId == null || await _service.GetEventAsync(eventId) == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
+            }
+
+            if (!await _service.CanParticipate(eventId, users))
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    Constants.Errors.EXCEEDED_PARTICIPANTS_COUNT_LIMIT));
+            }
+
+            if (!await _service.AlreadyParticipate(eventId, users))
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    Constants.Errors.USER_ALREADY_PARTICIPATE));
+            }
+
+            var result = await _service.AddEventParticipant(eventId, users);
+
+            return Ok();
+        }
+
+        [HttpDelete("{eventId}/participants/{userId}")]
+        [Authorize]
+        public async Task<ActionResult> RemoveEventParticipant(
+            Guid eventId,
+            Guid userId)
+        {
+            if (eventId == null || await _service.GetEventAsync(eventId) == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.EVENT_NOT_FOUND));
+            }
+
+            bool result = await _service.RemoveEventParticipant(eventId, userId);
+
+            return Ok();
         }
     }
 }
