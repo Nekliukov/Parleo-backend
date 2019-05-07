@@ -41,7 +41,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<ChatViewModel>(chatModel));
         }
 
-        [HttpPost("{eventId}")]
+        [HttpPost("/api/Events/{eventId}/chat")]
         [Authorize]
         public async Task<IActionResult> CreateEventChat([FromQuery] Guid eventId)
         {
@@ -49,23 +49,21 @@ namespace ParleoBackend.Controllers
 
             if (!await _eventService.CanUserCreateChat(eventId, id))
             {
-                return Forbid("not allowed");
+                return Forbid(Constants.Errors.NOT_CREATOR);
             }
             return Ok(await _chatService.CreateEventChatAsync(eventId));
         }
 
-        [HttpGet("{eventId}")]
-        [Authorize]
-        public async Task<IActionResult> GetEventChat([FromQuery] Guid eventId)
-        {
-            var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+        //Do we need it?
+        //[HttpGet("/api/Events/{eventId}/chat")]
+        //[Authorize]
+        //public async Task<IActionResult> GetEventChat([FromQuery] Guid eventId)
+        //{
+        //    var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
 
-            if (!await _eventService.CanUserCreateChat(eventId, id))
-            {
-                return Forbid("not allowed");
-            }
-            return Ok(await _chatService.CreateEventChatAsync(id));
-        }
+
+        //    return Ok(await _chatService.GetEventChatAsync(id));
+        //}
 
         [HttpGet]
         [Authorize]

@@ -26,6 +26,7 @@ namespace Parleo.DAL.Repositories
         public async Task<Chat> GetChatByIdAsync(Guid id, Guid myUserId)
         {
             var chat = await _context.Chat
+                .Include(c => c.Event)
                 .Include(c => c.Members)
                 .ThenInclude(m => m.User)
                 .Include(c => c.Messages)
@@ -36,11 +37,12 @@ namespace Parleo.DAL.Repositories
             SetUpUnreadMessages(chat, myUserId);
             var result = new Chat()
             {
-                Creator = chat.Creator,
                 Members = chat.Members,
                 Id = chat.Id,
                 Name = chat.Name,
-                Messages = chat.Messages.OrderByDescending(m => m.CreatedOn).Take(1).ToList()
+                Messages = chat.Messages.OrderByDescending(m => m.CreatedOn).Take(1).ToList(),
+                Event = chat.Event,
+                CreatorId = chat.CreatorId
             };
             return result;
         }
@@ -48,6 +50,9 @@ namespace Parleo.DAL.Repositories
         public async Task<Page<Chat>> GetChatPageByUserId(Guid userId, PageRequest page)
         {
             var chatPage = await _context.Chat
+                .Include(c => c.Event)
+                .Include(c => c.Creator)
+                .Include(c => c.Event)
                 .Include(c => c.Members)
                     .ThenInclude(cu => cu.User)
                 .Include(c => c.Messages)
@@ -68,11 +73,12 @@ namespace Parleo.DAL.Repositories
                 .Take(page.PageSize ?? PAGE_SIZE)
                 .Select(c => new Chat()
             {
-                Creator = c.ChatInfo.Creator,
                 Id = c.ChatInfo.Id,
                 Members = c.ChatInfo.Members,
                 Messages = c.Messages.ToList(),
-                Name = c.ChatInfo.Name
+                Name = c.ChatInfo.Name,
+                CreatorId = c.ChatInfo.CreatorId,
+                Event = c.ChatInfo.Event
             }).ToList();
 
             SetUpUnreadMessages (chats, userId);
