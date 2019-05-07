@@ -74,9 +74,9 @@ namespace ParleoBackend.Controllers
         [HttpPost]
         [Authorize]
         public async Task<ActionResult> CreateEventAsync(
-            [FromBody] CreateEventViewModel entity)
+            [FromBody] UpdateEventViewModel entity)
         {
-            var validator = new CreateEventViewModelValidator();
+            var validator = new UpdateEventViewModelValidator(_utilityService, _mapper);
             ValidationResult result = validator.Validate(entity);
             if (!result.IsValid)
             {

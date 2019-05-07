@@ -52,7 +52,9 @@
             public const int MIN_LONGITUDE_VALUE = -180;
             public const int MAX_LONGITUDE_VALUE = 180;
 
+            public const int MIN_HOURS_TO_START_DATE = 1;
             public const int MAX_DAYS_TO_START_DATE = 60;
+
             public const int MAX_HOURS_TO_END_DATE = 24;
         }
     }

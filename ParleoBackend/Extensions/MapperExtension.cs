@@ -52,8 +52,7 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<UpdateEventViewModel, UpdateEventModel>();
                 mc.CreateMap<UpdateEventModel, UpdateEventViewModel>();
 
-                mc.CreateMap<CreateEventViewModel, CreateEventModel>();
-                mc.CreateMap<CreateEventModel, CreateEventViewModel>();
+                mc.CreateMap<UpdateEventViewModel, CreateEventModel>();
 
                 mc.CreateMap<LanguageModel, LanguageViewModel>()
                     .ForMember(lvm => lvm.Id, opt => opt.MapFrom(lm => lm.Code));

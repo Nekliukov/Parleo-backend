@@ -68,8 +68,10 @@ namespace ParleoBackend.Validators.Event
 
         private bool CorrectStartDate(DateTimeOffset dateTime)
         {
-            return DateTime.Now < dateTime && dateTime < DateTime.Now.AddDays(
-                Constants.Restrictions.MAX_DAYS_TO_START_DATE);
+            return (DateTimeOffset.Now < dateTime
+                .AddMinutes(2)) && 
+                (dateTime < DateTimeOffset.Now
+                .AddDays(Constants.Restrictions.MAX_DAYS_TO_START_DATE));
         }
     }
 }
