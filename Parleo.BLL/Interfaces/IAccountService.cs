@@ -39,6 +39,8 @@ namespace Parleo.BLL.Interfaces
 
         Task<bool> AddFriendAsync(Guid userSenderId, Guid newFriendId);
 
+        Task<bool> RemoveFriendAsync(Guid userFromId, Guid userToId);
+
         Task<PageModel<UserModel>> GetUserFriendsAsync(PageRequestModel pageRequest, Guid userId);
     }
 }

@@ -17,7 +17,7 @@ using ParleoBackend.ViewModels.Pages;
 
 namespace ParleoBackend.Controllers
 {
-    [Route("api/users/current/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ChatsController : ControllerBase
     {
