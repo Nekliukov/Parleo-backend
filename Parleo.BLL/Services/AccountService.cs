@@ -199,5 +199,25 @@ namespace Parleo.BLL.Services
             return _mapper.Map<PageModel<UserModel>>(friends);
              
         }
+
+        public async Task<bool> RemoveFriendAsync(Guid userFromId, Guid userToId)
+        {
+            if (userToId == null)
+            {
+                return false;
+            }
+
+            if (Equals(userFromId, userToId))
+            {
+                return false;
+            }
+
+            if (await _repository.GetAsync(userFromId) == null)
+            {
+                return false;
+            }
+
+            return await _repository.RemoveFriendAsync(userFromId, userToId);
+        }
     }
 }

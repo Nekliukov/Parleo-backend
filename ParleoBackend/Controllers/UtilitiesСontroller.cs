@@ -13,12 +13,12 @@ namespace ParleoBackend.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UtilityController : ControllerBase
+    public class UtilitiesController : ControllerBase
     {
         private readonly IUtilityService _utilityService;
         private readonly IMapper _mapper;
 
-        public UtilityController(
+        public UtilitiesController(
             IUtilityService utilityService,
             IMapperFactory mapperFactory
         )

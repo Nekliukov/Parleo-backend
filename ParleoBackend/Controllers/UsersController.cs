@@ -1,37 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using AutoMapper;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Parleo.BLL.Exceptions;
+using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Entities;
-using ParleoBackend.ViewModels.Entities;
-using AutoMapper;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Logging;
-using System.Net;
+using Parleo.BLL.Models.Filters;
+using Parleo.BLL.Models.Pages;
 using ParleoBackend.Contracts;
 using ParleoBackend.Extensions;
-using ParleoBackend.ViewModels.Filters;
-using Parleo.BLL.Models.Filters;
-using ParleoBackend.ViewModels.Pages;
-using System.Linq;
-using ParleoBackend.Validators.User;
-using FluentValidation.Results;
-using Parleo.BLL.Exceptions;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using Parleo.BLL.Extensions;
 using ParleoBackend.Validators.Common;
-using ParleoBackend.Services;
-using Parleo.BLL.Models.Pages;
+using ParleoBackend.Validators.User;
+using ParleoBackend.ViewModels.Entities;
+using ParleoBackend.ViewModels.Filters;
+using ParleoBackend.ViewModels.Pages;
 
 namespace ParleoBackend.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class AccountController : ControllerBase
+    public class UsersController : Controller
     {
         private readonly IAccountService _accountService;
+        private readonly IEventService _eventService;
         private readonly IEmailService _emailService;
         private readonly IJwtService _jwtService;
         private readonly IImageSettings _accountImageSettings;
@@ -40,18 +39,20 @@ namespace ParleoBackend.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public AccountController(
+        public UsersController(
             IAccountService accountService,
+            IEventService eventService,
             IMapperFactory mapperFactory,
             IJwtService jwtService,
             IEmailService emailService,
-            ILogger<AccountController> logger,
+            ILogger<AccountsController> logger,
             IImageSettings accountImageSettings,
             IUtilityService utilityService,
             IJwtSettings jwtSettings
         )
         {
             _accountService = accountService;
+            _eventService = eventService;
             _jwtService = jwtService;
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
             _logger = logger;
@@ -61,14 +62,15 @@ namespace ParleoBackend.Controllers
             _jwtSettings = jwtSettings;
         }
 
+
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUsersPageAsync(
-            [FromQuery] UserFilterViewModel userFilter)
+        [FromQuery] UserFilterViewModel userFilter)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-            if(id == null)
+            if (id == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
@@ -90,7 +92,7 @@ namespace ParleoBackend.Controllers
                 return NotFound();
             }
 
-            foreach(var listUser in users.Entities)
+            foreach (var listUser in users.Entities)
             {
                 listUser.DistanceFromCurrentUser = await _accountService
                     .GetDistanceFromCurrentUserAsync(currentUser.Id, listUser.Id);
@@ -99,71 +101,46 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<PageViewModel<UserViewModel>>(users));
         }
 
-        [HttpPost("register")]
-        [AllowAnonymous]
+        [HttpGet("{userId}")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RegisterAsync(UserRegistrationViewModel registrationViewModel)
+        public async Task<IActionResult> GetUserByIdAsync(Guid userId)
         {
-            var validator = new UserRegistrationViewModelValidator(_accountService);
-            ValidationResult result = validator.Validate(registrationViewModel);
-            if (!result.IsValid)
-            {
-                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
-            }
-
-            UserRegistrationModel authorizationModel = _mapper.Map<UserRegistrationModel>(registrationViewModel);
-            UserModel user = await _accountService.CreateUserAsync(authorizationModel);
+            UserModel user = await _accountService.GetUserByIdAsync(userId);
             if (user == null)
             {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_CREATION_FAILED));
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
-            string tokenString = _jwtService.GetJWTToken(user, new EmailClaimsService(_jwtSettings));
-            await _accountService.AddAccountTokenAsync(
-                new AccountTokenModel()
-                {
-                    ExpirationDate = DateTime.Now.AddMinutes(10),
-                    UserId = user.Id
-                }
-            );
-            await _emailService.SendEmailConfirmationLinkAsync(user.Email, tokenString);
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            user.DistanceFromCurrentUser = await _accountService
+                .GetDistanceFromCurrentUserAsync(new Guid(id), user.Id);
 
-            return NoContent();
+            return Ok(_mapper.Map<UserViewModel>(user));
         }
 
-        [HttpPost("login")]
-        [AllowAnonymous]
+        [HttpGet("current")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> LoginAsync(UserLoginViewModel loginViewModel)
+        public async Task<IActionResult> GetUserByTokenAsync()
         {
-            var validator = new UserLoginViewModelValidator(_accountService);
-            ValidationResult result = validator.Validate(loginViewModel);
-            if (!result.IsValid)
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if (id == null)
             {
-                return BadRequest(new ErrorResponseFormat(result.Errors.First().ErrorMessage));
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+            UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
+            if (user == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
-            if (await _accountService.CheckUserHasTokenAsync(loginViewModel.Email))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.TOKEN_ALREADY_SENT));
-            }
-
-            UserLoginModel authorizationModel = _mapper.Map<UserLoginModel>(loginViewModel);
-            UserModel user = await _accountService.AuthenticateAsync(authorizationModel);
-            if(user == null)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.INVALID_PASSWORD));
-            }
-            string tokenString = _jwtService.GetJWTToken(user, new ClaimsService(_jwtSettings));
-
-            return Ok(new {token = tokenString});
+            return Ok(_mapper.Map<UserViewModel>(user));
         }
 
         [HttpPut("current")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> EditAsync(
-            [FromBody] UpdateUserViewModel entity)
+        [FromBody] UpdateUserViewModel entity)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             if (!Guid.TryParse(id, out Guid userGuid))
@@ -188,73 +165,6 @@ namespace ParleoBackend.Controllers
             }
 
             return NoContent();
-        }
-
-        [HttpGet("{userId}")]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserByIdAsync(Guid userId)
-        {
-            UserModel user = await _accountService.GetUserByIdAsync(userId);
-            if (user == null)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
-            }
-
-            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-            user.DistanceFromCurrentUser = await _accountService
-                .GetDistanceFromCurrentUserAsync(new Guid(id), user.Id);
-
-            return Ok(_mapper.Map<UserViewModel>(user));
-        }
-
-        [HttpGet("me")]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserByTokenAsync()
-        {
-            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-            if (id == null)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
-            }
-            UserModel user = await _accountService.GetUserByIdAsync(new Guid(id));
-            if (user == null)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
-            }
-
-            return Ok(_mapper.Map<UserViewModel>(user));
-        }
-
-
-        [HttpGet("activate")]
-        [AllowAnonymous]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetActivatedUserAccount(string token)
-        {
-            string userIdString = _jwtService.GetUserIdFromToken(token);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.NOT_VALID_TOKEN));
-            }
-
-            Guid userId = new Guid(userIdString);
-
-            AccountTokenModel accountToken = await _accountService.DeleteAccountTokenAsync(userId);
-            if (accountToken == null)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.EXPIRED_TOKEN));
-            }
-
-            UserModel user = await _accountService.GetUserByIdAsync(userId);
-            if (user == null)
-            {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.EXPIRED_TOKEN));
-            }
-
-            return Ok(new {
-                id = user.Id,
-                token = _jwtService.GetJWTToken(user, new ClaimsService(_jwtSettings))
-            });
         }
 
         [HttpPut("current/image")]
@@ -324,40 +234,78 @@ namespace ParleoBackend.Controllers
             return NoContent();
         }
 
-        [HttpPut("addFriend/{userToId}")]
-        [Authorize]
+        [HttpGet("current/created-events")]
+        public async Task<IActionResult> GetCreatedEvents(
+            [FromQuery] PageRequestViewModel pageRequest)
+        {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(pageRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+
+            var createdEvents = await _eventService.GetCreatedEvents(new Guid(id),
+                _mapper.Map<PageRequestModel>(pageRequest));
+
+            return Ok(_mapper.Map<PageViewModel<EventViewModel>>(createdEvents));
+        }
+
+        [HttpGet("current/attending-events")]
+        public async Task<IActionResult> GetAttendingEvents(
+            [FromQuery] PageRequestViewModel pageRequest)
+        {
+            var validator = new PageRequestViewModelValidator();
+            ValidationResult validationResult = validator.Validate(pageRequest);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(new ErrorResponseFormat(
+                    validationResult.Errors.First().ErrorMessage));
+            }
+
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+
+            var attendingEvents = await _eventService.GetAttendingEvents(new Guid(id),
+                _mapper.Map<PageRequestModel>(pageRequest));
+
+            return Ok(_mapper.Map<PageViewModel<EventViewModel>>(attendingEvents));
+        }
+
+        [HttpPut("current/removeFriend/{userId}")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> SendFriendshipRequest(Guid userToId)
+        public async Task<IActionResult> RemoveFriend(Guid userId)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-            if(id == null)
+            if (id == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
 
             Guid userFromId = new Guid(id);
-            bool isSent = false;
+            bool isRemoved = false;
 
-            if(userFromId != null)
+            if (userFromId != null)
             {
-                isSent = await _accountService.AddFriendAsync(userFromId, userToId);
+                isRemoved = await _accountService.RemoveFriendAsync(userFromId, userId);
             }
             else
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
-            
-            if (!isSent)
+
+            if (!isRemoved)
             {
-                return BadRequest(new ErrorResponseFormat(Constants.Errors.FRIEND_REQUSET_FAILED));
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.FRIEND_DELETE_FAILED));
             }
 
             return NoContent();
         }
 
         [HttpGet("current/friends")]
-        [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> GetUserFriends([FromQuery] PageRequestViewModel pageRequest)
@@ -379,6 +327,37 @@ namespace ParleoBackend.Controllers
                 _mapper.Map<PageRequestModel>(pageRequest), new Guid(id));
 
             return Ok(_mapper.Map<PageViewModel<UserViewModel>>(friends));
+        }
+
+        [HttpPut("current/friends/{userToId}")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> SendFriendshipRequest(Guid userToId)
+        {
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            if (id == null)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            Guid userFromId = new Guid(id);
+            bool isSent = false;
+
+            if (userFromId != null)
+            {
+                isSent = await _accountService.AddFriendAsync(userFromId, userToId);
+            }
+            else
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
+            }
+
+            if (!isSent)
+            {
+                return BadRequest(new ErrorResponseFormat(Constants.Errors.FRIEND_REQUSET_FAILED));
+            }
+
+            return NoContent();
         }
     }
 }
