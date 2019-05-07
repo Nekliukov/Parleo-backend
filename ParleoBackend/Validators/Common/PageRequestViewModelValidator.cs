@@ -7,8 +7,12 @@ namespace ParleoBackend.Validators.Common
     {
         public PageRequestViewModelValidator()
         {
-            RuleFor(pageRequest => pageRequest.PageNumber).GreaterThan(0);
-            RuleFor(pageRequest => pageRequest.PageSize).InclusiveBetween(1, 100);
+            RuleFor(pageRequest => pageRequest.PageNumber)
+                .GreaterThan(0);
+            RuleFor(pageRequest => pageRequest.PageSize)
+                .InclusiveBetween(
+                Constants.Restrictions.MIN_PAGE_SIZE, 
+                Constants.Restrictions.MAX_PAGE_SIZE);
         }
     }
 }

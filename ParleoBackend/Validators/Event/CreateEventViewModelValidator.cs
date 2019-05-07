@@ -3,7 +3,7 @@ using ParleoBackend.ViewModels.Entities;
 
 namespace ParleoBackend.Validators.Event
 {
-    public class CreateEventViewModelValidator: AbstractValidator<CreateEventViewModel>
+    public class CreateEventViewModelValidator : AbstractValidator<CreateEventViewModel>
     {
         public CreateEventViewModelValidator()
         {
@@ -12,8 +12,8 @@ namespace ParleoBackend.Validators.Event
             RuleFor(ev => ev.Latitude).NotNull().NotEmpty();
             RuleFor(ev => ev.Longitude).NotNull().NotEmpty();
             RuleFor(ev => ev.MaxParticipants)
-                .GreaterThanOrEqualTo(1)
-                .LessThan(30);
+                .GreaterThanOrEqualTo(Constants.Restrictions.MIN_PARTICIPANTS_COUNT)
+                .LessThan(Constants.Restrictions.MAX_PARTICIPANTS_COUNT);
             RuleFor(ev => ev.Name).NotEmpty();
         }
     }

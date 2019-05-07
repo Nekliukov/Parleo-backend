@@ -58,7 +58,8 @@ namespace ParleoBackend.Extensions
                 mc.CreateMap<LanguageModel, LanguageViewModel>()
                     .ForMember(lvm => lvm.Id, opt => opt.MapFrom(lm => lm.Code));
 
-                mc.CreateMap<LanguageViewModel, LanguageModel>();
+                mc.CreateMap<LanguageViewModel, LanguageModel>()
+                    .ForMember(lm => lm.Code, opt => opt.MapFrom(lvm => lvm.Id));
 
                 mc.CreateMap<HobbyModel, HobbyViewModel>();
                 mc.CreateMap<HobbyViewModel, HobbyModel>();

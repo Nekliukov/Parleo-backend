@@ -25,7 +25,7 @@ namespace ParleoBackend.Validators.User
                 .MaximumLength(60);
             RuleFor(user => user.Languages).NotEmpty().NotNull()
                 .Must(NoLanguageDuplicates).WithMessage(Constants.Errors.DUPLICATES_ARE_NOT_ALLOWED)
-                .Must(AllLanguagesExist).WithMessage(Constants.Errors.INVALID_LANGUAGE);
+                .Must(AllLanguagesExist).WithMessage(Constants.Errors.INVALID_LANGUAGES);
             RuleFor(user => user.Languages)
                 .Must(CorrectLevel).WithMessage(Constants.Errors.INCORRECT_LANGUAGE_LEVEL);
             RuleFor(user => user.Hobbies)
