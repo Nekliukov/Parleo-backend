@@ -32,17 +32,20 @@ namespace ParleoBackend.Controllers
         private readonly IImageSettings _eventImageSettings;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
+        private readonly IUtilityService _utilityService;
 
         public EventsController(
             IEventService service,
             IMapperFactory mapperFactory,
             IImageSettings eventImageSettings,
-            IAccountService accountService
+            IAccountService accountService,
+            IUtilityService utilityService
         )
         {
             _service = service;
             _accountService = accountService;
             _eventImageSettings = eventImageSettings;
+            _utilityService = utilityService;
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
         }
 
@@ -96,7 +99,7 @@ namespace ParleoBackend.Controllers
             Guid eventId,
             [FromBody] UpdateEventViewModel entity)
         {
-            var validator = new UpdateEventViewModelValidator();
+            var validator = new UpdateEventViewModelValidator(_utilityService, _mapper);
             ValidationResult result = validator.Validate(entity);
             if (!result.IsValid)
             {
