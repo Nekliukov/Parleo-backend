@@ -295,7 +295,7 @@ namespace Parleo.DAL.Migrations
             modelBuilder.Entity("Parleo.DAL.Models.Entities.Chat", b =>
                 {
                     b.HasOne("Parleo.DAL.Models.Entities.User", "Creator")
-                        .WithMany()
+                        .WithMany("CreatedChats")
                         .HasForeignKey("CreatorId");
 
                     b.HasOne("Parleo.DAL.Models.Entities.Event", "Event")

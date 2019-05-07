@@ -97,11 +97,11 @@ namespace ParleoBackend.Extensions
 
             mc.CreateMap<ChatModel, ChatViewModel>()
                 .ForMember(ecvm => ecvm.Image, opt =>
-                    opt.MapFrom(cm => cm.Event != null ?
+                    opt.MapFrom(cm => cm.EventMiniature != null ?
                         FileExtension.GetFullFilePath(
                                 imageSettings.BaseUrl,
                                 imageSettings.EventSourceUrl,
-                                cm.Event.Image)
+                                cm.EventMiniature.Image)
                         : FileExtension.GetFullFilePath(
                         imageSettings.BaseUrl,
                         imageSettings.EventSourceUrl,
@@ -110,8 +110,9 @@ namespace ParleoBackend.Extensions
             mc.CreateMap<ChatViewModel, ChatModel>();
 
             mc.CreateMap<CreateGroupChatViewModel, ChatModel>()
-            .ForMember(cm => cm.Members, opt => opt.MapFrom(cgcvm => cgcvm.Members.Select(id => new MiniatureModel() { Id = id })))
-            .ForMember(cm => cm.Event, opt => opt.MapFrom(cgcvm => cgcvm.EventId.HasValue ? new MiniatureModel() { Id = cgcvm.EventId.Value } : null));
+                .ForMember(cm => cm.Members,
+                    opt => opt.MapFrom(cgcvm =>
+                        cgcvm.Members.Select(id => new MiniatureModel() {Id = id})));
 
 
                 mc.CreateMap<HobbyModel, HobbyViewModel>();

@@ -15,7 +15,7 @@ using Parleo.DAL.Models.Pages;
 
 namespace Parleo.BLL.Services
 {
-    class ChatService : IChatService
+    public class ChatService : IChatService
     {
         private readonly IAccountService _accountService;
         private readonly IChatRepository _chatRepository;
@@ -90,12 +90,12 @@ namespace Parleo.BLL.Services
             return _mapper.Map<PageModel<MessageModel>>(page);
         }
 
-        public async Task<ChatModel> CreateEventChatAsync(ChatModel chat)
+        public async Task<ChatModel> CreateEventChatAsync(Guid eventId)
         {
-            var eventEntity = await _eventService.GetEventAsync(chat.Event.Id);
-            _mapper.Map(eventEntity, chat);
+            var eventEntity = await _eventService.GetEventAsync(eventId);
+            var chatModel = _mapper.Map<ChatModel>(eventEntity);
 
-            var chatEntity = await _chatRepository.CreateChatAsync(_mapper.Map<Chat>(chat));
+            var chatEntity = await _chatRepository.CreateChatAsync(_mapper.Map<Chat>(chatModel));
             chatEntity = await _chatRepository.GetChatByIdAsync(chatEntity.Id, chatEntity.CreatorId.Value);
             return _mapper.Map<ChatModel>(chatEntity);
         }

@@ -37,22 +37,38 @@ namespace ParleoBackend.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateChat([FromBody] CreateGroupChatViewModel groupChat)
+        public async Task<IActionResult> CreateGroupChat([FromBody] CreateGroupChatViewModel groupChat)
+        {
+            var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+            var chatModel = await _chatService.CreateGroupChatAsync(id, _mapper.Map<ChatModel>(groupChat));
+            return Ok(_mapper.Map<ChatViewModel>(chatModel));
+        }
+
+        [HttpPost("{eventId}")]
+        [Authorize]
+        public async Task<IActionResult> CreateEventChat([FromQuery] Guid eventId)
         {
             var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
 
-            if(groupChat.EventId.HasValue)
+            if (!await _eventService.CanUserCreateChat(eventId, id))
             {
-                if(! await _eventService.CanUserCreateChat(groupChat.EventId.Value, id))
-                {
-                    return Forbid("not allowed");
-                }
-                return Ok(await _chatService.CreateEventChatAsync(_mapper.Map<ChatModel>(groupChat)));
+                return Forbid("not allowed");
             }
-
-            return Ok(await _chatService.CreateGroupChatAsync(id, _mapper.Map<ChatModel>(groupChat)));
+            return Ok(await _chatService.CreateEventChatAsync(eventId));
         }
 
+        [HttpGet("{eventId}")]
+        [Authorize]
+        public async Task<IActionResult> GetEventChat([FromQuery] Guid eventId)
+        {
+            var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+
+            if (!await _eventService.CanUserCreateChat(eventId, id))
+            {
+                return Forbid("not allowed");
+            }
+            return Ok(await _chatService.CreateEventChatAsync(id));
+        }
 
         [HttpGet]
         [Authorize]

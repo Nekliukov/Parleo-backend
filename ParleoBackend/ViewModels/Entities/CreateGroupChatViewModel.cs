@@ -9,8 +9,8 @@ namespace ParleoBackend.ViewModels.Entities
     {
         public string Name { get; set; }
 
-        public Guid[] Members { get; set; }
+        //public string Image { get; set; }
 
-        public Guid? EventId { get; set; }
+        public Guid[] Members { get; set; }
     }
 }

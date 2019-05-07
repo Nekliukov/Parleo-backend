@@ -29,15 +29,18 @@ namespace Parleo.DAL.Repositories
                 .Include(c => c.Members)
                 .ThenInclude(m => m.User)
                 .Include(c => c.Messages)
+                .Where(c => c.Members.Select(m => m.UserId).Contains(myUserId))
                 .FirstOrDefaultAsync(c => c.Id == id);
-            SetUpUnreadMessages(ref chat, myUserId);
+            if (chat == null)
+                return null;
+            SetUpUnreadMessages(chat, myUserId);
             var result = new Chat()
             {
                 Creator = chat.Creator,
                 Members = chat.Members,
                 Id = chat.Id,
                 Name = chat.Name,
-                Messages = chat.Messages.OrderBy(m => m.CreatedOn).Take(1).ToList()
+                Messages = chat.Messages.OrderByDescending(m => m.CreatedOn).Take(1).ToList()
             };
             return result;
         }
@@ -51,13 +54,13 @@ namespace Parleo.DAL.Repositories
                 .Select(chat => new 
                     {
                         ChatInfo = chat,
-                        Messages = chat.Messages.OrderBy(m => m.CreatedOn).Take(1)
+                        Messages = chat.Messages.OrderByDescending(m => m.CreatedOn).Take(1)
                     }
                 )
                 .Where(c => c.ChatInfo.Members
                     .Select(cu => cu.UserId)
                     .Contains(userId))
-                .OrderBy(c => c.Messages.Select(m => m.CreatedOn).FirstOrDefault())
+                .OrderByDescending(c => c.Messages.Select(m => m.CreatedOn).FirstOrDefault())
                 .ToListAsync();
 
             var chats = chatPage
@@ -72,7 +75,7 @@ namespace Parleo.DAL.Repositories
                 Name = c.ChatInfo.Name
             }).ToList();
 
-            SetUpUnreadMessages (ref chats, userId);
+            SetUpUnreadMessages (chats, userId);
 
             return new Page<Chat>()
             {
@@ -98,7 +101,7 @@ namespace Parleo.DAL.Repositories
                     .Select(m => m.UserId)
                     .Contains(anotherUserId));
             if (chat != null) 
-                SetUpUnreadMessages(ref chat, myUserId);   
+                SetUpUnreadMessages(chat, myUserId);   
             return chat;
         }
 
@@ -132,7 +135,7 @@ namespace Parleo.DAL.Repositories
 
             var chatPage = new Page<Message>
             {
-                Entities = chat.Messages.OrderBy(m => m.CreatedOn)
+                Entities = chat.Messages.OrderByDescending(m => m.CreatedOn)
                 .SkipWhile(m => m.CreatedOn > page.TimeStamp)
                 .Skip((page.PageNumber - 1) * (page.PageSize ?? PAGE_SIZE))
                 .Take(page.PageSize ?? PAGE_SIZE)
@@ -148,7 +151,7 @@ namespace Parleo.DAL.Repositories
             return chatPage;
         }
 
-        private void SetUpUnreadMessages(ref Chat chat, Guid userId)
+        private void SetUpUnreadMessages(Chat chat, Guid userId)
         {
             if (chat != null)
             {
@@ -160,37 +163,30 @@ namespace Parleo.DAL.Repositories
             }
         }
 
-        private void SetUpUnreadMessages(ref List<Chat> chatPage, Guid userId)
+        private void SetUpUnreadMessages(List<Chat> chatPage, Guid userId)
         {
             foreach (var chat in chatPage)
             {
                 var chatUser = chat.Members.First(m => m.UserId == userId);
 
-                chatUser.UnreadMessages = chat.Messages.Count(m => m.CreatedOn > chatUser.TimeStamp);
+                chatUser.UnreadMessages = chat.Messages.Where(m => m.SenderId != userId)
+                    .Count(m => m.CreatedOn < chatUser.TimeStamp);
             }
             _context.SaveChanges();
         }
 
         private void ViewChat(Guid chatId, Guid userId)
         {
-            var time = _context.Chat
+            var chat = _context.Chat
                 .Include(c => c.Members)
-                .First(c => c.Id == chatId)
-                .Members
-                .First(m => m.UserId == userId)
-                .TimeStamp;
-
-            _context.Chat
                 .Include(c => c.Messages)
-                .First(c => c.Id == chatId)
-                .Messages
-                .Where(m => m.CreatedOn > time)
-                .Select(m => m.ViewedOn = DateTimeOffset.UtcNow)
-                .ToList();
+                .First(c => c.Id == chatId);
+            chat.Members
+                .First(m => m.UserId == userId)
+                .TimeStamp = DateTimeOffset.UtcNow;
 
-            time = DateTimeOffset.UtcNow;
-
-            _context.SaveChanges();
+            var readMessage = chat.Messages.Where(m => !m.ViewedOn.HasValue && m.SenderId != userId)
+                .Select(m => m.ViewedOn = DateTimeOffset.UtcNow).ToList();
         }
     }
 }

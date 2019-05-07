@@ -41,9 +41,9 @@ namespace Parleo.DAL
                 .HasForeignKey<Credentials>(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade); 
 
-            modelBuilder.Entity<Event>()
-                .HasOne(ev => ev.Chat)
-                .WithOne(c => c.Event)
+            modelBuilder.Entity<Chat>()
+                .HasOne(ev => ev.Event)
+                .WithOne(c => c.Chat)
                 .HasForeignKey<Chat>(c => c.EventId);
                
             modelBuilder.Entity<AccountToken>()
@@ -67,6 +67,10 @@ namespace Parleo.DAL
                 .HasMany(chat => chat.Messages)
                 .WithOne(message => message.Chat)
                 .HasForeignKey(message => message.ChatId);
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId);
             modelBuilder.Entity<Chat>()
                 .HasOne(chat => chat.Creator)
                 .WithMany(user => user.CreatedChats)
