@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation.Results;
@@ -11,28 +10,25 @@ using Parleo.BLL.Exceptions;
 using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
 using Parleo.BLL.Models.Pages;
-using ParleoBackend.Contracts;
-using ParleoBackend.Hubs;
 using ParleoBackend.Validators.Common;
 using ParleoBackend.ViewModels.Entities;
 using ParleoBackend.ViewModels.Pages;
 
 namespace ParleoBackend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users/current/[controller]")]
     [ApiController]
-    public class ChatController : ControllerBase
+    public class ChatsController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IChatService _chatService;
 
-        public ChatController(IMapperFactory mapperFactory, IChatService chatService)
+        public ChatsController(IMapperFactory mapperFactory, IChatService chatService)
         {
             _mapper = mapperFactory.GetMapper(typeof(WebServices).Name); ;
             _chatService = chatService;
         }
 
-        
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetChatPage([FromQuery] PageRequestViewModel pageRequest)
@@ -59,7 +55,7 @@ namespace ParleoBackend.Controllers
 
             return Ok(_mapper.Map<ChatViewModel>(chat));
         }
-        
+
         [Authorize]
         [HttpGet("{chatId}/messages")]
         public async Task<IActionResult> GetMessagePage(Guid chatId, [FromQuery] PageRequestViewModel pageRequest)
@@ -80,7 +76,7 @@ namespace ParleoBackend.Controllers
         }
 
         [Authorize]
-        [HttpGet("user")]
+        [HttpGet("userId")]
         public async Task<IActionResult> GetChatWithUser([FromQuery] Guid userId)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
@@ -88,6 +84,5 @@ namespace ParleoBackend.Controllers
 
             return Ok(_mapper.Map<ChatViewModel>(chatModel));
         }
-
     }
 }
