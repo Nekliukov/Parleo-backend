@@ -112,7 +112,29 @@ namespace ParleoBackend.Extensions
             mc.CreateMap<CreateGroupChatViewModel, ChatModel>()
                 .ForMember(cm => cm.Members,
                     opt => opt.MapFrom(cgcvm =>
-                        cgcvm.Members.Select(id => new MiniatureModel() {Id = id})));
+                        cgcvm.Members.Select(id => new MiniatureModel() {Id = id}))
+                    );
+                mc.CreateMap<EventMiniatureViewModel, MiniatureModel>();
+
+                mc.CreateMap<UpdateUserViewModel, UpdateUserModel>();
+                mc.CreateMap<UpdateUserModel, UpdateUserViewModel>();
+
+                mc.CreateMap<MessageModel, MessageViewModel>();
+                mc.CreateMap<MessageViewModel, MessageModel>();
+
+                mc.CreateMap<ChatModel, ChatViewModel>()
+                    .ForMember(ecvm => ecvm.Image, opt =>
+                        opt.MapFrom(cm => cm.EventMiniature != null ?
+                            FileExtension.GetFullFilePath(
+                                    imageSettings.BaseUrl,
+                                    imageSettings.EventSourceUrl,
+                                    cm.EventMiniature.Image)
+                            : FileExtension.GetFullFilePath(
+                            imageSettings.BaseUrl,
+                            imageSettings.AccountSourceUrl,
+                            cm.Image)));
+
+                mc.CreateMap<ChatViewModel, ChatModel>();
 
 
                 mc.CreateMap<HobbyModel, HobbyViewModel>();

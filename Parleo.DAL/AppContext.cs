@@ -7,6 +7,8 @@ namespace Parleo.DAL
     {
         public DbSet<User> User { get; set; }
 
+        public DbSet<UserFriends> UserFriends { get; set; }
+
         public DbSet<Credentials> Credentials { get; set; }
 
         public DbSet<Event> Event { get; set; }
@@ -131,6 +133,7 @@ namespace Parleo.DAL
                 .WithMany(user => user.Chats)
                 .HasForeignKey(chatUser => chatUser.UserId);
             #endregion
+
             #region User-Hobby m2m
             modelBuilder.Entity<UserHobby>().HasKey(k => new { k.UserId, k.HobbyName });
             modelBuilder.Entity<UserHobby>()

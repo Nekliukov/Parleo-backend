@@ -18,6 +18,7 @@
             public const string EXCEEDED_PARTICIPANTS_COUNT_LIMIT = "Exceeded the limit of participants";
             public const string NO_UPDATE_RIGHTS = "You are not an event creator";
             public const string USER_ALREADY_PARTICIPATE = "At least one user already participates";
+            public const string FRIEND_REQUSET_FAILED = "Unable to add friend. Some error occured";
           
             public const string EXPIRED_TOKEN = "Token expired";
             public const string NOT_VALID_TOKEN = "Token is not valid";
