@@ -168,6 +168,14 @@ namespace Parleo.DAL.Repositories
 
         public async Task<bool> AddFriendAsync(Guid userFromId, Guid userToId)
         {
+            var friendship = await GetExistingFriendship(userFromId, userToId);
+            if (friendship != null && friendship.Status == (int)FriendStatus.Deleted)
+            {
+                friendship.Status = (int)FriendStatus.InFriends;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
             UserFriends userFriends = await CreateUserFriendsEntityAsync(userFromId, userToId);
             if (_context.UserFriends.Any(uf => // if friend is already added
                 Equals(userFromId, uf.UserFromId) && Equals(userToId, uf.UserToId)))
@@ -222,7 +230,7 @@ namespace Parleo.DAL.Repositories
                 friend = await _context.UserFriends
                     .Where(u => u.UserFromId == userFromId && u.UserToId == userToId)
                     .FirstOrDefaultAsync();
-                friend.Status = 0;
+                friend.Status = (int)FriendStatus.Deleted;
                 await _context.SaveChangesAsync();
             }
             catch
@@ -243,8 +251,15 @@ namespace Parleo.DAL.Repositories
                 UserFrom = await _context.User.FirstOrDefaultAsync(user => user.Id == userFromId),
                 UserToId = userToId,
                 UserTo = await _context.User.FirstOrDefaultAsync(user => user.Id == userToId),
-                Status = 1 // 1 - is in friends, 0 - deleted
+                Status = (int)FriendStatus.InFriends
             };
+        }
+
+        private async Task<UserFriends> GetExistingFriendship(Guid userFromId, Guid userToId)
+        {
+            return await _context.UserFriends
+                    .Where(u => u.UserFromId == userFromId && u.UserToId == userToId)
+                    .FirstOrDefaultAsync();
         }
 
         private bool LevelInRange(UserLanguage userLanguage, int? minLevel)

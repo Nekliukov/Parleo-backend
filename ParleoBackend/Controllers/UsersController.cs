@@ -275,7 +275,6 @@ namespace ParleoBackend.Controllers
         }
 
         [HttpPut("removeFriend/{userId}")]
-        [Authorize]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveFriend(Guid userId)
@@ -330,7 +329,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<PageViewModel<UserViewModel>>(friends));
         }
 
-        [HttpPut("current/friends/{userId}")]
+        [HttpPut("current/friends/{userToId}")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> SendFriendshipRequest(Guid userToId)
