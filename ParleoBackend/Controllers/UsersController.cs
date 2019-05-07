@@ -274,7 +274,7 @@ namespace ParleoBackend.Controllers
             return Ok(_mapper.Map<PageViewModel<EventViewModel>>(attendingEvents));
         }
 
-        [HttpDelete("current/removeFriend/{userId}")]
+        [HttpDelete("current/friends/{userId}")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> RemoveFriend(Guid userId)
