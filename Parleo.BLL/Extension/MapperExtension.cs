@@ -50,7 +50,7 @@ namespace Parleo.BLL.Extensions
                 mc.CreateMap<LanguageModel, DataAccessLanguage>();
 
                 mc.CreateMap<DataAccessEvent, EventModel>()
-                    .ForMember(em => em.Creator, 
+                    .ForMember(em => em.Creator,
                         opt => opt.MapFrom(c => new MiniatureModel()
                         {
                             Id = c.Creator.Id,
@@ -58,13 +58,14 @@ namespace Parleo.BLL.Extensions
                             Name = c.Creator.Name
                         }))
                     .ForMember(em => em.Participants,
-                        opt => opt.MapFrom(e => 
+                        opt => opt.MapFrom(e =>
                             e.Participants.Select(p => new MiniatureModel
                             {
                                 Id = p.UserId,
                                 Image = p.User.AccountImage,
                                 Name = p.User.Name
-                            })));
+                            })))
+                     .ForMember(em => em.ChatId, opt => opt.MapFrom(e => e.Chat != null ? e.Chat.Id : (Guid?)null));
 
                 mc.CreateMap<UpdateEventModel, DataAccessEvent>();
                 mc.CreateMap<CreateEventModel, DataAccessEvent>()
