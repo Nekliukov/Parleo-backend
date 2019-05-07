@@ -24,6 +24,7 @@ namespace ParleoBackend.Validators.User
             RuleFor(user => user.Name).NotEmpty().NotNull()
                 .MaximumLength(60);
             RuleFor(user => user.Languages).NotEmpty().NotNull()
+                .Must(NoLanguageDuplicates).WithMessage(Constants.Errors.DUPLICATES_ARE_NOT_ALLOWED)
                 .Must(AllLanguagesExist).WithMessage(Constants.Errors.INVALID_LANGUAGE);
             RuleFor(user => user.Languages)
                 .Must(CorrectLevel).WithMessage(Constants.Errors.INCORRECT_LANGUAGE_LEVEL);
@@ -35,6 +36,11 @@ namespace ParleoBackend.Validators.User
         {
             return _utilityService.AllLanguagesExistAsync(
                 _mapper.Map<ICollection<LanguageModel>>(languages)).Result;
+        }
+
+        private bool NoLanguageDuplicates(UserLanguageViewModel[] languages)
+        {
+            return languages.Length == languages.Select(l => l.Code).Distinct().Count();
         }
 
         private bool AllHobbiesExist(IEnumerable<string> hobbies)
@@ -57,12 +63,12 @@ namespace ParleoBackend.Validators.User
         private bool ValidBirthDate(DateTime birthDate)
         {
             DateTime minDateTime = new DateTime(
-                DateTime.Now.Year - Constants.Restrictions.MIN_AGE,
+                DateTime.Now.Year - Constants.Restrictions.MAX_AGE,
                 DateTime.Now.Month,
                 DateTime.Now.Day);
 
             DateTime maxDateTime = new DateTime(
-                DateTime.Now.Year - Constants.Restrictions.MAX_AGE,
+                DateTime.Now.Year - Constants.Restrictions.MIN_AGE,
                 DateTime.Now.Month,
                 DateTime.Now.Day);
 
