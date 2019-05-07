@@ -67,7 +67,7 @@ namespace ParleoBackend.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUsersPageAsync(
-        [FromQuery] UserFilterViewModel userFilter)
+            [FromQuery] UserFilterViewModel userFilter)
         {
             string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
             if (id == null)
