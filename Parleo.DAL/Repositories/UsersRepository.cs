@@ -105,6 +105,9 @@ namespace Parleo.DAL.Repositories
                     .ThenInclude(ue => ue.Event)
                 .FirstOrDefaultAsync(user => user.Id == id);
 
+            result.Friends = await _context.UserFriends.Where(u => u.UserFromId == id)
+                .ToListAsync();
+
             return result;
         }
 

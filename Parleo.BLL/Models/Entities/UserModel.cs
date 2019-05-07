@@ -25,6 +25,8 @@ namespace Parleo.BLL.Models.Entities
 
         public string Email { get; set; }
 
+        public bool IsFriend { get; set; }
+
         public ICollection<UserLanguageModel> Languages { get; set; }
 
         public ICollection<HobbyModel> Hobbies { get; set; }

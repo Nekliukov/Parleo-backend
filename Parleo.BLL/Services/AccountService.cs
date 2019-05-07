@@ -11,7 +11,7 @@ using Parleo.BLL.Models.Pages;
 using Parleo.DAL.Models.Filters;
 using Parleo.BLL.Extensions;
 using Parleo.DAL.Helpers;
-using System.Collections.Generic;
+using System.Linq;
 using Parleo.DAL.Models.Pages;
 
 namespace Parleo.BLL.Services
@@ -62,12 +62,23 @@ namespace Parleo.BLL.Services
             var usersPage = await _repository.GetPageAsync(
                 _mapper.Map<UserFilter>(pageRequest), user);
 
-            if(usersPage == null)
+            if (usersPage == null)
             {
                 return null;
             }
 
-            return _mapper.Map<PageModel<UserModel>>(usersPage);
+            PageModel<UserModel> page = _mapper.Map<PageModel<UserModel>>(usersPage);
+
+            foreach (UserFriends userFriends in user.Friends)
+            {
+                UserModel userModel = page.Entities.First(u => u.Id == userFriends.UserToId);
+                if (userModel != null)
+                {
+                    userModel.IsFriend = true;
+                }
+            }
+
+            return page;
         }
 
         public async Task<UserModel> GetUserByIdAsync(Guid id)

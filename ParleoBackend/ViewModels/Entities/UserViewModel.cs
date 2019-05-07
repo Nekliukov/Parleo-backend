@@ -21,6 +21,8 @@ namespace ParleoBackend.ViewModels.Entities
 
         public string Email { get; set; }
 
+        public bool IsFriend { get; set; }
+
         public ICollection<UserLanguageViewModel> Languages { get; set; }
 
         public ICollection<HobbyViewModel> Hobbies { get; set; }
