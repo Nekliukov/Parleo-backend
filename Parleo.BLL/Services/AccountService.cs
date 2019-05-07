@@ -59,11 +59,8 @@ namespace Parleo.BLL.Services
                 return null;
             }
 
-            LocationModel location = new LocationModel();
-            (location.Latitude, location.Longitude) = (user.Latitude, user.Longitude);
-
             var usersPage = await _repository.GetPageAsync(
-                _mapper.Map<UserFilter>(pageRequest), _mapper.Map<Location>(location));
+                _mapper.Map<UserFilter>(pageRequest), user);
 
             if(usersPage == null)
             {
