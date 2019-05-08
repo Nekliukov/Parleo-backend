@@ -43,7 +43,7 @@ namespace ParleoBackend.Controllers
 
         [HttpPost("/api/Events/{eventId}/chat")]
         [Authorize]
-        public async Task<IActionResult> CreateEventChat([FromQuery] Guid eventId)
+        public async Task<IActionResult> CreateEventChat(Guid eventId)
         {
             var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
 
