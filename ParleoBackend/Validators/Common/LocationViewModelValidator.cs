@@ -8,9 +8,15 @@ namespace ParleoBackend.Validators.Common
         public LocationViewModelValidator()
         {
             RuleFor(location => location.Latitude)
-                .InclusiveBetween(-90, 90).WithMessage(Constants.Errors.INVALID_LOCATION);
+                .InclusiveBetween(
+                    Constants.Restrictions.MIN_LATITUDE_VALUE, 
+                    Constants.Restrictions.MAX_LATITUDE_VALUE)
+                .WithMessage(Constants.Errors.INVALID_LOCATION);
             RuleFor(location => location.Longitude)
-                .InclusiveBetween(-180, 180).WithMessage(Constants.Errors.INVALID_LOCATION);
+                .InclusiveBetween(
+                    Constants.Restrictions.MIN_LONGITUDE_VALUE,
+                    Constants.Restrictions.MAX_LONGITUDE_VALUE)
+                .WithMessage(Constants.Errors.INVALID_LOCATION);
         }
     }
 }

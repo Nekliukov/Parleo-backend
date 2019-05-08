@@ -15,22 +15,25 @@ using Parleo.DAL.Models.Pages;
 
 namespace Parleo.BLL.Services
 {
-    class ChatService : IChatService
+    public class ChatService : IChatService
     {
         private readonly IAccountService _accountService;
         private readonly IChatRepository _chatRepository;
         private readonly IChatHelper _chatHelper;
+        private readonly IEventService _eventService;
         private readonly IMapper _mapper;
 
         public ChatService(
             IAccountService accountService, 
             IChatRepository chatRepository, 
             IMapperFactory mapperFactory, 
-            IChatHelper chatHelper)
+            IChatHelper chatHelper,
+            IEventService eventService)
         {
             _accountService = accountService;
             _chatRepository = chatRepository;
             _chatHelper = chatHelper;
+            _eventService = eventService;
             _mapper = mapperFactory.GetMapper(typeof(BLServices).Name); ;
         }
         public async Task<ChatModel> GetChatWithUserAsync(Guid myId, Guid anotherUserId)
@@ -41,11 +44,8 @@ namespace Parleo.BLL.Services
             {
                 var anotherUser = await _accountService.GetUserByIdAsync(anotherUserId);
 
-                chat = await _chatRepository.CreateChatAsync(new List<Guid>()
-                {
-                    myId,
-                    anotherUser.Id
-                });
+                var chatEntity = _mapper.Map<ChatModel>(new List<Guid>() { myId, anotherUser.Id });
+                chat = await _chatRepository.CreateChatAsync(_mapper.Map<Chat>(chatEntity));
             }
 
             //Delete this, when ef core fix stupid bug
@@ -88,6 +88,25 @@ namespace Parleo.BLL.Services
             var page = await _chatRepository.GetMessagePageAsync(userId, myUserId, _mapper.Map<PageRequest>(pageRequest));
 
             return _mapper.Map<PageModel<MessageModel>>(page);
+        }
+
+        public async Task<ChatModel> CreateEventChatAsync(Guid eventId)
+        {
+            var eventEntity = await _eventService.GetEventAsync(eventId);
+            var chatModel = _mapper.Map<ChatModel>(eventEntity);
+
+            var chatEntity = await _chatRepository.CreateChatAsync(_mapper.Map<Chat>(chatModel));
+            chatEntity = await _chatRepository.GetChatByIdAsync(chatEntity.Id, chatEntity.CreatorId.Value);
+            return _mapper.Map<ChatModel>(chatEntity);
+        }
+
+        public async Task<ChatModel> CreateGroupChatAsync(Guid creatorId, ChatModel chat)
+        {
+            chat.CreatorId = creatorId;
+
+            var chatEntity = await _chatRepository.CreateChatAsync(_mapper.Map<Chat>(chat));
+            chatEntity = await _chatRepository.GetChatByIdAsync(chatEntity.Id, chatEntity.CreatorId.Value);
+            return _mapper.Map<ChatModel>(chatEntity);
         }
     }
 }

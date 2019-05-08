@@ -21,6 +21,8 @@ namespace ParleoBackend.ViewModels.Entities
 
         public bool IsFinished { get; set; }
 
+        public Guid? ChatId { get; set; }
+
         public DateTimeOffset StartTime { get; set; }
 
         public DateTimeOffset? EndDate { get; set; }

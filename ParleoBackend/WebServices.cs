@@ -30,7 +30,6 @@ namespace ParleoBackend
             services.AddScoped<IChatHub, ChatHub>();
             services.AddSingleton<BackgroundWorkerRegistry>();
             services.AddTransient<IValidator<UpdateEventViewModel>, UpdateEventViewModelValidator>();
-            services.AddTransient<IValidator<CreateEventViewModel>, CreateEventViewModelValidator>();
             services.AddTransient<IValidator<UserRegistrationViewModel>, UserRegistrationViewModelValidator>();
             services.AddTransient<IValidator<UserLoginViewModel>, UserLoginViewModelValidator>();
             services.AddTransient<IValidator<UpdateUserViewModel>, UpdateUserViewModelValidator>();
