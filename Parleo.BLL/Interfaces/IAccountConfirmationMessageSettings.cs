@@ -2,7 +2,9 @@
 {
     public interface IAccountConfirmationMessageSettings
     {
-        string InvitationUrl { get; }
+        string WebSiteInvitationUrl { get; }
+
+        string MobileInvitationUrl { get; }
 
         string Message { get; }
 
