@@ -23,7 +23,7 @@
 
             public const string EXPIRED_TOKEN = "Token expired";
             public const string NOT_VALID_TOKEN = "Token is not valid";
-            public const string TOKEN_ALREADY_SENT = "Token has already been sent";
+            public const string TOKEN_ALREADY_SENT = "Please, verify your email first. Check your inbox for a verification link";
 
             public const string INVALID_LANGUAGE = "Language has incorrect code";
             public const string INVALID_LANGUAGES = "At least one language has incorrect code";
