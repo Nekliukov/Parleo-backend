@@ -137,6 +137,7 @@ namespace Parleo.DAL.Repositories
         {
             var chat = await _context.Chat
                 .Include(c => c.Messages)
+                    .ThenInclude(m => m.Sender)
                 .FirstOrDefaultAsync(c => c.Id == chatId);
 
             var chatPage = new Page<Message>
