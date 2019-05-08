@@ -14,7 +14,9 @@ namespace ParleoBackend.Configuration
             _configuration = configuration.GetSection(nameof(AccountConfirmationMessageSettings));
         }
 
-        public string InvitationUrl => _configuration.GetValue<string>(nameof(InvitationUrl));
+        public string WebSiteInvitationUrl => _configuration.GetValue<string>(nameof(WebSiteInvitationUrl));
+
+        public string MobileInvitationUrl => _configuration.GetValue<string>(nameof(MobileInvitationUrl));
 
         public string Message => _configuration.GetValue<string>(nameof(Message));
 
