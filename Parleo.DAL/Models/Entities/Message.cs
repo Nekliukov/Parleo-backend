@@ -23,6 +23,8 @@ namespace Parleo.DAL.Models.Entities
 
         public User Sender { get; set; }
 
+        public Guid? SenderId { get; set; }
+
         public Chat Chat { get; set; }
 
         public Guid ChatId { get; set; }

@@ -31,6 +31,9 @@
     <Compile Remove="Migrations\20190310160227_CreateInitialModels.Designer.cs" />
     <Compile Remove="Migrations\20190416132317_ChangeLanguagePrimaryKey.cs" />
     <Compile Remove="Migrations\20190501185810_AddEventToChat.cs" />
+    <Compile Remove="Migrations\20190504195705_AddCreatedChat.cs" />
+    <Compile Remove="Migrations\20190505142447_FixChatRelationship.cs" />
+    <Compile Remove="Migrations\20190507145530_fix.cs" />
   </ItemGroup>
 
   <ItemGroup>
