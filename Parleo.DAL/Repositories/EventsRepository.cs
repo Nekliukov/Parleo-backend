@@ -7,6 +7,7 @@ using Parleo.DAL.Interfaces;
 using Parleo.DAL.Models.Pages;
 using Parleo.DAL.Models.Filters;
 using Parleo.DAL.Helpers;
+using System.Collections.Generic;
 
 namespace Parleo.DAL.Repositories
 {
@@ -65,13 +66,11 @@ namespace Parleo.DAL.Repositories
         {
             double latitude = (double)location.Latitude,
                    longtitude = (double)location.Longitude;
-            var events = await _context.Event
+
+            IEnumerable<Event> events = await _context.Event
                 .Where(e => (eventFilter.Languages != null && 
                         eventFilter.Languages.Count() != 0) ?
                     eventFilter.Languages.Contains(e.LanguageCode) : true)
-                .Where(e => (eventFilter.MaxDistance != null) ?
-                    LocationHelper.GetDistanceBetween((double)e.Longitude, (double)e.Latitude,
-                    longtitude, latitude) <= eventFilter.MaxDistance : true)
                 .Where(e => (eventFilter.MaxNumberOfParticipants != null) ?
                     e.MaxParticipants <= eventFilter.MaxNumberOfParticipants : true)
                 .Where(e => (eventFilter.MaxStartDate != null) ?
@@ -83,6 +82,12 @@ namespace Parleo.DAL.Repositories
                 .Include(e => e.Participants)
                 .ThenInclude(ue => ue.User)
                 .ToListAsync();
+
+            events = events
+                .Where(e => (eventFilter.MaxDistance != null) ?
+                    LocationHelper.GetDistanceBetween((double)e.Longitude, (double)e.Latitude,
+                    longtitude, latitude) <= eventFilter.MaxDistance : true)
+                .ToArray();
 
             int totalAmount = events.Count();
 
