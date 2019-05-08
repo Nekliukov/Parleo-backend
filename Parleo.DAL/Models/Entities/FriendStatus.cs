@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Parleo.DAL.Models.Entities
+﻿namespace Parleo.DAL.Models.Entities
 {
     public enum FriendStatus
     {

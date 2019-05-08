@@ -21,20 +21,17 @@ namespace Parleo.BLL.Services
         private readonly IUsersRepository _repository;
         private readonly ISecurityHelper _securityService;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
 
 
         public AccountService(
             IUsersRepository repository,
             ISecurityHelper securityHelper,
-            IMapperFactory mapperFactory,
-            ILogger<AccountService> logger
+            IMapperFactory mapperFactory
         )
         {
             _repository = repository;
             _securityService = securityHelper;
             _mapper = mapperFactory.GetMapper(typeof(BLServices).Name);
-            _logger = logger;
         }
 
         public async Task<UserModel> AuthenticateAsync(UserLoginModel authorizationModel)
@@ -69,10 +66,10 @@ namespace Parleo.BLL.Services
 
             PageModel<UserModel> page = _mapper.Map<PageModel<UserModel>>(usersPage);
 
-            foreach (UserFriends userFriends in user.Friends)
+            foreach (UserFriends userFriend in user.Friends)
             {
-                UserModel userModel = page.Entities.First(u => u.Id == userFriends.UserToId);
-                if (userModel != null)
+                UserModel userModel = page.Entities.First(u => u.Id == userFriend.UserToId);
+                if (userModel != null && userFriend.Status == (int)FriendStatus.InFriends)
                 {
                     userModel.IsFriend = true;
                 }
