@@ -186,6 +186,7 @@ namespace Parleo.DAL.Repositories
                 .Include(e => e.Participants).ThenInclude(ue => ue.User)
                 .Include(e => e.Language)
                 .Include(e => e.Creator)
+                .Include(e => e.Chat)
                 .Where(e => e.CreatorId == userId)
                 .ToArrayAsync();
 
@@ -216,6 +217,7 @@ namespace Parleo.DAL.Repositories
                 .Include(e => e.Participants).ThenInclude(ue => ue.User)
                 .Include(e => e.Language)
                 .Include(e => e.Creator)
+                .Include(e => e.Chat)
                 .Where(e => e.Participants.Any(
                     ue => ue.UserId == userId && e.CreatorId != userId))
                 .ToArrayAsync();

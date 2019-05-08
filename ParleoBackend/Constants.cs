@@ -29,6 +29,9 @@
             public const string INVALID_LANGUAGES = "At least one language has incorrect code";
             public const string INVALID_HOBBY = "At least one hobby doesn't exist";
             public const string INCORRECT_LANGUAGE_LEVEL = "Language level must be greater than 0 and less than 5 inclusively";
+
+            public const string NOT_CREATOR = "Only creator can attach chat";
+            
             public const string DUPLICATES_ARE_NOT_ALLOWED = "At least one language has duplicate";
             public const string INVALID_BIRTHDATE = "Invalid birth date. You must be from 16 to 100 years old";
             public const string INVALID_START_DATE = "Event should start in a maximum of 60 days";

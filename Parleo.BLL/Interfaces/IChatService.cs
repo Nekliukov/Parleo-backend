@@ -19,5 +19,9 @@ namespace Parleo.BLL.Interfaces
         
         Task<PageModel<MessageModel>> GetMessagePageAsync(
             Guid id, Guid myUserId, PageRequestModel pageRequest);
+
+        Task<ChatModel> CreateEventChatAsync(Guid eventId);
+
+        Task<ChatModel> CreateGroupChatAsync(Guid creatorId, ChatModel chat);
     }
 }

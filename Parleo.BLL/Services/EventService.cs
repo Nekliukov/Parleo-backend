@@ -141,5 +141,11 @@ namespace Parleo.BLL.Services
 
             return _mapper.Map<PageModel<EventModel>>(attendingEventPageModel);
         }
+
+        public async Task<bool> CanUserCreateChat(Guid EventId, Guid userId)
+        {
+                var eventEntity = await _repository.GetEventAsync(EventId);
+                return eventEntity.Creator.Id == userId;
+        }
     }
 }

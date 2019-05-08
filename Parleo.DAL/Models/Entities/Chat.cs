@@ -14,10 +14,14 @@ namespace Parleo.DAL.Models.Entities
 
         public User Creator { get; set; }
 
+        public Guid? CreatorId { get; set; }
+
         public ICollection<ChatUser> Members { get; set; }
 
         public ICollection<Message> Messages { get; set; }
 
         public Event Event { get; set; }
+        
+        public Guid? EventId { get; set; }
     }
 }

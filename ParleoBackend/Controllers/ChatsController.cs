@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Parleo.BLL.Exceptions;
 using Parleo.BLL.Extensions;
 using Parleo.BLL.Interfaces;
+using Parleo.BLL.Models.Entities;
 using Parleo.BLL.Models.Pages;
 using ParleoBackend.Validators.Common;
 using ParleoBackend.ViewModels.Entities;
@@ -22,12 +23,47 @@ namespace ParleoBackend.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IChatService _chatService;
+        private readonly IEventService _eventService;
 
-        public ChatsController(IMapperFactory mapperFactory, IChatService chatService)
+        public ChatsController(IMapperFactory mapperFactory, IChatService chatService, IEventService eventService)
         {
-            _mapper = mapperFactory.GetMapper(typeof(WebServices).Name); ;
+            _mapper = mapperFactory.GetMapper(typeof(WebServices).Name);
             _chatService = chatService;
+            _eventService = eventService;
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateGroupChat([FromBody] CreateGroupChatViewModel groupChat)
+        {
+            var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+            var chatModel = await _chatService.CreateGroupChatAsync(id, _mapper.Map<ChatModel>(groupChat));
+            return Ok(_mapper.Map<ChatViewModel>(chatModel));
+        }
+
+        [HttpPost("/api/Events/{eventId}/chat")]
+        [Authorize]
+        public async Task<IActionResult> CreateEventChat([FromQuery] Guid eventId)
+        {
+            var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+
+            if (!await _eventService.CanUserCreateChat(eventId, id))
+            {
+                return Forbid(Constants.Errors.NOT_CREATOR);
+            }
+            return Ok(await _chatService.CreateEventChatAsync(eventId));
+        }
+
+        //Do we need it?
+        //[HttpGet("/api/Events/{eventId}/chat")]
+        //[Authorize]
+        //public async Task<IActionResult> GetEventChat([FromQuery] Guid eventId)
+        //{
+        //    var id = new Guid(User.FindFirst(JwtRegisteredClaimNames.Jti).Value);
+
+
+        //    return Ok(await _chatService.GetEventChatAsync(id));
+        //}
 
         [HttpGet]
         [Authorize]
