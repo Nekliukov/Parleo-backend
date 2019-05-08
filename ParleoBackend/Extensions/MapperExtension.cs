@@ -53,9 +53,6 @@ namespace ParleoBackend.Extensions
             mc.CreateMap<UpdateEventViewModel, UpdateEventModel>();
             mc.CreateMap<UpdateEventModel, UpdateEventViewModel>();
 
-            mc.CreateMap<CreateEventViewModel, CreateEventModel>();
-            mc.CreateMap<CreateEventModel, CreateEventViewModel>();
-
             mc.CreateMap<LanguageModel, LanguageViewModel>()
                 .ForMember(lvm => lvm.Id, opt => opt.MapFrom(lm => lm.Code));
 
@@ -95,17 +92,19 @@ namespace ParleoBackend.Extensions
             mc.CreateMap<MessageModel, MessageViewModel>();
             mc.CreateMap<MessageViewModel, MessageModel>();
 
-            mc.CreateMap<ChatModel, ChatViewModel>()
-                .ForMember(ecvm => ecvm.Image, opt =>
-                    opt.MapFrom(cm => cm.Event != null ?
-                        FileExtension.GetFullFilePath(
-                                imageSettings.BaseUrl,
-                                imageSettings.EventSourceUrl,
-                                cm.Event.Image)
-                        : FileExtension.GetFullFilePath(
-                        imageSettings.BaseUrl,
-                        imageSettings.EventSourceUrl,
-                        cm.Image)));
+            mc.CreateMap<UpdateEventViewModel, CreateEventModel>();
+
+            mc.CreateMap<LanguageModel, LanguageViewModel>()
+                .ForMember(lvm => lvm.Id, opt => opt.MapFrom(lm => lm.Code));
+
+            mc.CreateMap<LanguageViewModel, LanguageModel>()
+                .ForMember(lm => lm.Code, opt => opt.MapFrom(lvm => lvm.Id));
+
+            mc.CreateMap<HobbyModel, HobbyViewModel>();
+            mc.CreateMap<HobbyViewModel, HobbyModel>();
+
+            mc.CreateMap<UserLanguageModel, UserLanguageViewModel>();
+            mc.CreateMap<UserLanguageViewModel, UserLanguageModel>();
 
             mc.CreateMap<CreateGroupChatViewModel, ChatModel>()
                 .ForMember(cm => cm.Members,
