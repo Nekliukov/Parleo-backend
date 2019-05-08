@@ -11,7 +11,7 @@ using Parleo.BLL.Models.Pages;
 using Parleo.DAL.Models.Filters;
 using Parleo.BLL.Extensions;
 using Parleo.DAL.Helpers;
-using System.Collections.Generic;
+using System.Linq;
 using Parleo.DAL.Models.Pages;
 
 namespace Parleo.BLL.Services
@@ -21,20 +21,17 @@ namespace Parleo.BLL.Services
         private readonly IUsersRepository _repository;
         private readonly ISecurityHelper _securityService;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
 
 
         public AccountService(
             IUsersRepository repository,
             ISecurityHelper securityHelper,
-            IMapperFactory mapperFactory,
-            ILogger<AccountService> logger
+            IMapperFactory mapperFactory
         )
         {
             _repository = repository;
             _securityService = securityHelper;
             _mapper = mapperFactory.GetMapper(typeof(BLServices).Name);
-            _logger = logger;
         }
 
         public async Task<UserModel> AuthenticateAsync(UserLoginModel authorizationModel)
@@ -59,23 +56,61 @@ namespace Parleo.BLL.Services
                 return null;
             }
 
-            LocationModel location = new LocationModel();
-            (location.Latitude, location.Longitude) = (user.Latitude, user.Longitude);
-
             var usersPage = await _repository.GetPageAsync(
-                _mapper.Map<UserFilter>(pageRequest), _mapper.Map<Location>(location));
+                _mapper.Map<UserFilter>(pageRequest), user);
 
-            if(usersPage == null)
+            if (usersPage == null)
             {
                 return null;
             }
 
-            return _mapper.Map<PageModel<UserModel>>(usersPage);
+            PageModel<UserModel> page = _mapper.Map<PageModel<UserModel>>(usersPage);
+
+            foreach (UserFriends userFriend in user.Friends)
+            {
+                UserModel userModel = page.Entities.First(u => u.Id == userFriend.UserToId);
+                if (userModel != null && userFriend.Status == (int)FriendStatus.InFriends)
+                {
+                    userModel.IsFriend = true;
+                }
+            }
+
+            UserModel currentUser = _mapper.Map<UserModel>(user);
+            foreach (var listUser in page.Entities)
+            {
+                listUser.DistanceFromCurrentUser = GetDistanceFromCurrentUserAsync(currentUser, listUser);
+            }
+
+            return page;
         }
 
-        public async Task<UserModel> GetUserByIdAsync(Guid id)
+        public async Task<UserModel> GetUserByIdAsync(Guid id, Guid currentUserId)
         {
             User user = await _repository.GetAsync(id);
+            User currentUser = await _repository.GetAsync(currentUserId);
+
+            if (user == null || currentUser == null)
+            {
+                return null;
+            }
+
+            UserModel result = _mapper.Map<UserModel>(user);
+
+            result.IsFriend = currentUser.Friends.Any(fr =>
+                fr.UserToId == result.Id && fr.Status == (int)FriendStatus.InFriends
+            );
+
+            result.DistanceFromCurrentUser = GetDistanceFromCurrentUserAsync(
+                _mapper.Map<UserModel>(currentUser),
+                result
+            );
+
+            return result;
+        }
+
+        public async Task<UserModel> GetUserByIdAsync(Guid currentUserId)
+        {
+            User user = await _repository.GetAsync(currentUserId);
             if (user == null)
             {
                 return null;
@@ -148,6 +183,14 @@ namespace Parleo.BLL.Services
         {
             User mainUser = await _repository.GetAsync(mainUserId);
             User targetUser = await _repository.GetAsync(targetUserId);
+            double resultDistance = LocationHelper.GetDistanceBetween((double)mainUser.Longitude, (double)mainUser.Latitude,
+                (double)targetUser.Longitude, (double)targetUser.Latitude);
+
+            return (int)Math.Round(resultDistance);
+        }
+
+        private int GetDistanceFromCurrentUserAsync(UserModel mainUser, UserModel targetUser)
+        {
             double resultDistance = LocationHelper.GetDistanceBetween((double)mainUser.Longitude, (double)mainUser.Latitude,
                 (double)targetUser.Longitude, (double)targetUser.Latitude);
 

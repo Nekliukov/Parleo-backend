@@ -8,7 +8,7 @@ namespace Parleo.DAL.Interfaces
 {
     public interface IUsersRepository
     {
-        Task<Page<User>> GetPageAsync(UserFilter userFilter, Location location);
+        Task<Page<User>> GetPageAsync(UserFilter userFilter, User entity);
 
         Task<User> GetAsync(Guid id);
 

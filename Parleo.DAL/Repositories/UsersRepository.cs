@@ -35,10 +35,10 @@ namespace Parleo.DAL.Repositories
             return true;
         }
 
-        public async Task<Page<User>> GetPageAsync(UserFilter userFilter, Location location)
+        public async Task<Page<User>> GetPageAsync(UserFilter userFilter, User user)
         {
-            double latitude = (double)location.Latitude,
-                   longitude = (double)location.Longitude;
+            double latitude = (double)user.Latitude,
+                   longitude = (double)user.Longitude;
 
             // hack for correct first user's output int filter list
             // without it first user will have no lang, hobbies etc...
@@ -51,6 +51,7 @@ namespace Parleo.DAL.Repositories
                 .FirstOrDefaultAsync();
 
             var users = await _context.User
+                .Where(u => u.Id != user.Id)
                 .Where(u => userFilter.Gender != null ?
                     u.Gender == userFilter.Gender : true)
                 .Where(u => (userFilter.Languages != null &&
@@ -96,6 +97,7 @@ namespace Parleo.DAL.Repositories
         {
             var result = await _context.User.Include(u => u.Credentials)
                 .Include(u => u.Languages)
+                .Include(u => u.Friends)
                 .Include(u => u.Hobbies)
                     .ThenInclude(uh => uh.Hobby)
                         .ThenInclude(h => h.Category)

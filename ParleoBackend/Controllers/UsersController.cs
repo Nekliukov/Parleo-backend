@@ -83,19 +83,12 @@ namespace ParleoBackend.Controllers
                     validationResult.Errors.First().ErrorMessage));
             }
 
-            var currentUser = await _accountService.GetUserByIdAsync(new Guid(id));
             var users = await _accountService.GetUsersPageAsync(
                 _mapper.Map<UserFilterModel>(userFilter), new Guid(id));
 
             if (users == null)
             {
                 return NotFound();
-            }
-
-            foreach (var listUser in users.Entities)
-            {
-                listUser.DistanceFromCurrentUser = await _accountService
-                    .GetDistanceFromCurrentUserAsync(currentUser.Id, listUser.Id);
             }
 
             return Ok(_mapper.Map<PageViewModel<UserViewModel>>(users));
@@ -105,15 +98,12 @@ namespace ParleoBackend.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserByIdAsync(Guid userId)
         {
-            UserModel user = await _accountService.GetUserByIdAsync(userId);
+            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
+            UserModel user = await _accountService.GetUserByIdAsync(userId, new Guid(id));
             if (user == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.USER_NOT_FOUND));
             }
-
-            string id = User.FindFirst(JwtRegisteredClaimNames.Jti).Value;
-            user.DistanceFromCurrentUser = await _accountService
-                .GetDistanceFromCurrentUserAsync(new Guid(id), user.Id);
 
             return Ok(_mapper.Map<UserViewModel>(user));
         }
