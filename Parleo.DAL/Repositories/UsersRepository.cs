@@ -97,6 +97,7 @@ namespace Parleo.DAL.Repositories
         {
             var result = await _context.User.Include(u => u.Credentials)
                 .Include(u => u.Languages)
+                .Include(u => u.Friends)
                 .Include(u => u.Hobbies)
                     .ThenInclude(uh => uh.Hobby)
                         .ThenInclude(h => h.Category)
@@ -104,9 +105,6 @@ namespace Parleo.DAL.Repositories
                 .Include(u => u.AttendingEvents)
                     .ThenInclude(ue => ue.Event)
                 .FirstOrDefaultAsync(user => user.Id == id);
-
-            result.Friends = await _context.UserFriends.Where(u => u.UserFromId == id)
-                .ToListAsync();
 
             return result;
         }

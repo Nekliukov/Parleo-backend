@@ -97,12 +97,12 @@ namespace Parleo.DAL
             modelBuilder.Entity<UserFriends>().HasKey(k => new { k.UserToId, k.UserFromId });
             modelBuilder.Entity<UserFriends>()
                 .HasOne(fs => fs.UserTo)
-                .WithMany(u => u.Friends)
+                .WithMany()
                 .HasForeignKey(fs => fs.UserToId)
                 .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<UserFriends>()
                 .HasOne(fs => fs.UserFrom)
-                .WithMany()
+                .WithMany(u => u.Friends)
                 .HasForeignKey(fs => fs.UserFromId)
                 .OnDelete(DeleteBehavior.Restrict);
             #endregion

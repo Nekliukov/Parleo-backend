@@ -75,12 +75,42 @@ namespace Parleo.BLL.Services
                 }
             }
 
+            UserModel currentUser = _mapper.Map<UserModel>(user);
+            foreach (var listUser in page.Entities)
+            {
+                listUser.DistanceFromCurrentUser = GetDistanceFromCurrentUserAsync(currentUser, listUser);
+            }
+
             return page;
         }
 
-        public async Task<UserModel> GetUserByIdAsync(Guid id)
+        public async Task<UserModel> GetUserByIdAsync(Guid id, Guid currentUserId)
         {
             User user = await _repository.GetAsync(id);
+            User currentUser = await _repository.GetAsync(currentUserId);
+
+            if (user == null || currentUser == null)
+            {
+                return null;
+            }
+
+            UserModel result = _mapper.Map<UserModel>(user);
+
+            result.IsFriend = currentUser.Friends.Any(fr =>
+                fr.UserToId == result.Id && fr.Status == (int)FriendStatus.InFriends
+            );
+
+            result.DistanceFromCurrentUser = GetDistanceFromCurrentUserAsync(
+                _mapper.Map<UserModel>(currentUser),
+                result
+            );
+
+            return result;
+        }
+
+        public async Task<UserModel> GetUserByIdAsync(Guid currentUserId)
+        {
+            User user = await _repository.GetAsync(currentUserId);
             if (user == null)
             {
                 return null;
@@ -153,6 +183,14 @@ namespace Parleo.BLL.Services
         {
             User mainUser = await _repository.GetAsync(mainUserId);
             User targetUser = await _repository.GetAsync(targetUserId);
+            double resultDistance = LocationHelper.GetDistanceBetween((double)mainUser.Longitude, (double)mainUser.Latitude,
+                (double)targetUser.Longitude, (double)targetUser.Latitude);
+
+            return (int)Math.Round(resultDistance);
+        }
+
+        private int GetDistanceFromCurrentUserAsync(UserModel mainUser, UserModel targetUser)
+        {
             double resultDistance = LocationHelper.GetDistanceBetween((double)mainUser.Longitude, (double)mainUser.Latitude,
                 (double)targetUser.Longitude, (double)targetUser.Latitude);
 
