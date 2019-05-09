@@ -56,6 +56,7 @@ namespace Parleo.DAL.Repositories
             return await _context.Event
                 .Include(e => e.Language)
                 .Include(e => e.Creator)
+                .Include(e => e.Chat)
                 .Include(e => e.Participants)
                 .ThenInclude(ue => ue.User)
                 .FirstOrDefaultAsync(e => e.Id == id);
