@@ -50,7 +50,7 @@ namespace Parleo.DAL.Repositories
                         .ThenInclude(h => h.Category)
                 .FirstOrDefaultAsync();
 
-            var users = await _context.User
+            IEnumerable<User> users = await _context.User
                 .Where(u => u.Id != user.Id)
                 .Where(u => userFilter.Gender != null ?
                     u.Gender == userFilter.Gender : true)
@@ -59,9 +59,6 @@ namespace Parleo.DAL.Repositories
                     userFilter.Languages.Any(fl => u.Languages.Any(
                         ul => ul.LanguageCode == fl &&
                             LevelInRange(ul, userFilter.MinLevel))) : true)
-                .Where(u => (userFilter.MaxDistance != null) ?
-                    LocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
-                    longitude, latitude) <= userFilter.MaxDistance : true)
                 .Where(u => (userFilter.MaxAge != null) ?
                     GetAge(u.Birthdate) <= userFilter.MaxAge : true)
                 .Where(u => (userFilter.MinAge != null) ?
@@ -72,6 +69,12 @@ namespace Parleo.DAL.Repositories
                 .Include(u => u.Hobbies)
                     .ThenInclude(h => h.Hobby)
                 .ToListAsync();
+
+            users = users
+                .Where(u => (userFilter.MaxDistance != null) ?
+                    LocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
+                    longitude, latitude) <= userFilter.MaxDistance : true)
+                .ToArray();
 
             int totalAmount = users.Count();
 

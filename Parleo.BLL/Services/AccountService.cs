@@ -68,7 +68,7 @@ namespace Parleo.BLL.Services
 
             foreach (UserFriends userFriend in user.Friends)
             {
-                UserModel userModel = page.Entities.First(u => u.Id == userFriend.UserToId);
+                UserModel userModel = page.Entities.FirstOrDefault(u => u.Id == userFriend.UserToId);
                 if (userModel != null && userFriend.Status == (int)FriendStatus.InFriends)
                 {
                     userModel.IsFriend = true;
