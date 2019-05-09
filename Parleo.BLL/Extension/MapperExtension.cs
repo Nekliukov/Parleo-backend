@@ -128,7 +128,9 @@ namespace Parleo.BLL.Extensions
                         opt => opt.MapFrom(cm => cm.Members.Select(m => new ChatUser()
                         {
                             UserId = m.Id
-                        })));
+                        })))
+                    .ForMember(c => c.EventId, opt => opt.MapFrom(cm => cm.Event != null ? cm.Event.Id : (Guid?)null))
+                    .ForMember(c => c.Event, opt => opt.Ignore());
 
                 mc.CreateMap<IEnumerable<Guid>, ChatModel>()
                 .ForMember(cm => cm.Members, opt => opt.MapFrom(m => m.Select(id => new MiniatureModel() { Id = id })));
