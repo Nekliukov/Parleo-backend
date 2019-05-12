@@ -68,6 +68,8 @@ namespace Parleo.DAL.Repositories
             double latitude = (double)location.Latitude,
                    longtitude = (double)location.Longitude;
 
+            DateTimeOffset now = DateTimeOffset.Now;
+
             IEnumerable<Event> events = await _context.Event
                 .Where(e => (eventFilter.Languages != null && 
                         eventFilter.Languages.Count() != 0) ?
@@ -77,7 +79,8 @@ namespace Parleo.DAL.Repositories
                 .Where(e => (eventFilter.MaxStartDate != null) ?
                     e.StartTime <= eventFilter.MaxStartDate : true)
                 .Where(e => (eventFilter.MinStartDate != null) ?
-                    e.StartTime >= eventFilter.MaxStartDate : true)
+                    e.StartTime >= eventFilter.MinStartDate : true)
+                .Where(e => e.StartTime >= now)
                 .Include(e => e.Creator)
                 .Include(e => e.Language)
                 .Include(e => e.Participants)
