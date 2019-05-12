@@ -50,7 +50,7 @@ namespace Parleo.DAL.Repositories
                         .ThenInclude(h => h.Category)
                 .FirstOrDefaultAsync();
 
-            IEnumerable<User> users = await _context.User
+            var users = await _context.User
                 .Where(u => u.Id != user.Id)
                 .Where(u => userFilter.Gender != null ?
                     u.Gender == userFilter.Gender : true)
@@ -59,6 +59,9 @@ namespace Parleo.DAL.Repositories
                     userFilter.Languages.Any(fl => u.Languages.Any(
                         ul => ul.LanguageCode == fl &&
                             LevelInRange(ul, userFilter.MinLevel))) : true)
+                .Where(u => (userFilter.MaxDistance != null) ?
+                    LocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
+                    longitude, latitude) <= userFilter.MaxDistance : true)
                 .Where(u => (userFilter.MaxAge != null) ?
                     GetAge(u.Birthdate) <= userFilter.MaxAge : true)
                 .Where(u => (userFilter.MinAge != null) ?
@@ -69,12 +72,6 @@ namespace Parleo.DAL.Repositories
                 .Include(u => u.Hobbies)
                     .ThenInclude(h => h.Hobby)
                 .ToListAsync();
-
-            users = users
-                .Where(u => (userFilter.MaxDistance != null) ?
-                    LocationHelper.GetDistanceBetween((double)u.Longitude, (double)u.Latitude,
-                    longitude, latitude) <= userFilter.MaxDistance : true)
-                .ToArray();
 
             int totalAmount = users.Count();
 
@@ -109,6 +106,14 @@ namespace Parleo.DAL.Repositories
                     .ThenInclude(ue => ue.Event)
                 .FirstOrDefaultAsync(user => user.Id == id);
 
+            if (result == null)
+            {
+                return null;
+            }
+
+            result.Friends = await _context.UserFriends.Where(u => u.UserFromId == id)
+                .ToListAsync();
+
             return result;
         }
 
@@ -135,8 +140,12 @@ namespace Parleo.DAL.Repositories
         {
             AccountToken accountToken = await _context.AccountToken.Include(c => c.User)
                 .FirstOrDefaultAsync(с => с.UserId == userId);
-            _context.AccountToken.Remove(accountToken);
-            _context.SaveChanges();
+
+            if (accountToken != null)
+            {
+                _context.AccountToken.Remove(accountToken);
+                _context.SaveChanges();
+            }
 
             return accountToken;
         }
