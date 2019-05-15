@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
@@ -7,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -74,36 +74,50 @@
             align-items: center;
         }
 
-        button {
+        .button {
+            text-align: center;
             cursor: pointer;
-            width: 80%;
+            width: 100%;
             height: 45px;
             border-radius: 45px;
             background: #5264FF;
-            transition: .3s;
-            border: none !important;
         }
 
-        a {
-            text-align: center;
-            outline: none;
-            font-size: 11px;
-            letter-spacing: 1.5px;
-            font-weight: 600;
+        .button a {
+            display: inline-block;
+            padding: 13px;
+            font-family: Montserrat;
+            font-size: 14px;
             color: #FFFFFF;
         }
 
-            a, a:hover, a:active, a:visited, a:focus {
-                text-decoration: none !important;
-            }
+        a,
+        a:hover,
+        a:active,
+        a:visited,
+        a:focus {
+            text-decoration: none !important;
+        }
+
+        .table {
+            margin-left: 12.5%;
+            margin-right: 12.5%;
+            width: 75%;
+        }
+
+        .table td {
+            border: 0px;
+        }
+
+        .table tr {
+            border: 0px;
+        }
 
         .upper-button {
-            width: 324px;
             margin-top: 20px;
         }
 
         .lower-button {
-            width: 324px;
             margin-bottom: 40px;
         }
 
@@ -124,15 +138,15 @@
             padding: 0;
         }
 
-            .right p {
-                width: 100%;
-                text-align: right;
-            }
+        .right p {
+            width: 100%;
+            text-align: right;
+        }
 
-            .left p {
-                text-align: left;
-                align-items: start;
-            }
+        .left p {
+            text-align: left;
+            align-items: start;
+        }
 
         .follow-us {
             font-style: normal;
@@ -177,11 +191,12 @@
             border-radius: 10px;
         }
 
-            ::-webkit-scrollbar-thumb:hover {
-                background: #555;
-            }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
+
 <body class="container-fluid">
     <div class="col-sm-8 whiteblock">
         <div class="header">
@@ -200,19 +215,39 @@
             who receive those emails so click button bellow to
             finish your registration!
         </div>
-        <button class="upper-button">
-            <a href="#{{WEB_VERSION_LINK}}" class="button-text">
-                Continue in web app
-            </a>
-        </button>
+        <table class="upper-button table" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <table width="100%" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td class="button">
+                                <a class="button-text" href="{{WEB_VERSION_LINK}}" target="_blank">
+                                    Continue in web app
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
         <div class="or">
             or...
         </div>
-        <button class="lower-button">
-            <a href="#{{MOBILE_LINK}}" class="button-text">
-                Continue with mobile
-            </a>
-        </button>
+        <table class="lower-button table" cellspacing="0" cellpadding="0">
+            <tr>
+                <td>
+                    <table width="100%" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td class="button ">
+                                <a class="button-text" href="{{MOBILE_LINK}}" target="_blank">
+                                    Continue in web app
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </div>
     <div class="col-sm-8 summary">
         <div class="row down-block justify-content-between">
@@ -221,9 +256,12 @@
             </div>
             <div class="col-4 right">
                 <p class="images">
-                    <img class="follow-img" src="https://awesomeparleobackend.azurewebsites.net/event-images/shape1.png">
-                    <img class="follow-img" src="https://awesomeparleobackend.azurewebsites.net/event-images/shape2.png">
-                    <img class="follow-img" src="https://awesomeparleobackend.azurewebsites.net/event-images/shape3.png">
+                    <img class="follow-img"
+                        src="https://awesomeparleobackend.azurewebsites.net/event-images/shape1.png">
+                    <img class="follow-img"
+                        src="https://awesomeparleobackend.azurewebsites.net/event-images/shape2.png">
+                    <img class="follow-img"
+                        src="https://awesomeparleobackend.azurewebsites.net/event-images/shape3.png">
                 </p>
             </div>
         </div>
@@ -240,4 +278,5 @@
         </div>
     </div>
 </body>
+
 </html>
