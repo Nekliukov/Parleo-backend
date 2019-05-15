@@ -115,14 +115,14 @@ namespace ParleoBackend.Controllers
 
             Guid userId = new Guid(userIdString);
 
-            AccountTokenModel accountToken = await _accountService.DeleteAccountTokenAsync(userId);
-            if (accountToken == null)
+            UserModel user = await _accountService.GetUserByIdAsync(userId);
+            if (user == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.EXPIRED_TOKEN));
             }
 
-            UserModel user = await _accountService.GetUserByIdAsync(userId);
-            if (user == null)
+            AccountTokenModel accountToken = await _accountService.DeleteAccountTokenAsync(userId);
+            if (accountToken == null)
             {
                 return BadRequest(new ErrorResponseFormat(Constants.Errors.EXPIRED_TOKEN));
             }

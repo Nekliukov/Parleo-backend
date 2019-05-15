@@ -109,6 +109,14 @@ namespace Parleo.DAL.Repositories
                     .ThenInclude(ue => ue.Event)
                 .FirstOrDefaultAsync(user => user.Id == id);
 
+            if (result == null)
+            {
+                return null;
+            }
+
+            result.Friends = await _context.UserFriends.Where(u => u.UserFromId == id)
+                .ToListAsync();
+
             return result;
         }
 
@@ -135,8 +143,12 @@ namespace Parleo.DAL.Repositories
         {
             AccountToken accountToken = await _context.AccountToken.Include(c => c.User)
                 .FirstOrDefaultAsync(с => с.UserId == userId);
-            _context.AccountToken.Remove(accountToken);
-            _context.SaveChanges();
+
+            if (accountToken != null)
+            {
+                _context.AccountToken.Remove(accountToken);
+                _context.SaveChanges();
+            }
 
             return accountToken;
         }
