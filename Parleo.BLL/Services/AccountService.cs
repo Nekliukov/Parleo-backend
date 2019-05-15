@@ -239,8 +239,14 @@ namespace Parleo.BLL.Services
                 return null;
             }
 
-            return _mapper.Map<PageModel<UserModel>>(friends);
-             
+            PageModel<UserModel> friendsPage = _mapper.Map<PageModel<UserModel>>(friends);
+
+            foreach (UserModel user in friendsPage.Entities)
+            {
+                user.IsFriend = true;
+            }
+
+            return friendsPage;
         }
 
         public async Task<bool> RemoveFriendAsync(Guid userFromId, Guid userToId)
