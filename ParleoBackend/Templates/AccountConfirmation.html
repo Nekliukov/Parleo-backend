@@ -1,12 +1,243 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Parleo</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .whiteblock {
+            border-radius: 8px;
+            background: white;
+            margin: auto;
+            text-align: center;
+            align-items: center;
+            padding: 0 !important;
+        }
+
+        body {
+            min-width: 320px;
+            background: #ECECEC;
+            font-family: Montserrat;
+        }
+
+        .image {
+            background-size: cover;
+            background-position: center;
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+        }
+
+        .header {
+            margin: 15px 0;
+            letter-spacing: 1.5px;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 48px;
+            line-height: 59px;
+            align-items: center;
+            text-align: center;
+            color: rgb(0, 0, 0);
+        }
+
+        .subheader {
+            margin: 20px auto;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 29px;
+            align-items: center;
+            text-align: center;
+            color: rgba(0, 0, 0, 0.75);
+        }
+
+        .text {
+            margin: auto;
+            max-width: 80%;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 15px;
+            color: #000000;
+        }
+
+        .image-block {
+            align-content: center;
+            align-self: center;
+            align-items: center;
+        }
+
+        button {
+            cursor: pointer;
+            width: 80%;
+            height: 45px;
+            border-radius: 45px;
+            background: #5264FF;
+            transition: .3s;
+            border: none !important;
+        }
+
+        a {
+            text-align: center;
+            outline: none;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+            a, a:hover, a:active, a:visited, a:focus {
+                text-decoration: none !important;
+            }
+
+        .upper-button {
+            width: 324px;
+            margin-top: 20px;
+        }
+
+        .lower-button {
+            width: 324px;
+            margin-bottom: 40px;
+        }
+
+        .or {
+            margin: 15px auto;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 17px;
+        }
+
+        .button-text {
+            color: #FFFFFF;
+        }
+
+        .left,
+        .right {
+            padding: 0;
+        }
+
+            .right p {
+                width: 100%;
+                text-align: right;
+            }
+
+            .left p {
+                text-align: left;
+                align-items: start;
+            }
+
+        .follow-us {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 17px;
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        .email {
+            text-decoration: underline;
+        }
+
+        .rights {
+            padding-top: 1vh;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 17px;
+            text-align: center;
+            color: rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px
+        }
+
+        .summary {
+            margin: auto;
+            padding-top: 2vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 2px;
+            height: 2px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0.6;
+            border-radius: 10px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+    </style>
 </head>
-<body>
-    <p><h2>Welcome!</h2></p>
-    <p><h4> Click on link to continue registration in browser {{webSiteUrl}}</h4></p>
-    <p><h4> Click on link to continue registration in mobile App {{mobileUrl}}</h4></p>
+<body class="container-fluid">
+    <div class="col-sm-8 whiteblock">
+        <div class="header">
+            Parleo
+        </div>
+        <div class="image-block">
+            <img class="image" src="https://awesomeparleobackend.azurewebsites.net/event-images/confirmation-image.jpg">
+        </div>
+        <div class="subheader">
+            Thanks for signing up!
+        </div>
+        <div class="text">
+            You are one click away from joining huge community if people,
+            who are passionate about learning languages in a calm and
+            friendly atmosphere! This text is read by 2% of people
+            who receive those emails so click button bellow to
+            finish your registration!
+        </div>
+        <button class="upper-button">
+            <a href="#{{WEB_VERSION_LINK}}" class="button-text">
+                Continue in web app
+            </a>
+        </button>
+        <div class="or">
+            or...
+        </div>
+        <button class="lower-button">
+            <a href="#{{MOBILE_LINK}}" class="button-text">
+                Continue with mobile
+            </a>
+        </button>
+    </div>
+    <div class="col-sm-8 summary">
+        <div class="row down-block justify-content-between">
+            <div class="col-4 left">
+                <p class="follow-us">Follow us</p>
+            </div>
+            <div class="col-4 right">
+                <p class="images">
+                    <img class="follow-img" src="https://awesomeparleobackend.azurewebsites.net/event-images/shape1.png">
+                    <img class="follow-img" src="https://awesomeparleobackend.azurewebsites.net/event-images/shape2.png">
+                    <img class="follow-img" src="https://awesomeparleobackend.azurewebsites.net/event-images/shape3.png">
+                </p>
+            </div>
+        </div>
+        <div class="row down-block justify-content-between">
+            <div class="col-4 left">
+                <p class="follow-us">Contact us</p>
+            </div>
+            <div class="col right">
+                <p class="follow-us email">parleoteam@gmail.com</p>
+            </div>
+        </div>
+        <div class="rights">
+            © Parleo 2019. All rights reserved
+        </div>
+    </div>
 </body>
 </html>

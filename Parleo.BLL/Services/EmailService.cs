@@ -24,11 +24,11 @@ namespace Parleo.BLL.Services
         {
             string message = (await File.ReadAllTextAsync(_accountConfirmationMessageSettings.Message))
                 .Replace(
-                    "{{webSiteUrl}}",
+                    "{{WEB_VERSION_LINK}}",
                     _accountConfirmationMessageSettings.WebSiteInvitationUrl.Replace("{{token}}", $"{token}"
                 ))
                 .Replace(
-                    "{{mobileUrl}}",
+                    "{{MOBILE_LINK}}",
                     _accountConfirmationMessageSettings.MobileInvitationUrl.Replace("{{token}}", $"{token}"
                 )
             );
