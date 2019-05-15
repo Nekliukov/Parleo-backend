@@ -60,7 +60,7 @@ namespace Parleo.BLL.Services
             var chat = await _chatRepository.GetChatByIdAsync(chatId, myUserId);
             if (chat == null)
             {
-                throw new AppException(ErrorType.InvalidId);
+                return null;
             }
 
             var chatModel = _mapper.Map<ChatModel>(chat);
